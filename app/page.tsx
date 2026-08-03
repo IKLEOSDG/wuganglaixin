@@ -683,7 +683,7 @@ export default function Home() {
                       </div>
                       <div className="phone-apps">
                         <button onClick={() => setPhoneView("wechat")}>
-                          <i className="app-wechat">●●</i>
+                          <i className="app-wechat" />
                           <span>微信</span>
                           <em>3</em>
                         </button>
@@ -700,30 +700,30 @@ export default function Home() {
                           <span>天气</span>
                         </button>
                         <button onClick={() => setPhoneView("map")}>
-                          <i className="app-map">⌖</i>
+                          <i className="app-map" />
                           <span>地图</span>
                         </button>
                         <button onClick={() => setPhoneView("phone")}>
-                          <i className="app-phone">●</i>
+                          <i className="app-phone" />
                           <span>电话</span>
                         </button>
                         <button onClick={() => setPhoneView("contacts")}>
-                          <i className="app-contacts">●</i>
+                          <i className="app-contacts" />
                           <span>通讯录</span>
                         </button>
                         <button onClick={() => setPhoneView("messages")}>
-                          <i className="app-messages">●</i>
+                          <i className="app-messages" />
                           <span>信息</span>
                           <em>2</em>
                         </button>
                         <button onClick={() => setPhoneView("browser")}>
-                          <i className="app-browser">⌁</i>
+                          <i className="app-browser" />
                           <span>Safari</span>
                         </button>
                       </div>
                       <div className="phone-dock">
                         <button onClick={() => setPhoneView("phone")}>
-                          <i className="dock-phone">●</i>
+                          <i className="dock-phone">☎</i>
                           <span>电话</span>
                         </button>
                         <button onClick={() => setPhoneView("messages")}>
@@ -731,7 +731,7 @@ export default function Home() {
                           <span>信息</span>
                         </button>
                         <button onClick={() => setPhoneView("wechat")}>
-                          <i className="dock-wechat">●●</i>
+                          <i className="dock-wechat">••</i>
                           <span>微信</span>
                         </button>
                         <button onClick={() => setPhoneView("gallery")}>

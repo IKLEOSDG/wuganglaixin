@@ -4237,3 +4237,204 @@ mark {
   line-height: 1.6;
   color: #777;
 }
+
+/* Refined iOS glyphs and compact app chrome. */
+.phone-apps i {
+  position: relative;
+  overflow: hidden;
+}
+.phone-apps .app-wechat::before {
+  content: "••";
+  width: 30px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #08a950;
+  font: bold 12px Arial;
+  letter-spacing: 4px;
+  padding-left: 4px;
+}
+.phone-apps .app-wechat::after {
+  content: "••";
+  position: absolute;
+  right: 7px;
+  bottom: 8px;
+  width: 23px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #08c160;
+  border-radius: 50%;
+  background: #fff;
+  color: #08a950;
+  font: bold 8px Arial;
+  letter-spacing: 2px;
+  padding-left: 2px;
+}
+.phone-apps .app-phone::before {
+  content: "☎";
+  color: #fff;
+  font: 28px/1 Arial;
+  transform: rotate(-18deg);
+}
+.phone-apps .app-contacts::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #fff;
+}
+.phone-apps .app-contacts::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  width: 34px;
+  height: 20px;
+  border-radius: 20px 20px 8px 8px;
+  background: #fff;
+}
+.phone-apps .app-messages::before {
+  content: "";
+  width: 31px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+}
+.phone-apps .app-messages::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  border-width: 6px 5px 0 0;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+  transform: rotate(15deg);
+}
+.phone-apps .app-map {
+  background: linear-gradient(
+    135deg,
+    #d7e9d4 0 38%,
+    #f5dd8b 38% 55%,
+    #9dc5e3 55%
+  );
+}
+.phone-apps .app-map::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 24px;
+  width: 42px;
+  height: 4px;
+  background: #fff;
+  transform: rotate(-38deg);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+.phone-apps .app-map::after {
+  content: "●";
+  position: absolute;
+  right: 10px;
+  top: 7px;
+  color: #e44843;
+  font-size: 22px;
+  text-shadow: 0 2px 0 #fff;
+}
+.phone-apps .app-browser::before {
+  content: "";
+  width: 35px;
+  height: 35px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: linear-gradient(
+    112deg,
+    transparent 46%,
+    #e64d52 47% 52%,
+    transparent 53%
+  );
+}
+.phone-apps .app-browser::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 25px;
+  background: #fff;
+  transform: rotate(25deg);
+  box-shadow: 0 0 0 1px rgba(32, 116, 183, 0.2);
+}
+.dock-phone {
+  font-size: 22px !important;
+}
+.dock-messages {
+  position: relative;
+  font-size: 0 !important;
+}
+.dock-messages::before {
+  content: "";
+  width: 23px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+}
+.dock-messages::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  bottom: 7px;
+  border: 5px solid transparent;
+  border-top-color: #fff;
+  transform: rotate(20deg);
+}
+.dock-wechat {
+  font-size: 12px !important;
+  letter-spacing: 1px;
+}
+.safari-app > header {
+  grid-template-columns: 64px 1fr 64px;
+}
+.safari-app > header button {
+  position: static !important;
+  padding: 0 0 0 14px !important;
+  border: 0 !important;
+  background: none !important;
+  color: #1682d4 !important;
+  font-size: 10px !important;
+  text-align: left !important;
+}
+.safari-app > header b {
+  font-size: 15px;
+}
+.safari-app > header span {
+  padding-right: 12px;
+  text-align: right;
+  font-size: 10px;
+}
+.safari-address {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .notebook:not(.open) {
+    left: auto !important;
+    right: 8px !important;
+    width: 176px !important;
+  }
+  .notebook.open {
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+  }
+  .notebook:not(.open) .notebook-toggle {
+    padding: 0 10px;
+  }
+  .notebook:not(.open) .notebook-toggle span {
+    font-size: 10px;
+  }
+  .notebook:not(.open) .notebook-toggle i {
+    display: none;
+  }
+}
