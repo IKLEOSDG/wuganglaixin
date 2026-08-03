@@ -3832,58 +3832,102 @@ mark {
   background: #d7ddd5;
 }
 .ios-map-canvas {
-  height: 58%;
+  height: 64%;
   position: relative;
-  background: url("/evidence/harbor-map.webp") center/cover;
+  background:
+    linear-gradient(rgba(12, 25, 29, 0.08), rgba(12, 25, 29, 0.16)),
+    url("/evidence/fog-harbor-modern-map.png") center/cover;
   overflow: hidden;
 }
 .ios-map-canvas:after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    20deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.18)
-  );
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 40px rgba(7, 17, 21, 0.35);
 }
-.map-route {
+.ios-map-route {
   position: absolute;
   z-index: 1;
-  left: 19%;
-  top: 62%;
-  width: 62%;
-  height: 2px;
-  background: #4285d4;
-  transform: rotate(-28deg);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.ios-map-route path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ios-map-route .route-shadow {
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 2.2;
+}
+.ios-map-route .route-line {
+  stroke: #2784df;
+  stroke-width: 1.15;
 }
 .ios-pin {
   position: absolute;
-  z-index: 2;
-  padding: 5px 7px;
+  z-index: 4;
+  padding: 5px 8px 5px 20px;
   border: 0;
-  border-radius: 12px 12px 12px 0;
-  background: #e04c45;
-  color: #fff;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #202829;
   font: 8px monospace;
-  transform: rotate(-45deg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
 }
-.ios-pin::first-line {
-  transform: rotate(45deg);
+.ios-pin:before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: #e54b45;
+  box-shadow: 0 0 0 2px #fff;
 }
 .pin-a {
-  left: 14%;
-  top: 67%;
+  left: 17%;
+  top: 78%;
 }
 .pin-b {
-  left: 48%;
-  top: 44%;
+  left: 42%;
+  top: 51%;
 }
 .pin-c {
   right: 12%;
-  top: 20%;
-  background: #293f91;
+  top: 15%;
+}
+.pin-c:before {
+  background: #2784df;
+}
+.map-label {
+  position: absolute;
+  z-index: 3;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(249, 249, 247, 0.9);
+  color: #263231;
+  font-size: 7px;
+  line-height: 1.25;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+}
+.label-a {
+  left: 14%;
+  top: 70%;
+}
+.label-b {
+  left: 39%;
+  top: 43%;
+}
+.label-c {
+  right: 15%;
+  top: 26%;
 }
 .map-card {
   position: absolute;

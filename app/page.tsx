@@ -1104,7 +1104,24 @@ export default function Home() {
                         <span>⋯</span>
                       </header>
                       <div className="ios-map-canvas">
-                        <i className="map-route" />
+                        <svg
+                          className="ios-map-route"
+                          viewBox="0 0 100 100"
+                          preserveAspectRatio="none"
+                          aria-hidden="true"
+                        >
+                          <path
+                            className="route-shadow"
+                            d="M 21 81 C 28 73, 33 67, 41 61 S 54 52, 61 43 S 70 28, 81 17"
+                          />
+                          <path
+                            className="route-line"
+                            d="M 21 81 C 28 73, 33 67, 41 61 S 54 52, 61 43 S 70 28, 81 17"
+                          />
+                        </svg>
+                        <span className="map-label label-a">海堤检查站</span>
+                        <span className="map-label label-b">白鹭钟表行</span>
+                        <span className="map-label label-c">北码头</span>
                         <button
                           className="ios-pin pin-a"
                           onClick={() =>
