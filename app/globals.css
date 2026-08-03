@@ -3680,7 +3680,51 @@ mark {
     pointer-events: none;
   }
   .person-photo-button {
-    width: 50px;
-    height: 65px;
+    grid-column: 1 !important;
+    grid-row: 1 / span 2 !important;
+    align-self: start;
+    justify-self: start !important;
+    width: 68px;
+    height: 86px;
+  }
+  .people-list article {
+    grid-template-columns: 68px minmax(0, 1fr) !important;
+    grid-auto-flow: row;
+    align-items: start;
+    gap: 12px 16px;
+    min-height: 0;
+    padding: 18px !important;
+  }
+  .people-list .person-copy {
+    grid-column: 2 !important;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+  }
+  .people-list .person-copy h3 {
+    margin: 5px 0 7px;
+    font-size: 22px;
+  }
+  .people-list .person-copy p {
+    width: 100%;
+    font-size: 11px;
+    line-height: 1.75;
+    word-break: normal;
+  }
+  .people-list .person-judgment {
+    display: flex;
+    width: 100%;
+    gap: 5px;
+  }
+  .people-list .person-judgment button {
+    grid-column: auto !important;
+    justify-self: auto !important;
+    min-width: 46px;
+  }
+  .people-list .person-action {
+    grid-column: 2 !important;
+    grid-row: 2;
+    justify-self: start !important;
+    margin: 0;
   }
 }
