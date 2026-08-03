@@ -254,8 +254,10 @@ const PEOPLE: {
   name: string;
   role: string;
   avatar: string;
-  photo?: string;
-  photoCrop?: string;
+  sheet: string;
+  sheetColumns: number;
+  sheetRows: number;
+  sheetIndex: number;
   text: string;
   action: string;
   need?: string;
@@ -267,6 +269,10 @@ const PEOPLE: {
     name: "陈放",
     role: "前男友 / 摄影器材租赁",
     avatar: "陈",
+    sheet: "/people/case-portraits.png",
+    sheetColumns: 3,
+    sheetRows: 2,
+    sheetIndex: 0,
     text: "承认发过威胁消息。称争执围绕一台未归还的相机，案发夜正在跨城高速。",
     action: "核对行程",
     need: "ex",
@@ -277,6 +283,10 @@ const PEOPLE: {
     name: "吴敏",
     role: "海潮药房 / 夜班药师",
     avatar: "吴",
+    sheet: "/people/case-portraits.png",
+    sheetColumns: 3,
+    sheetRows: 2,
+    sheetIndex: 1,
     text: "记得取药的年轻女人，也记得处方上的患者姓名被胶带遮住一半。",
     action: "调取处方",
     need: "pills",
@@ -287,8 +297,10 @@ const PEOPLE: {
     name: "林琴",
     role: "母亲 / 失联3日",
     avatar: "琴",
-    photo: "/people/three-identities.png",
-    photoCrop: "center center",
+    sheet: "/people/three-identities.png",
+    sheetColumns: 3,
+    sheetRows: 1,
+    sheetIndex: 1,
     text: "旧户籍显示生于雾港，出生地址却是一片在1987年填海形成的空地。",
     action: "查旧报",
     archive: true,
@@ -298,6 +310,10 @@ const PEOPLE: {
     name: "赵桂香",
     role: "潮生民宿 / 老板娘",
     avatar: "赵",
+    sheet: "/people/case-portraits.png",
+    sheetColumns: 3,
+    sheetRows: 2,
+    sheetIndex: 2,
     text: "坚持自己从未见过林琴，却在群聊里把林岚叫作‘周岚’。",
     action: "记下口供",
   },
@@ -306,6 +322,10 @@ const PEOPLE: {
     name: "高进",
     role: "网约车司机 / 最后接触者",
     avatar: "高",
+    sheet: "/people/case-portraits.png",
+    sheetColumns: 3,
+    sheetRows: 2,
+    sheetIndex: 3,
     text: "称22:46把林岚送到北码头；订单轨迹却在距码头两公里处提前结束。",
     action: "查看轨迹",
   },
@@ -314,6 +334,10 @@ const PEOPLE: {
     name: "苏晴",
     role: "大学同学 / 合作摄影师",
     avatar: "苏",
+    sheet: "/people/case-portraits.png",
+    sheetColumns: 3,
+    sheetRows: 2,
+    sheetIndex: 4,
     text: "说林岚近一个月沉迷家族史，还把三张不同年代的女人照片当作同一人的自拍。",
     action: "记录证词",
   },
@@ -371,6 +395,9 @@ export default function Home() {
     title: string;
     crop?: string;
     cropSize?: string;
+    gridColumns?: number;
+    gridRows?: number;
+    gridIndex?: number;
   } | null>(null);
   const [search, setSearch] = useState("");
   const [archiveResults, setArchiveResults] = useState<ArchiveResult[]>([]);
@@ -970,20 +997,23 @@ export default function Home() {
                           {
                             src: "/people/three-identities.png",
                             title: "1992 · 周岚",
-                            crop: "left center",
-                            cropSize: "300% 100%",
+                            gridColumns: 3,
+                            gridRows: 1,
+                            gridIndex: 0,
                           },
                           {
                             src: "/people/three-identities.png",
                             title: "2009 · 林琴",
-                            crop: "center center",
-                            cropSize: "300% 100%",
+                            gridColumns: 3,
+                            gridRows: 1,
+                            gridIndex: 1,
                           },
                           {
                             src: "/people/three-identities.png",
                             title: "2026 · 林岚",
-                            crop: "right center",
-                            cropSize: "300% 100%",
+                            gridColumns: 3,
+                            gridRows: 1,
+                            gridIndex: 2,
                           },
                           ...PHOTOS.map((p) => ({
                             src: p.src,
@@ -995,12 +1025,25 @@ export default function Home() {
                             title: string;
                             crop?: string;
                             cropSize?: string;
+                            gridColumns?: number;
+                            gridRows?: number;
+                            gridIndex?: number;
                           }) => (
                             <button
                               key={item.title}
                               onClick={() => setPhonePhoto(item)}
                             >
-                              {item.crop ? (
+                              {item.gridColumns &&
+                              item.gridRows !== undefined &&
+                              item.gridIndex !== undefined ? (
+                                <SheetCrop
+                                  src={item.src}
+                                  columns={item.gridColumns}
+                                  rows={item.gridRows}
+                                  index={item.gridIndex}
+                                  className="gallery-crop"
+                                />
+                              ) : item.crop ? (
                                 <i
                                   className="gallery-crop"
                                   style={{
@@ -1157,40 +1200,27 @@ export default function Home() {
                     key={person.id}
                     className={peopleVerdicts[person.id] || ""}
                   >
-                    {person.photo ? (
-                      person.photoCrop ? (
-                        <button
-                          className="person-photo person-photo-crop"
-                          aria-label={`查看${person.name}照片`}
-                          style={{
-                            backgroundImage: `url(${person.photo})`,
-                            backgroundPosition: person.photoCrop,
-                          }}
-                          onClick={() =>
-                            setPhonePhoto({
-                              src: person.photo!,
-                              title: person.name,
-                              crop: person.photoCrop,
-                              cropSize: "300% 100%",
-                            })
-                          }
-                        />
-                      ) : (
-                        <img
-                          className="person-photo"
-                          src={person.photo}
-                          alt={person.name}
-                          onClick={() =>
-                            setPhonePhoto({
-                              src: person.photo!,
-                              title: person.name,
-                            })
-                          }
-                        />
-                      )
-                    ) : (
-                      <div className="avatar">{person.avatar}</div>
-                    )}
+                    <button
+                      className="person-photo-button"
+                      aria-label={`查看${person.name}照片`}
+                      onClick={() =>
+                        setPhonePhoto({
+                          src: person.sheet,
+                          title: person.name,
+                          gridColumns: person.sheetColumns,
+                          gridRows: person.sheetRows,
+                          gridIndex: person.sheetIndex,
+                        })
+                      }
+                    >
+                      <SheetCrop
+                        src={person.sheet}
+                        columns={person.sheetColumns}
+                        rows={person.sheetRows}
+                        index={person.sheetIndex}
+                        className="person-photo"
+                      />
+                    </button>
                     <div className="person-copy">
                       <small>{person.role}</small>
                       <h3>{person.name}</h3>
@@ -1322,16 +1352,11 @@ export default function Home() {
                   ].map((x, i) => (
                     <article key={x[0]}>
                       <div className="notice-face">
-                        <i
-                          style={{
-                            backgroundImage:
-                              "url(/people/three-identities.png)",
-                            backgroundPosition: [
-                              "left center",
-                              "center center",
-                              "right center",
-                            ][i],
-                          }}
+                        <SheetCrop
+                          src="/people/three-identities.png"
+                          columns={3}
+                          rows={1}
+                          index={i}
                         />
                       </div>
                       <b>寻 人 启 事</b>
@@ -1768,7 +1793,17 @@ export default function Home() {
       {phonePhoto && (
         <div className="file-preview" onClick={() => setPhonePhoto(null)}>
           <button onClick={() => setPhonePhoto(null)}>关闭 ×</button>
-          {phonePhoto.crop ? (
+          {phonePhoto.gridColumns &&
+          phonePhoto.gridRows !== undefined &&
+          phonePhoto.gridIndex !== undefined ? (
+            <SheetCrop
+              src={phonePhoto.src}
+              columns={phonePhoto.gridColumns}
+              rows={phonePhoto.gridRows}
+              index={phonePhoto.gridIndex}
+              className="preview-sheet-crop"
+            />
+          ) : phonePhoto.crop ? (
             <div
               className="cropped-frame"
               style={{
@@ -1785,6 +1820,36 @@ export default function Home() {
       )}
       {notice && <div className="toast">{notice}</div>}
     </main>
+  );
+}
+
+function SheetCrop({
+  src,
+  columns,
+  rows,
+  index,
+  className = "",
+}: {
+  src: string;
+  columns: number;
+  rows: number;
+  index: number;
+  className?: string;
+}) {
+  const column = index % columns;
+  const row = Math.floor(index / columns);
+  return (
+    <span className={`sheet-crop ${className}`}>
+      <img
+        src={src}
+        alt=""
+        style={{
+          width: `${columns * 100}%`,
+          height: `${rows * 100}%`,
+          transform: `translate(${-column * (100 / columns)}%, ${-row * (100 / rows)}%)`,
+        }}
+      />
+    </span>
   );
 }
 
