@@ -191,31 +191,172 @@ const PHOTOS = [
 ];
 
 const TIMELINE_EVENTS = [
-  { id: "arrival", date: "2026.06.17", title: "林岚抵达雾港", text: "手机最后定位进入旧港区。" },
-  { id: "first", date: "1992.06.18", title: "周岚户籍首次出现", text: "此前没有出生、入学或医疗记录。" },
-  { id: "fire", date: "2009.06.17", title: "白鹭钟表行起火", text: "店主沈砚失踪，林琴户籍同日建立。" },
-  { id: "wreck", date: "1992.06.17", title: "“归潮号”失联", text: "船上17人，官方记录为零伤亡。" },
-  { id: "mother", date: "2026.06.14", title: "林琴失联", text: "家中旧表停在03:17。" },
-  { id: "blackout", date: "1992.06.17 03:17", title: "灯塔人为熄灭", text: "值守记录被撕去一页。" },
+  {
+    id: "arrival",
+    date: "2026.06.17",
+    title: "林岚抵达雾港",
+    text: "手机最后定位进入旧港区。",
+  },
+  {
+    id: "first",
+    date: "1992.06.18",
+    title: "周岚户籍首次出现",
+    text: "此前没有出生、入学或医疗记录。",
+  },
+  {
+    id: "fire",
+    date: "2009.06.17",
+    title: "白鹭钟表行起火",
+    text: "店主沈砚失踪，林琴户籍同日建立。",
+  },
+  {
+    id: "wreck",
+    date: "1992.06.17",
+    title: "“归潮号”失联",
+    text: "船上17人，官方记录为零伤亡。",
+  },
+  {
+    id: "mother",
+    date: "2026.06.14",
+    title: "林琴失联",
+    text: "家中旧表停在03:17。",
+  },
+  {
+    id: "blackout",
+    date: "1992.06.17 03:17",
+    title: "灯塔人为熄灭",
+    text: "值守记录被撕去一页。",
+  },
 ];
 
-const VICTIMS = ["许望海","周岚","沈萍","顾长青","白小满","陈述","林鹤","江秋生","宋娟","何有福","冯春来","叶知潮","吴静","赵棠","韩树","乔冬青","罗闻舟"];
-
-const PEOPLE: { id: string; name: string; role: string; avatar: string; photo?: string; text: string; action: string; need?: string; clue?: string; archive?: boolean }[] = [
-  { id: "chen", name: "陈放", role: "前男友 / 摄影器材租赁", avatar: "陈", photo: "/people/chen-fang.svg", text: "承认发过威胁消息。称争执围绕一台未归还的相机，案发夜正在跨城高速。", action: "核对行程", need: "ex", clue: "alibi" },
-  { id: "pharmacist", name: "吴敏", role: "海潮药房 / 夜班药师", avatar: "吴", photo: "/people/wu-min.svg", text: "记得取药的年轻女人，也记得处方上的患者姓名被胶带遮住一半。", action: "调取处方", need: "pills", clue: "prescription" },
-  { id: "qin", name: "林琴", role: "母亲 / 失联3日", avatar: "琴", photo: "/people/lin-qin.svg", text: "旧户籍显示生于雾港，出生地址却是一片在1987年填海形成的空地。", action: "查旧报", archive: true },
-  { id: "landlady", name: "赵桂香", role: "潮生民宿 / 老板娘", avatar: "赵", text: "坚持自己从未见过林琴，却在群聊里把林岚叫作‘周岚’。", action: "记下口供" },
-  { id: "driver", name: "高进", role: "网约车司机 / 最后接触者", avatar: "高", text: "称22:46把林岚送到北码头；订单轨迹却在距码头两公里处提前结束。", action: "查看轨迹" },
-  { id: "classmate", name: "苏晴", role: "大学同学 / 合作摄影师", avatar: "苏", text: "说林岚近一个月沉迷家族史，还把三张不同年代的女人照片当作同一人的自拍。", action: "记录证词" },
+const VICTIMS = [
+  "许望海",
+  "周岚",
+  "沈萍",
+  "顾长青",
+  "白小满",
+  "陈述",
+  "林鹤",
+  "江秋生",
+  "宋娟",
+  "何有福",
+  "冯春来",
+  "叶知潮",
+  "吴静",
+  "赵棠",
+  "韩树",
+  "乔冬青",
+  "罗闻舟",
 ];
 
-const ARCHIVE_BACKGROUND: Record<string, { date: string; section: string; title: string; excerpt: string }> = {
-  town: { date: "1987.09.02", section: "地方志 / 城建", title: "东滩完成填海，旧门牌整体注销", excerpt: "新建海堤覆盖原周家坳、白塔坡等七处旧址。迁出人口名册缺失第17页。" },
-  harbor: { date: "1992.06.19", section: "港务简报 / 内参", title: "北码头夜间封闭，十七只货箱下落不明", excerpt: "港务局称系台风预案演练。值守表上两名签字人后来否认当夜到岗。" },
-  clockmaker: { date: "2009.06.18", section: "社会新闻 / 第03版", title: "白鹭钟表行失火，店主沈砚失踪", excerpt: "火场内有十七只停在03:17的旧钟。警方按电路老化结案，未发现店主遗体。" },
-  weather: { date: "1992.06.17", section: "气象观测 / 站史", title: "当夜能见度并未达到停航标准", excerpt: "03:00—04:00海面能见度1.8公里、风力三级，与‘极端浓雾导致事故’的报道矛盾。" },
-  school: { date: "2009.09.01", section: "教育年鉴 / 新生", title: "南陵小学接收一名无转学档案女生", excerpt: "女生登记名林琴，监护人栏为空。班主任备注：她坚持自己已经十七岁。" },
+const PEOPLE: {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  photo?: string;
+  photoCrop?: string;
+  text: string;
+  action: string;
+  need?: string;
+  clue?: string;
+  archive?: boolean;
+}[] = [
+  {
+    id: "chen",
+    name: "陈放",
+    role: "前男友 / 摄影器材租赁",
+    avatar: "陈",
+    photo: "/people/chen-fang.svg",
+    text: "承认发过威胁消息。称争执围绕一台未归还的相机，案发夜正在跨城高速。",
+    action: "核对行程",
+    need: "ex",
+    clue: "alibi",
+  },
+  {
+    id: "pharmacist",
+    name: "吴敏",
+    role: "海潮药房 / 夜班药师",
+    avatar: "吴",
+    photo: "/people/wu-min.svg",
+    text: "记得取药的年轻女人，也记得处方上的患者姓名被胶带遮住一半。",
+    action: "调取处方",
+    need: "pills",
+    clue: "prescription",
+  },
+  {
+    id: "qin",
+    name: "林琴",
+    role: "母亲 / 失联3日",
+    avatar: "琴",
+    photo: "/people/three-identities.png",
+    photoCrop: "center center",
+    text: "旧户籍显示生于雾港，出生地址却是一片在1987年填海形成的空地。",
+    action: "查旧报",
+    archive: true,
+  },
+  {
+    id: "landlady",
+    name: "赵桂香",
+    role: "潮生民宿 / 老板娘",
+    avatar: "赵",
+    text: "坚持自己从未见过林琴，却在群聊里把林岚叫作‘周岚’。",
+    action: "记下口供",
+  },
+  {
+    id: "driver",
+    name: "高进",
+    role: "网约车司机 / 最后接触者",
+    avatar: "高",
+    text: "称22:46把林岚送到北码头；订单轨迹却在距码头两公里处提前结束。",
+    action: "查看轨迹",
+  },
+  {
+    id: "classmate",
+    name: "苏晴",
+    role: "大学同学 / 合作摄影师",
+    avatar: "苏",
+    text: "说林岚近一个月沉迷家族史，还把三张不同年代的女人照片当作同一人的自拍。",
+    action: "记录证词",
+  },
+];
+
+const ARCHIVE_BACKGROUND: Record<
+  string,
+  { date: string; section: string; title: string; excerpt: string }
+> = {
+  town: {
+    date: "1987.09.02",
+    section: "地方志 / 城建",
+    title: "东滩完成填海，旧门牌整体注销",
+    excerpt: "新建海堤覆盖原周家坳、白塔坡等七处旧址。迁出人口名册缺失第17页。",
+  },
+  harbor: {
+    date: "1992.06.19",
+    section: "港务简报 / 内参",
+    title: "北码头夜间封闭，十七只货箱下落不明",
+    excerpt: "港务局称系台风预案演练。值守表上两名签字人后来否认当夜到岗。",
+  },
+  clockmaker: {
+    date: "2009.06.18",
+    section: "社会新闻 / 第03版",
+    title: "白鹭钟表行失火，店主沈砚失踪",
+    excerpt:
+      "火场内有十七只停在03:17的旧钟。警方按电路老化结案，未发现店主遗体。",
+  },
+  weather: {
+    date: "1992.06.17",
+    section: "气象观测 / 站史",
+    title: "当夜能见度并未达到停航标准",
+    excerpt:
+      "03:00—04:00海面能见度1.8公里、风力三级，与‘极端浓雾导致事故’的报道矛盾。",
+  },
+  school: {
+    date: "2009.09.01",
+    section: "教育年鉴 / 新生",
+    title: "南陵小学接收一名无转学档案女生",
+    excerpt: "女生登记名林琴，监护人栏为空。班主任备注：她坚持自己已经十七岁。",
+  },
 };
 
 export default function Home() {
@@ -223,9 +364,16 @@ export default function Home() {
   const [panel, setPanel] = useState<Panel>("phone");
   const [found, setFound] = useState<string[]>([]);
   const [verdicts, setVerdicts] = useState<Record<string, Verdict>>({});
-  const [peopleVerdicts, setPeopleVerdicts] = useState<Record<string, Verdict>>({});
+  const [peopleVerdicts, setPeopleVerdicts] = useState<Record<string, Verdict>>(
+    {},
+  );
   const [photo, setPhoto] = useState<number | null>(null);
-  const [phonePhoto, setPhonePhoto] = useState<{ src: string; title: string; crop?: string } | null>(null);
+  const [phonePhoto, setPhonePhoto] = useState<{
+    src: string;
+    title: string;
+    crop?: string;
+    cropSize?: string;
+  } | null>(null);
   const [search, setSearch] = useState("");
   const [archiveResults, setArchiveResults] = useState<ArchiveResult[]>([]);
   const [archiveSearched, setArchiveSearched] = useState(false);
@@ -314,11 +462,7 @@ export default function Home() {
       hits.push("notices", "school");
       discover("notices");
     }
-    if (
-      q.includes("白鹭") ||
-      q.includes("钟表") ||
-      q.includes("沈砚")
-    ) {
+    if (q.includes("白鹭") || q.includes("钟表") || q.includes("沈砚")) {
       hits.push("article", "clockmaker");
       discover("article");
     }
@@ -326,10 +470,14 @@ export default function Home() {
       hits.push("article", "weather", "harbor");
       discover("article");
     }
-    if (q.includes("雾港") || q.includes("地方志") || q.includes("周家坳")) hits.push("town", "harbor");
-    if (q.includes("灯塔") || q.includes("浓雾") || q.includes("天气")) hits.push("weather", "article");
-    if (q.includes("北码头") || q.includes("港务") || q.includes("走私")) hits.push("harbor");
-    if (q.includes("学校") || q.includes("南陵") || q.includes("新生")) hits.push("school");
+    if (q.includes("雾港") || q.includes("地方志") || q.includes("周家坳"))
+      hits.push("town", "harbor");
+    if (q.includes("灯塔") || q.includes("浓雾") || q.includes("天气"))
+      hits.push("weather", "article");
+    if (q.includes("北码头") || q.includes("港务") || q.includes("走私"))
+      hits.push("harbor");
+    if (q.includes("学校") || q.includes("南陵") || q.includes("新生"))
+      hits.push("school");
     if (
       (q.includes("0617") || q.includes("沉名")) &&
       found.includes("identity") &&
@@ -516,21 +664,66 @@ export default function Home() {
                   </div>
                   {phoneView === "home" ? (
                     <div className="phone-home">
-                      <div className="phone-date"><b>23:17</b><span>6月17日　星期三</span></div>
-                      <div className="phone-apps">
-                        <button onClick={() => setPhoneView("wechat")}><i className="app-wechat">●●</i><span>微信</span><em>3</em></button>
-                        <button onClick={() => setPhoneView("gallery")}><i className="app-gallery">✿</i><span>照片</span></button>
-                        <button onClick={() => setPhoneView("notes")}><i className="app-notes">▤</i><span>备忘录</span></button>
-                        <button onClick={() => setPhoneView("weather")}><i className="app-weather">☁</i><span>天气</span></button>
-                        <button onClick={() => toast("地图缓存损坏：最后定位在北码头外两公里。") }><i className="app-map">⌖</i><span>地图</span></button>
-                        <button onClick={() => toast("通话记录：6月14日03:17，来自已注销号码。") }><i className="app-phone">☎</i><span>电话</span></button>
+                      <div className="phone-date">
+                        <b>23:17</b>
+                        <span>6月17日　星期三</span>
                       </div>
-                      <div className="phone-dock"><button onClick={() => setPhoneView("wechat")}>微信</button><button onClick={() => setPhoneView("gallery")}>照片</button><button onClick={() => setPhoneView("notes")}>记录</button></div>
+                      <div className="phone-apps">
+                        <button onClick={() => setPhoneView("wechat")}>
+                          <i className="app-wechat">●●</i>
+                          <span>微信</span>
+                          <em>3</em>
+                        </button>
+                        <button onClick={() => setPhoneView("gallery")}>
+                          <i className="app-gallery">✿</i>
+                          <span>照片</span>
+                        </button>
+                        <button onClick={() => setPhoneView("notes")}>
+                          <i className="app-notes">▤</i>
+                          <span>备忘录</span>
+                        </button>
+                        <button onClick={() => setPhoneView("weather")}>
+                          <i className="app-weather">☁</i>
+                          <span>天气</span>
+                        </button>
+                        <button
+                          onClick={() =>
+                            toast("地图缓存损坏：最后定位在北码头外两公里。")
+                          }
+                        >
+                          <i className="app-map">⌖</i>
+                          <span>地图</span>
+                        </button>
+                        <button
+                          onClick={() =>
+                            toast("通话记录：6月14日03:17，来自已注销号码。")
+                          }
+                        >
+                          <i className="app-phone">☎</i>
+                          <span>电话</span>
+                        </button>
+                      </div>
+                      <div className="phone-dock">
+                        <button onClick={() => setPhoneView("wechat")}>
+                          微信
+                        </button>
+                        <button onClick={() => setPhoneView("gallery")}>
+                          照片
+                        </button>
+                        <button onClick={() => setPhoneView("notes")}>
+                          记录
+                        </button>
+                      </div>
                     </div>
                   ) : phoneView === "wechat" ? (
                     <>
                       <div className="wechat-header">
-                        <button className="app-back" onClick={() => setPhoneView("home")}>‹</button>
+                        <button
+                          className="app-back"
+                          onClick={() => setPhoneView("home")}
+                        >
+                          ‹
+                        </button>
                         微信 <small>(3)</small>
                         <i>⊕</i>
                       </div>
@@ -589,17 +782,21 @@ export default function Home() {
                       </div>
                     </>
                   ) : (
+                      ["lin", "chen", "files", "group"] as PhoneView[]
+                    ).includes(phoneView) ? (
                     <>
                       <div className="wechat-chatbar">
-                        <button onClick={() => setPhoneView("wechat")}>‹</button>
+                        <button onClick={() => setPhoneView("wechat")}>
+                          ‹
+                        </button>
                         <b>
                           {phoneView === "lin"
                             ? "顾远"
                             : phoneView === "chen"
                               ? "陈放"
-                            : phoneView === "files"
-                              ? "票证卡包"
-                              : "雾港民宿住客群"}
+                              : phoneView === "files"
+                                ? "票证卡包"
+                                : "雾港民宿住客群"}
                         </b>
                         <i>•••</i>
                       </div>
@@ -616,19 +813,51 @@ export default function Home() {
                               <p>报警了吗？你别一个人去雾港。</p>
                             </div>
                             <div className="wx-row right">
-                              <p>警察说成年人失联不够24小时。她户籍上的出生地根本不存在。</p>
+                              <p>
+                                警察说成年人失联不够24小时。她户籍上的出生地根本不存在。
+                              </p>
                               <span className="wx-avatar green">岚</span>
                             </div>
                             <div className="wx-row right wx-photo-row">
-                              <button className="wx-photo" onClick={() => setPhoto(0)}><img src={PHOTOS[0].src} alt="17号浮标"/></button><span className="wx-avatar green">岚</span>
+                              <button
+                                className="wx-photo"
+                                onClick={() => setPhoto(0)}
+                              >
+                                <img src={PHOTOS[0].src} alt="17号浮标" />
+                              </button>
+                              <span className="wx-avatar green">岚</span>
                             </div>
-                            <div className="wx-row right"><p>浮标明明是17号，漆下面却像写着“第17次”。</p><span className="wx-avatar green">岚</span></div>
+                            <div className="wx-row right">
+                              <p>浮标明明是17号，漆下面却像写着“第17次”。</p>
+                              <span className="wx-avatar green">岚</span>
+                            </div>
                             <div className="wx-row right wx-photo-row">
-                              <button className="wx-photo" onClick={() => setPhoto(1)}><img src={PHOTOS[1].src} alt="白鹭钟表行"/></button><span className="wx-avatar green">岚</span>
+                              <button
+                                className="wx-photo"
+                                onClick={() => setPhoto(1)}
+                              >
+                                <img src={PHOTOS[1].src} alt="白鹭钟表行" />
+                              </button>
+                              <span className="wx-avatar green">岚</span>
                             </div>
-                            <div className="wx-row left"><span className="wx-avatar self">顾</span><p>别进店，先发定位给我。</p></div>
+                            <div className="wx-row left">
+                              <span className="wx-avatar self">顾</span>
+                              <p>别进店，先发定位给我。</p>
+                            </div>
                             <div className="wx-row right wx-photo-row two">
-                              <button className="wx-photo" onClick={() => setPhoto(2)}><img src={PHOTOS[2].src} alt="航图"/></button><button className="wx-photo" onClick={() => setPhoto(3)}><img src={PHOTOS[3].src} alt="北码头"/></button><span className="wx-avatar green">岚</span>
+                              <button
+                                className="wx-photo"
+                                onClick={() => setPhoto(2)}
+                              >
+                                <img src={PHOTOS[2].src} alt="航图" />
+                              </button>
+                              <button
+                                className="wx-photo"
+                                onClick={() => setPhoto(3)}
+                              >
+                                <img src={PHOTOS[3].src} alt="北码头" />
+                              </button>
+                              <span className="wx-avatar green">岚</span>
                             </div>
                             <div className="wx-time">23:17</div>
                             <div className="wx-row right voice">
@@ -692,12 +921,31 @@ export default function Home() {
                         {phoneView === "group" && (
                           <>
                             <div className="wx-time">昨天 18:41</div>
-                            <div className="wx-group-line"><b>老板娘</b><p>今晚三点后退潮。住客不要离开房间，也不要回应走廊里叫名字的人。</p></div>
-                            <div className="wx-group-line mine"><b>林岚</b><p>请问白鹭钟表行怎么走？我来找林琴。</p></div>
-                            <div className="wx-group-line"><b>老板娘</b><p>周岚，你外婆没告诉你不要回来吗？</p></div>
-                            <div className="wx-revoked">“老板娘”撤回了一条消息</div>
-                            <div className="wx-group-line"><b>103房</b><p>老板娘认错人了吧，她姓林。</p></div>
-                            <div className="wx-group-line"><b>老板娘</b><p>我们这里，从来没有人姓林。</p></div>
+                            <div className="wx-group-line">
+                              <b>老板娘</b>
+                              <p>
+                                今晚三点后退潮。住客不要离开房间，也不要回应走廊里叫名字的人。
+                              </p>
+                            </div>
+                            <div className="wx-group-line mine">
+                              <b>林岚</b>
+                              <p>请问白鹭钟表行怎么走？我来找林琴。</p>
+                            </div>
+                            <div className="wx-group-line">
+                              <b>老板娘</b>
+                              <p>周岚，你外婆没告诉你不要回来吗？</p>
+                            </div>
+                            <div className="wx-revoked">
+                              “老板娘”撤回了一条消息
+                            </div>
+                            <div className="wx-group-line">
+                              <b>103房</b>
+                              <p>老板娘认错人了吧，她姓林。</p>
+                            </div>
+                            <div className="wx-group-line">
+                              <b>老板娘</b>
+                              <p>我们这里，从来没有人姓林。</p>
+                            </div>
                           </>
                         )}
                       </div>
@@ -707,32 +955,102 @@ export default function Home() {
                         <button>☺</button>
                       </div>
                     </>
-                  )}
+                  ) : null}
                   {phoneView === "gallery" && (
                     <div className="phone-app-view">
-                      <header><button onClick={() => setPhoneView("home")}>‹</button><b>照片</b><span>选择</span></header>
-                      <div className="album-meta"><b>最近项目</b><span>7张照片</span></div>
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>照片</b>
+                        <span>选择</span>
+                      </header>
+                      <div className="album-meta">
+                        <b>最近项目</b>
+                        <span>7张照片</span>
+                      </div>
                       <div className="phone-gallery">
                         {[
-                          { src: "/people/zhou-lan.svg", title: "1992 · 周岚" },
-                          { src: "/people/lin-qin.svg", title: "2009 · 林琴" },
-                          { src: "/people/lin-lan.svg", title: "2026 · 林岚" },
-                          ...PHOTOS.map((p) => ({ src: p.src, title: p.title })),
-                        ].map((item) => <button key={item.src} onClick={() => setPhonePhoto(item)}><img src={item.src} alt={item.title}/><span>{item.title}</span></button>)}
+                          {
+                            src: "/people/three-identities.png",
+                            title: "1992 · 周岚",
+                            crop: "left center",
+                            cropSize: "300% 100%",
+                          },
+                          {
+                            src: "/people/three-identities.png",
+                            title: "2009 · 林琴",
+                            crop: "center center",
+                            cropSize: "300% 100%",
+                          },
+                          {
+                            src: "/people/three-identities.png",
+                            title: "2026 · 林岚",
+                            crop: "right center",
+                            cropSize: "300% 100%",
+                          },
+                          ...PHOTOS.map((p) => ({
+                            src: p.src,
+                            title: p.title,
+                          })),
+                        ].map(
+                          (item: {
+                            src: string;
+                            title: string;
+                            crop?: string;
+                            cropSize?: string;
+                          }) => (
+                            <button
+                              key={item.title}
+                              onClick={() => setPhonePhoto(item)}
+                            >
+                              {item.crop ? (
+                                <i
+                                  className="gallery-crop"
+                                  style={{
+                                    backgroundImage: `url(${item.src})`,
+                                    backgroundPosition: item.crop,
+                                    backgroundSize: item.cropSize,
+                                  }}
+                                />
+                              ) : (
+                                <img src={item.src} alt={item.title} />
+                              )}
+                              <span>{item.title}</span>
+                            </button>
+                          ),
+                        )}
                       </div>
                     </div>
                   )}
                   {phoneView === "notes" && (
                     <div className="phone-app-view notes-app">
-                      <header><button onClick={() => setPhoneView("home")}>‹</button><b>备忘录</b><span>完成</span></header>
-                      <h3>去雾港前</h3><time>6月16日 23:17</time>
-                      <p>1. 找到妈妈，不要相信她留在家里的信。</p><p>2. 白鹭不是鸟，是旧表背面的刻字。</p><p>3. 如果老板娘叫我周岚，先别纠正她。</p><p>4. 手机交给顾远。别让捡到它的人来找我。</p>
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>备忘录</b>
+                        <span>完成</span>
+                      </header>
+                      <h3>去雾港前</h3>
+                      <time>6月16日 23:17</time>
+                      <p>1. 找到妈妈，不要相信她留在家里的信。</p>
+                      <p>2. 白鹭不是鸟，是旧表背面的刻字。</p>
+                      <p>3. 如果老板娘叫我周岚，先别纠正她。</p>
+                      <p>4. 手机交给顾远。别让捡到它的人来找我。</p>
                     </div>
                   )}
                   {phoneView === "weather" && (
                     <div className="phone-app-view weather-app">
-                      <header><button onClick={() => setPhoneView("home")}>‹</button><b>雾港</b><span>⋯</span></header>
-                      <strong>17°</strong><p>浓雾　能见度1.8公里</p><div><b>03:00</b><span>退潮</span><em>0.17m</em></div><small>气象缓存更新时间：1992年6月17日 03:17</small>
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>雾港</b>
+                        <span>⋯</span>
+                      </header>
+                      <strong>17°</strong>
+                      <p>浓雾　能见度1.8公里</p>
+                      <div>
+                        <b>03:00</b>
+                        <span>退潮</span>
+                        <em>0.17m</em>
+                      </div>
+                      <small>气象缓存更新时间：1992年6月17日 03:17</small>
                     </div>
                   )}
                 </div>
@@ -791,14 +1109,35 @@ export default function Home() {
                 ))}
               </div>
               <section className="recovered-strip">
-                <header><div><small>警方恢复文件 / REC-018</small><h3>记录者最后四小时</h3></div><span>文件尾部损坏 31%</span></header>
+                <header>
+                  <div>
+                    <small>警方恢复文件 / REC-018</small>
+                    <h3>记录者最后四小时</h3>
+                  </div>
+                  <span>文件尾部损坏 31%</span>
+                </header>
                 <div>
                   {[
                     ["left top", "22:58:11 · 末班车"],
                     ["right top", "00:41:06 · 白鹭钟表行"],
                     ["left bottom", "02:52:37 · 0617号木箱"],
                     ["right bottom", "03:17:42 · 最后画面"],
-                  ].map(([crop, title]) => <button key={crop} onClick={() => setPhonePhoto({ src: "/evidence/rec-018-contact.png", title, crop })}><i style={{ backgroundPosition: crop }}/><span>{title}</span></button>)}
+                  ].map(([crop, title]) => (
+                    <button
+                      key={crop}
+                      onClick={() =>
+                        setPhonePhoto({
+                          src: "/evidence/rec-018-contact.png",
+                          title,
+                          crop,
+                          cropSize: "200% 200%",
+                        })
+                      }
+                    >
+                      <i style={{ backgroundPosition: crop }} />
+                      <span>{title}</span>
+                    </button>
+                  ))}
                 </div>
               </section>
               <div className="uneasy-note">
@@ -816,22 +1155,92 @@ export default function Home() {
               </div>
               <div className="people-list">
                 {PEOPLE.map((person) => (
-                  <article key={person.id} className={peopleVerdicts[person.id] || ""}>
-                    {person.photo ? <img className="person-photo" src={person.photo} alt={person.name} onClick={() => setPhonePhoto({ src: person.photo!, title: person.name })}/> : <div className="avatar">{person.avatar}</div>}
+                  <article
+                    key={person.id}
+                    className={peopleVerdicts[person.id] || ""}
+                  >
+                    {person.photo ? (
+                      person.photoCrop ? (
+                        <button
+                          className="person-photo person-photo-crop"
+                          aria-label={`查看${person.name}照片`}
+                          style={{
+                            backgroundImage: `url(${person.photo})`,
+                            backgroundPosition: person.photoCrop,
+                          }}
+                          onClick={() =>
+                            setPhonePhoto({
+                              src: person.photo!,
+                              title: person.name,
+                              crop: person.photoCrop,
+                              cropSize: "300% 100%",
+                            })
+                          }
+                        />
+                      ) : (
+                        <img
+                          className="person-photo"
+                          src={person.photo}
+                          alt={person.name}
+                          onClick={() =>
+                            setPhonePhoto({
+                              src: person.photo!,
+                              title: person.name,
+                            })
+                          }
+                        />
+                      )
+                    ) : (
+                      <div className="avatar">{person.avatar}</div>
+                    )}
                     <div className="person-copy">
                       <small>{person.role}</small>
                       <h3>{person.name}</h3>
                       <p>{person.text}</p>
                       <div className="person-judgment">
                         <span>你的判断</span>
-                        {(["key", "doubt", "noise"] as Verdict[]).map((v) => <button key={v} className={peopleVerdicts[person.id] === v ? "active" : ""} onClick={() => setPeopleVerdicts(x => ({ ...x, [person.id]: v }))}>{v === "key" ? "相关" : v === "doubt" ? "待查" : "无关"}</button>)}
+                        {(["key", "doubt", "noise"] as Verdict[]).map((v) => (
+                          <button
+                            key={v}
+                            className={
+                              peopleVerdicts[person.id] === v ? "active" : ""
+                            }
+                            onClick={() =>
+                              setPeopleVerdicts((x) => ({
+                                ...x,
+                                [person.id]: v,
+                              }))
+                            }
+                          >
+                            {v === "key"
+                              ? "相关"
+                              : v === "doubt"
+                                ? "待查"
+                                : "无关"}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                    <button className="person-action" disabled={!!person.need && !found.includes(person.need)} onClick={() => {
-                      if (person.archive) return found.length >= 6 ? go("archive", 2) : toast("旧报数据库尚未授权。先检查其他基础证据。");
-                      if (person.clue) return discover(person.clue);
-                      toast(person.id === "driver" ? "平台回执：轨迹在海堤检查站中断，司机未进入码头。" : person.id === "landlady" ? "口供已保存：她在三个日期都使用过同一身份证号。" : "证词已保存，但暂时无法验证。" );
-                    }}>{person.action}</button>
+                    <button
+                      className="person-action"
+                      disabled={!!person.need && !found.includes(person.need)}
+                      onClick={() => {
+                        if (person.archive)
+                          return found.length >= 6
+                            ? go("archive", 2)
+                            : toast("旧报数据库尚未授权。先检查其他基础证据。");
+                        if (person.clue) return discover(person.clue);
+                        toast(
+                          person.id === "driver"
+                            ? "平台回执：轨迹在海堤检查站中断，司机未进入码头。"
+                            : person.id === "landlady"
+                              ? "口供已保存：她在三个日期都使用过同一身份证号。"
+                              : "证词已保存，但暂时无法验证。",
+                        );
+                      }}
+                    >
+                      {person.action}
+                    </button>
                   </article>
                 ))}
               </div>
@@ -854,21 +1263,58 @@ export default function Home() {
                 />
                 <button>检索</button>
               </form>
-              <div className="archive-toolbar"><span>馆藏 12,804 页</span><span>报纸　地方志　内部简报</span><b>{archiveSearched ? `${archiveResults.filter(x => x !== "empty").length} 条结果` : "离线检索"}</b></div>
+              <div className="archive-toolbar">
+                <span>馆藏 12,804 页</span>
+                <span>报纸　地方志　内部简报</span>
+                <b>
+                  {archiveSearched
+                    ? `${archiveResults.filter((x) => x !== "empty").length} 条结果`
+                    : "离线检索"}
+                </b>
+              </div>
               {!archiveSearched && (
                 <div className="archive-hints">
-                  <p>索引包含人名、地名、商号、船名与年份。扫描件可能存在识别错误。</p>
+                  <p>
+                    索引包含人名、地名、商号、船名与年份。扫描件可能存在识别错误。
+                  </p>
                 </div>
               )}
               {archiveResults.includes("empty") && (
-                <div className="no-result">未找到“{search}”的精确记录。尝试完整姓名、旧地名或机构名称。</div>
+                <div className="no-result">
+                  未找到“{search}”的精确记录。尝试完整姓名、旧地名或机构名称。
+                </div>
               )}
-              {archiveResults.filter((id) => id in ARCHIVE_BACKGROUND).length > 0 && <div className="archive-results">
-                {archiveResults.filter((id) => id in ARCHIVE_BACKGROUND).map((id) => {
-                  const item = ARCHIVE_BACKGROUND[id];
-                  return <article key={id}><header><span>{item.section}</span><time>{item.date}</time></header><h3>{item.title}</h3><p>{item.excerpt}</p>{(id === "harbor" || id === "town") && <div className="archive-redacted-lines"><i/><i/><i/></div>}<footer>OCR置信度 {id === "harbor" ? "63" : "91"}%　·　馆藏缩微胶片</footer></article>;
-                })}
-              </div>}
+              {archiveResults.filter((id) => id in ARCHIVE_BACKGROUND).length >
+                0 && (
+                <div className="archive-results">
+                  {archiveResults
+                    .filter((id) => id in ARCHIVE_BACKGROUND)
+                    .map((id) => {
+                      const item = ARCHIVE_BACKGROUND[id];
+                      return (
+                        <article key={id}>
+                          <header>
+                            <span>{item.section}</span>
+                            <time>{item.date}</time>
+                          </header>
+                          <h3>{item.title}</h3>
+                          <p>{item.excerpt}</p>
+                          {(id === "harbor" || id === "town") && (
+                            <div className="archive-redacted-lines">
+                              <i />
+                              <i />
+                              <i />
+                            </div>
+                          )}
+                          <footer>
+                            OCR置信度 {id === "harbor" ? "63" : "91"}
+                            %　·　馆藏缩微胶片
+                          </footer>
+                        </article>
+                      );
+                    })}
+                </div>
+              )}
               {archiveResults.includes("notices") && (
                 <div className="notices-grid">
                   {[
@@ -877,7 +1323,19 @@ export default function Home() {
                     ["2026", "林岚", "27岁"],
                   ].map((x, i) => (
                     <article key={x[0]}>
-                      <div className="notice-face"><img src={["/people/zhou-lan.svg", "/people/lin-qin.svg", "/people/lin-lan.svg"][i]} alt={x[1]}/></div>
+                      <div className="notice-face">
+                        <i
+                          style={{
+                            backgroundImage:
+                              "url(/people/three-identities.png)",
+                            backgroundPosition: [
+                              "left center",
+                              "center center",
+                              "right center",
+                            ][i],
+                          }}
+                        />
+                      </div>
                       <b>寻 人 启 事</b>
                       <h3>{x[1]}</h3>
                       <p>{x[2]}，最后出现于白鹭钟表行附近。</p>
@@ -887,7 +1345,10 @@ export default function Home() {
                   <div className="archive-shock">
                     三张照片经面部比对，相似度 97.8%。原始比对员姓名已被覆盖。
                     <br />
-                    <small><span className="redaction wide"/>　批注：不要让她知道自己见过这张脸。</small>
+                    <small>
+                      <span className="redaction wide" />
+                      　批注：不要让她知道自己见过这张脸。
+                    </small>
                   </div>
                 </div>
               )}
@@ -911,10 +1372,18 @@ export default function Home() {
                     <p>
                       <i>潮</i>退之后，周家多了一个女儿，没人记得她从哪里来。
                     </p>
-                    <p className="redacted-copy"><i>■</i><span className="redaction"/>于03:17签署封口令。现场第十八人<span className="redaction short"/>。</p>
+                    <p className="redacted-copy">
+                      <i>■</i>
+                      <span className="redaction" />
+                      于03:17签署封口令。现场第十八人
+                      <span className="redaction short" />。
+                    </p>
                   </div>
                   <footer>
-                    <span>记者署名：沈砚 / 编辑：<i className="redaction short"/> / 该版发行前全部回收</span>
+                    <span>
+                      记者署名：沈砚 / 编辑：
+                      <i className="redaction short" /> / 该版发行前全部回收
+                    </span>
                   </footer>
                 </article>
               )}
@@ -928,12 +1397,10 @@ export default function Home() {
                     <div className={i === 17 ? "you" : ""} key={i}>
                       <em>{String(i + 1).padStart(2, "0")}</em>
                       <span>{i < 17 ? name : "你的名字"}</span>
-                      <time>
-                        {i === 17
-                          ? "2026.06.18"
-                          : "1992.06.17"}
-                      </time>
-                      <b>{i === 17 ? "待处理" : i === 1 ? "借名中" : "待念名"}</b>
+                      <time>{i === 17 ? "2026.06.18" : "1992.06.17"}</time>
+                      <b>
+                        {i === 17 ? "待处理" : i === 1 ? "借名中" : "待念名"}
+                      </b>
                     </div>
                   ))}
                   <p>
@@ -1002,7 +1469,10 @@ export default function Home() {
                 <span>系统只验证整张表，不反馈单项</span>
               </div>
               <div className="identity-source">
-                <p>三人的血型均为 AB−，左耳后均有一道 2.1cm 旧伤。照片面部相似度 97.8%。</p>
+                <p>
+                  三人的血型均为 AB−，左耳后均有一道 2.1cm 旧伤。照片面部相似度
+                  97.8%。
+                </p>
                 <p>户籍系统却将她们登记为外婆、母亲与女儿。</p>
               </div>
               <form className="identity-table" onSubmit={submitIdentity}>
@@ -1013,19 +1483,45 @@ export default function Home() {
                 ].map((row) => (
                   <label key={row[0]}>
                     <time>{row[0]}</time>
-                    <div><b>{row[1]}</b><small>{row[2]} · {row[3]}</small></div>
-                    <select value={identityDraft[row[0]]} onChange={(e)=>setIdentityDraft(v=>({...v,[row[0]]:e.target.value}))}>
+                    <div>
+                      <b>{row[1]}</b>
+                      <small>
+                        {row[2]} · {row[3]}
+                      </small>
+                    </div>
+                    <select
+                      value={identityDraft[row[0]]}
+                      onChange={(e) =>
+                        setIdentityDraft((v) => ({
+                          ...v,
+                          [row[0]]: e.target.value,
+                        }))
+                      }
+                    >
                       <option value="">选择她在仪式中的身份</option>
-                      <option value="zhou-first">第一代借名者 / 原名周岚</option>
-                      <option value="qin-second">第二代借名者 / 继承周岚记忆</option>
-                      <option value="lan-third">第三代借名者 / 本轮返乡者</option>
+                      <option value="zhou-first">
+                        第一代借名者 / 原名周岚
+                      </option>
+                      <option value="qin-second">
+                        第二代借名者 / 继承周岚记忆
+                      </option>
+                      <option value="lan-third">
+                        第三代借名者 / 本轮返乡者
+                      </option>
                       <option value="relative">普通血亲 / 与仪式无关</option>
                     </select>
                   </label>
                 ))}
                 <button className="verify-sheet">提交三项归并</button>
               </form>
-              {found.includes("identity") && <div className="identity-reveal"><b>归并通过</b><p>所谓“三代女性”没有任何同时出现的合影。每一次新户籍建立，上一代就在三天前失踪。</p></div>}
+              {found.includes("identity") && (
+                <div className="identity-reveal">
+                  <b>归并通过</b>
+                  <p>
+                    所谓“三代女性”没有任何同时出现的合影。每一次新户籍建立，上一代就在三天前失踪。
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -1038,17 +1534,41 @@ export default function Home() {
               </div>
               <div className="timeline-pool">
                 {TIMELINE_EVENTS.map((event) => (
-                  <button key={event.id} disabled={timelineDraft.includes(event.id)} onClick={()=>setTimelineDraft(v=>[...v,event.id])}>
-                    <time>{event.date}</time><b>{event.title}</b><p>{event.text}</p>
+                  <button
+                    key={event.id}
+                    disabled={timelineDraft.includes(event.id)}
+                    onClick={() => setTimelineDraft((v) => [...v, event.id])}
+                  >
+                    <time>{event.date}</time>
+                    <b>{event.title}</b>
+                    <p>{event.text}</p>
                   </button>
                 ))}
               </div>
               <div className="timeline-sequence">
-                <header><span>你的顺序</span><button onClick={()=>setTimelineDraft([])}>清空</button></header>
-                <ol>{timelineDraft.map((id)=><li key={id}>{TIMELINE_EVENTS.find(e=>e.id===id)?.title}</li>)}</ol>
-                <button className="verify-sheet" onClick={submitTimeline}>验证完整时间线</button>
+                <header>
+                  <span>你的顺序</span>
+                  <button onClick={() => setTimelineDraft([])}>清空</button>
+                </header>
+                <ol>
+                  {timelineDraft.map((id) => (
+                    <li key={id}>
+                      {TIMELINE_EVENTS.find((e) => e.id === id)?.title}
+                    </li>
+                  ))}
+                </ol>
+                <button className="verify-sheet" onClick={submitTimeline}>
+                  验证完整时间线
+                </button>
               </div>
-              {found.includes("timeline") && <div className="identity-reveal"><b>时间线成立</b><p>灯塔熄灭在前，沉船在后；“零伤亡”报道与17人名单同时存在。2009年的火灾不是事故，而是沈砚第一次试图烧掉借名簿。</p></div>}
+              {found.includes("timeline") && (
+                <div className="identity-reveal">
+                  <b>时间线成立</b>
+                  <p>
+                    灯塔熄灭在前，沉船在后；“零伤亡”报道与17人名单同时存在。2009年的火灾不是事故，而是沈砚第一次试图烧掉借名簿。
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
@@ -1144,7 +1664,10 @@ export default function Home() {
                   options={[
                     ["arrest", "把最像凶手的人交给警方，结束调查"],
                     ["rescue", "只带林岚离开，公开走私证据"],
-                    ["names", "在03:17念出17名死者的姓名，让他们不再借别人的名字回来"],
+                    [
+                      "names",
+                      "在03:17念出17名死者的姓名，让他们不再借别人的名字回来",
+                    ],
                   ]}
                 />
                 <button
@@ -1158,28 +1681,57 @@ export default function Home() {
           )}
         </section>
         <aside className={`notebook ${notesOpen ? "open" : ""}`}>
-          <button className="notebook-toggle" onClick={() => setNotesOpen(v => !v)} aria-expanded={notesOpen}>
-            <span>调查手记</span><b>{found.length}/{Object.keys(CLUES).length}</b><i>{notesOpen ? "收起" : "展开"}</i>
+          <button
+            className="notebook-toggle"
+            onClick={() => setNotesOpen((v) => !v)}
+            aria-expanded={notesOpen}
+          >
+            <span>调查手记</span>
+            <b>
+              {found.length}/{Object.keys(CLUES).length}
+            </b>
+            <i>{notesOpen ? "收起" : "展开"}</i>
           </button>
           <div className="notebook-title">
             <span>✎</span>
             <div>
               <b>调查手记</b>
-              <small>{found.length} / {Object.keys(CLUES).length} 条证据</small>
+              <small>
+                {found.length} / {Object.keys(CLUES).length} 条证据
+              </small>
             </div>
           </div>
           <div className="note-list grouped-notes">
-            {([
-              ["statement", "对话与口供"],
-              ["object", "照片与实物"],
-              ["record", "档案与记录"],
-              ["correction", "核查与反证"],
-            ] as const).map(([kind, label]) => {
-              const items = notes.filter(c => c.kind === kind).reverse();
-              return <details key={kind} defaultOpen={kind === "statement" || kind === "object"}>
-                <summary><span>{label}</span><b>{items.length}</b></summary>
-                {items.length ? items.map((c, i) => <div className="note" key={c.id}><em>{String(i + 1).padStart(2, "0")}</em><div><b>{c.title}</b><p>{c.body}</p></div></div>) : <p className="notes-empty">尚无记录</p>}
-              </details>;
+            {(
+              [
+                ["statement", "对话与口供"],
+                ["object", "照片与实物"],
+                ["record", "档案与记录"],
+                ["correction", "核查与反证"],
+              ] as const
+            ).map(([kind, label]) => {
+              const items = notes.filter((c) => c.kind === kind).reverse();
+              return (
+                <details key={kind}>
+                  <summary>
+                    <span>{label}</span>
+                    <b>{items.length}</b>
+                  </summary>
+                  {items.length ? (
+                    items.map((c, i) => (
+                      <div className="note" key={c.id}>
+                        <em>{String(i + 1).padStart(2, "0")}</em>
+                        <div>
+                          <b>{c.title}</b>
+                          <p>{c.body}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="notes-empty">尚无记录</p>
+                  )}
+                </details>
+              );
             })}
           </div>
         </aside>
@@ -1218,7 +1770,18 @@ export default function Home() {
       {phonePhoto && (
         <div className="file-preview" onClick={() => setPhonePhoto(null)}>
           <button onClick={() => setPhonePhoto(null)}>关闭 ×</button>
-          {phonePhoto.crop ? <div className="cropped-frame" style={{ backgroundImage: `url(${phonePhoto.src})`, backgroundPosition: phonePhoto.crop }}/> : <img src={phonePhoto.src} alt={phonePhoto.title}/>} 
+          {phonePhoto.crop ? (
+            <div
+              className="cropped-frame"
+              style={{
+                backgroundImage: `url(${phonePhoto.src})`,
+                backgroundPosition: phonePhoto.crop,
+                backgroundSize: phonePhoto.cropSize || "cover",
+              }}
+            />
+          ) : (
+            <img src={phonePhoto.src} alt={phonePhoto.title} />
+          )}
           <p>{phonePhoto.title}</p>
         </div>
       )}
@@ -1270,12 +1833,19 @@ function EndingView({
         <div className="ending-card">
           <p className="eyebrow">ENDING 01 · 最合理的答案</p>
           <h1>一个凶手。</h1>
-          <p>陈放因涉嫌绑架被捕。警方在他的车里找到林岚相机的包装盒，却没有找到林岚。三个月后，他因证据不足获释。</p>
+          <p>
+            陈放因涉嫌绑架被捕。警方在他的车里找到林岚相机的包装盒，却没有找到林岚。三个月后，他因证据不足获释。
+          </p>
           <p>
             白鹭钟表行被拆除，归潮号的卷宗重新封存。林琴和林岚被登记为“主动离家”，案件在系统里显示已办结。
           </p>
-          <p>画面在你把陈放的名字写进结案报告后中断。警方找到相机时，它躺在北码头储物柜里；你的遗体从未被找到。</p>
-          <div className="last-message"><span>警方恢复记录 / 2026.07.03</span>“录像里的人身份不明，暂列第18名失踪者。”</div>
+          <p>
+            画面在你把陈放的名字写进结案报告后中断。警方找到相机时，它躺在北码头储物柜里；你的遗体从未被找到。
+          </p>
+          <div className="last-message">
+            <span>警方恢复记录 / 2026.07.03</span>
+            “录像里的人身份不明，暂列第18名失踪者。”
+          </div>
           <PoliceCoda />
           <button className="seal-button" onClick={onReset}>
             重新调查
@@ -1295,9 +1865,16 @@ function EndingView({
           <p>
             官方把事件定性为走私、伪造户籍与长期非法拘禁。借名簿被当作封建迷信证物封存，没有人念出上面的名字。
           </p>
-          <p>林岚出院后不再认识你。她坚持自己叫周岚，今年十七岁，母亲正在码头等她回家。</p>
-          <p>这是警方根据你胸前相机恢复出的最后一段完整影像。救援人员在灯塔下找到林岚，却只在海堤边找到你的鞋。</p>
-          <div className="last-message"><span>17年后 / 户籍自动登记</span>林岚，女，监护人不详。随附照片中的女人没有变老。</div>
+          <p>
+            林岚出院后不再认识你。她坚持自己叫周岚，今年十七岁，母亲正在码头等她回家。
+          </p>
+          <p>
+            这是警方根据你胸前相机恢复出的最后一段完整影像。救援人员在灯塔下找到林岚，却只在海堤边找到你的鞋。
+          </p>
+          <div className="last-message">
+            <span>17年后 / 户籍自动登记</span>
+            林岚，女，监护人不详。随附照片中的女人没有变老。
+          </div>
           <PoliceCoda />
           <button className="seal-button" onClick={onReset}>
             重新调查
@@ -1317,13 +1894,24 @@ function EndingView({
         <p>
           你没有再叫她周岚、林琴或林岚，而是照着名册念完十七个真正的姓名。每念一个，店里便有一只停了三十四年的钟重新走动。
         </p>
-        <div className="victim-roll">{VICTIMS.map((name)=><span key={name}>{name}</span>)}</div>
-        <p>最后一声钟响后，林岚醒来。她不记得雾港，也不再背负周岚与林琴的人生。她第一次可以决定自己叫什么。</p>
-        <p>而你没有离开。画面倒在潮水里，直到三周后警方从灯塔排水沟找到相机。此刻发生的一切，是技术人员对你最后四小时录像的交互式复原。</p>
-        <div className="last-message">
-          <span>警方卷宗补录 / REC-018</span>“无名记录者死亡原因不明。因其影像，归潮号17名遇难者于34年后恢复姓名。”
+        <div className="victim-roll">
+          {VICTIMS.map((name) => (
+            <span key={name}>{name}</span>
+          ))}
         </div>
-        <p className="afterthought">名册第18行只剩一句：路过的人，也应该有名字。</p>
+        <p>
+          最后一声钟响后，林岚醒来。她不记得雾港，也不再背负周岚与林琴的人生。她第一次可以决定自己叫什么。
+        </p>
+        <p>
+          而你没有离开。画面倒在潮水里，直到三周后警方从灯塔排水沟找到相机。此刻发生的一切，是技术人员对你最后四小时录像的交互式复原。
+        </p>
+        <div className="last-message">
+          <span>警方卷宗补录 / REC-018</span>
+          “无名记录者死亡原因不明。因其影像，归潮号17名遇难者于34年后恢复姓名。”
+        </div>
+        <p className="afterthought">
+          名册第18行只剩一句：路过的人，也应该有名字。
+        </p>
         <PoliceCoda />
         <button className="seal-button" onClick={onReset}>
           忘掉，再来一次
@@ -1339,7 +1927,9 @@ function PoliceCoda() {
       <span>恢复录像结束　04:01:17</span>
       <p>警察默默看完这盘录像带，摘下耳机，回头看了看天花板的一角。</p>
       <p>那里正在渗水。水滴落在文件柜顶，声音每隔十七秒重复一次。</p>
-      <p>他推开门，门外仍是这间放映室。桌上的名册自己翻到最后一页，第十八席的旧字被划掉，重新写上了他的名字。</p>
+      <p>
+        他推开门，门外仍是这间放映室。桌上的名册自己翻到最后一页，第十八席的旧字被划掉，重新写上了他的名字。
+      </p>
       <b>进入轮回的人，从来没有出去过。</b>
     </section>
   );
