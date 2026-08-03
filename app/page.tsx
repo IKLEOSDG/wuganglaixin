@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Panel =
   | "phone"
-  | "evidence"
   | "people"
   | "archive"
   | "signal"
@@ -23,7 +22,12 @@ type PhoneView =
   | "group"
   | "gallery"
   | "notes"
-  | "weather";
+  | "weather"
+  | "map"
+  | "phone"
+  | "contacts"
+  | "messages"
+  | "browser";
 type ArchiveResult =
   | "notices"
   | "article"
@@ -145,7 +149,6 @@ const CLUES: Record<string, Clue> = {
 
 const NAV: { id: Panel; icon: string; label: string; act: number }[] = [
   { id: "phone", icon: "信", label: "手机", act: 1 },
-  { id: "evidence", icon: "片", label: "照片", act: 1 },
   { id: "people", icon: "人", label: "关系", act: 1 },
   { id: "archive", icon: "档", label: "旧档", act: 2 },
   { id: "signal", icon: "波", label: "信号", act: 2 },
@@ -254,10 +257,7 @@ const PEOPLE: {
   name: string;
   role: string;
   avatar: string;
-  sheet: string;
-  sheetColumns: number;
-  sheetRows: number;
-  sheetIndex: number;
+  photo: string;
   text: string;
   action: string;
   need?: string;
@@ -269,10 +269,7 @@ const PEOPLE: {
     name: "陈放",
     role: "前男友 / 摄影器材租赁",
     avatar: "陈",
-    sheet: "/people/case-portraits.png",
-    sheetColumns: 3,
-    sheetRows: 2,
-    sheetIndex: 0,
+    photo: "/people/chen-fang-real.png",
     text: "承认发过威胁消息。称争执围绕一台未归还的相机，案发夜正在跨城高速。",
     action: "核对行程",
     need: "ex",
@@ -283,10 +280,7 @@ const PEOPLE: {
     name: "吴敏",
     role: "海潮药房 / 夜班药师",
     avatar: "吴",
-    sheet: "/people/case-portraits.png",
-    sheetColumns: 3,
-    sheetRows: 2,
-    sheetIndex: 1,
+    photo: "/people/wu-min-real.png",
     text: "记得取药的年轻女人，也记得处方上的患者姓名被胶带遮住一半。",
     action: "调取处方",
     need: "pills",
@@ -297,10 +291,7 @@ const PEOPLE: {
     name: "林琴",
     role: "母亲 / 失联3日",
     avatar: "琴",
-    sheet: "/people/three-identities.png",
-    sheetColumns: 3,
-    sheetRows: 1,
-    sheetIndex: 1,
+    photo: "/people/lin-qin-real.png",
     text: "旧户籍显示生于雾港，出生地址却是一片在1987年填海形成的空地。",
     action: "查旧报",
     archive: true,
@@ -310,10 +301,7 @@ const PEOPLE: {
     name: "赵桂香",
     role: "潮生民宿 / 老板娘",
     avatar: "赵",
-    sheet: "/people/case-portraits.png",
-    sheetColumns: 3,
-    sheetRows: 2,
-    sheetIndex: 2,
+    photo: "/people/zhao-guixiang-real.png",
     text: "坚持自己从未见过林琴，却在群聊里把林岚叫作‘周岚’。",
     action: "记下口供",
   },
@@ -322,10 +310,7 @@ const PEOPLE: {
     name: "高进",
     role: "网约车司机 / 最后接触者",
     avatar: "高",
-    sheet: "/people/case-portraits.png",
-    sheetColumns: 3,
-    sheetRows: 2,
-    sheetIndex: 3,
+    photo: "/people/gao-jin-real.png",
     text: "称22:46把林岚送到北码头；订单轨迹却在距码头两公里处提前结束。",
     action: "查看轨迹",
   },
@@ -334,10 +319,7 @@ const PEOPLE: {
     name: "苏晴",
     role: "大学同学 / 合作摄影师",
     avatar: "苏",
-    sheet: "/people/case-portraits.png",
-    sheetColumns: 3,
-    sheetRows: 2,
-    sheetIndex: 4,
+    photo: "/people/su-qing-real.png",
     text: "说林岚近一个月沉迷家族史，还把三张不同年代的女人照片当作同一人的自拍。",
     action: "记录证词",
   },
@@ -395,15 +377,16 @@ export default function Home() {
     title: string;
     crop?: string;
     cropSize?: string;
-    gridColumns?: number;
-    gridRows?: number;
-    gridIndex?: number;
   } | null>(null);
   const [search, setSearch] = useState("");
   const [archiveResults, setArchiveResults] = useState<ArchiveResult[]>([]);
   const [archiveSearched, setArchiveSearched] = useState(false);
   const [phoneView, setPhoneView] = useState<PhoneView>("home");
   const [notesOpen, setNotesOpen] = useState(false);
+  const [callState, setCallState] = useState<{
+    name: string;
+    status: "calling" | "failed";
+  } | null>(null);
   const [morse, setMorse] = useState("");
   const [answers, setAnswers] = useState({ cause: "", cycle: "", self: "" });
   const [ending, setEnding] = useState<Ending>(null);
@@ -478,6 +461,7 @@ export default function Home() {
     setTimelineDraft([]);
     setMorse("");
     setPhoneView("home");
+    setCallState(null);
   };
   const lookup = (e: FormEvent) => {
     e.preventDefault();
@@ -522,6 +506,10 @@ export default function Home() {
       setMorse("");
       toast("译码错误。三组信号分别对应三个数字。");
     }
+  };
+  const placeCall = (name: string) => {
+    setCallState({ name, status: "calling" });
+    window.setTimeout(() => setCallState({ name, status: "failed" }), 1800);
   };
   const submitIdentity = (e: FormEvent) => {
     e.preventDefault();
@@ -711,32 +699,44 @@ export default function Home() {
                           <i className="app-weather">☁</i>
                           <span>天气</span>
                         </button>
-                        <button
-                          onClick={() =>
-                            toast("地图缓存损坏：最后定位在北码头外两公里。")
-                          }
-                        >
+                        <button onClick={() => setPhoneView("map")}>
                           <i className="app-map">⌖</i>
                           <span>地图</span>
                         </button>
-                        <button
-                          onClick={() =>
-                            toast("通话记录：6月14日03:17，来自已注销号码。")
-                          }
-                        >
-                          <i className="app-phone">☎</i>
+                        <button onClick={() => setPhoneView("phone")}>
+                          <i className="app-phone">●</i>
                           <span>电话</span>
+                        </button>
+                        <button onClick={() => setPhoneView("contacts")}>
+                          <i className="app-contacts">●</i>
+                          <span>通讯录</span>
+                        </button>
+                        <button onClick={() => setPhoneView("messages")}>
+                          <i className="app-messages">●</i>
+                          <span>信息</span>
+                          <em>2</em>
+                        </button>
+                        <button onClick={() => setPhoneView("browser")}>
+                          <i className="app-browser">⌁</i>
+                          <span>Safari</span>
                         </button>
                       </div>
                       <div className="phone-dock">
+                        <button onClick={() => setPhoneView("phone")}>
+                          <i className="dock-phone">●</i>
+                          <span>电话</span>
+                        </button>
+                        <button onClick={() => setPhoneView("messages")}>
+                          <i className="dock-messages">●</i>
+                          <span>信息</span>
+                        </button>
                         <button onClick={() => setPhoneView("wechat")}>
-                          微信
+                          <i className="dock-wechat">●●</i>
+                          <span>微信</span>
                         </button>
                         <button onClick={() => setPhoneView("gallery")}>
-                          照片
-                        </button>
-                        <button onClick={() => setPhoneView("notes")}>
-                          记录
+                          <i className="dock-gallery">✿</i>
+                          <span>照片</span>
                         </button>
                       </div>
                     </div>
@@ -990,75 +990,77 @@ export default function Home() {
                       </header>
                       <div className="album-meta">
                         <b>最近项目</b>
-                        <span>7张照片</span>
+                        <span>11张照片</span>
                       </div>
                       <div className="phone-gallery">
+                        <button
+                          onClick={() =>
+                            setPhonePhoto({
+                              src: "/people/lin-lan-real.png",
+                              title: "自拍 · 6月14日",
+                            })
+                          }
+                        >
+                          <img
+                            src="/people/lin-lan-real.png"
+                            alt="林岚的自拍"
+                          />
+                          <span>自拍 · 6月14日</span>
+                        </button>
+                        {PHOTOS.map((item, index) => (
+                          <button
+                            key={item.src}
+                            onClick={() => setPhoto(index)}
+                          >
+                            <img src={item.src} alt={item.title} />
+                            <span>
+                              {item.title}
+                              {item.clue && found.includes(item.clue)
+                                ? " · 已检查"
+                                : ""}
+                            </span>
+                          </button>
+                        ))}
                         {[
-                          {
-                            src: "/people/three-identities.png",
-                            title: "1992 · 周岚",
-                            gridColumns: 3,
-                            gridRows: 1,
-                            gridIndex: 0,
-                          },
-                          {
-                            src: "/people/three-identities.png",
-                            title: "2009 · 林琴",
-                            gridColumns: 3,
-                            gridRows: 1,
-                            gridIndex: 1,
-                          },
-                          {
-                            src: "/people/three-identities.png",
-                            title: "2026 · 林岚",
-                            gridColumns: 3,
-                            gridRows: 1,
-                            gridIndex: 2,
-                          },
-                          ...PHOTOS.map((p) => ({
-                            src: p.src,
-                            title: p.title,
-                          })),
-                        ].map(
-                          (item: {
-                            src: string;
-                            title: string;
-                            crop?: string;
-                            cropSize?: string;
-                            gridColumns?: number;
-                            gridRows?: number;
-                            gridIndex?: number;
-                          }) => (
-                            <button
-                              key={item.title}
-                              onClick={() => setPhonePhoto(item)}
-                            >
-                              {item.gridColumns &&
-                              item.gridRows !== undefined &&
-                              item.gridIndex !== undefined ? (
-                                <SheetCrop
-                                  src={item.src}
-                                  columns={item.gridColumns}
-                                  rows={item.gridRows}
-                                  index={item.gridIndex}
-                                  className="gallery-crop"
-                                />
-                              ) : item.crop ? (
-                                <i
-                                  className="gallery-crop"
-                                  style={{
-                                    backgroundImage: `url(${item.src})`,
-                                    backgroundPosition: item.crop,
-                                    backgroundSize: item.cropSize,
-                                  }}
-                                />
-                              ) : (
-                                <img src={item.src} alt={item.title} />
-                              )}
-                              <span>{item.title}</span>
-                            </button>
-                          ),
-                        )}
+                          ["left top", "22:58 · 末班车"],
+                          ["right top", "00:41 · 钟表行"],
+                          ["left bottom", "02:52 · 0617木箱"],
+                          ["right bottom", "03:17 · 最后画面"],
+                        ].map(([crop, title]) => (
+                          <button
+                            key={crop}
+                            onClick={() =>
+                              setPhonePhoto({
+                                src: "/evidence/rec-018-contact.png",
+                                title,
+                                crop,
+                                cropSize: "200% 200%",
+                              })
+                            }
+                          >
+                            <i
+                              className="gallery-crop recovered-gallery-crop"
+                              style={{
+                                backgroundImage:
+                                  "url(/evidence/rec-018-contact.png)",
+                                backgroundPosition: crop,
+                              }}
+                            />
+                            <span>{title}</span>
+                          </button>
+                        ))}
+                        {[
+                          ["/evidence/escape-031648.png", "03:16 · 逃离钟表行"],
+                          ["/evidence/fall-031709.png", "03:17 · 坠落前"],
+                        ].map(([src, title]) => (
+                          <button
+                            key={src}
+                            onClick={() => setPhonePhoto({ src, title })}
+                          >
+                            <img src={src} alt={title} />
+                            <span>{title}</span>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -1094,6 +1096,253 @@ export default function Home() {
                       <small>气象缓存更新时间：1992年6月17日 03:17</small>
                     </div>
                   )}
+                  {phoneView === "map" && (
+                    <div className="phone-app-view ios-map-app">
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>地图</b>
+                        <span>⋯</span>
+                      </header>
+                      <div className="ios-map-canvas">
+                        <i className="map-route" />
+                        <button
+                          className="ios-pin pin-a"
+                          onClick={() =>
+                            toast("22:46 · 车辆轨迹在海堤检查站结束。")
+                          }
+                        >
+                          22:46
+                        </button>
+                        <button
+                          className="ios-pin pin-b"
+                          onClick={() =>
+                            toast("23:11 · 林岚步行经过白鹭钟表行。")
+                          }
+                        >
+                          23:11
+                        </button>
+                        <button
+                          className="ios-pin pin-c"
+                          onClick={() =>
+                            toast("23:17 · 最后定位漂移至北码头水面。")
+                          }
+                        >
+                          23:17
+                        </button>
+                      </div>
+                      <section className="map-card">
+                        <small>最后位置</small>
+                        <h3>北码头外堤</h3>
+                        <p>精度 ±170 米　·　23:17停止更新</p>
+                        <div>
+                          <b>路线中断</b>
+                          <span>车辆并未到达最后定位点</span>
+                        </div>
+                      </section>
+                    </div>
+                  )}
+                  {phoneView === "phone" && (
+                    <div className="phone-app-view ios-list-app">
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>最近通话</b>
+                        <span>编辑</span>
+                      </header>
+                      <div className="ios-segment">
+                        <b>全部</b>
+                        <span>未接来电</span>
+                      </div>
+                      {[
+                        ["妈妈", "未接来电 · 3次", "03:17"],
+                        ["顾远", "移动电话", "昨天"],
+                        ["+86 0317 0017", "已注销号码", "6月14日"],
+                        ["潮生民宿", "呼出电话 · 17秒", "6月14日"],
+                      ].map(([name, meta, time]) => (
+                        <button
+                          className="ios-call-row"
+                          key={name}
+                          onClick={() => placeCall(name)}
+                        >
+                          <i>☎</i>
+                          <div>
+                            <b>{name}</b>
+                            <small>{meta}</small>
+                          </div>
+                          <time>{time}</time>
+                          <em>ⓘ</em>
+                        </button>
+                      ))}
+                      <nav className="ios-tabbar">
+                        <span>
+                          ☆<b>个人收藏</b>
+                        </span>
+                        <span className="active">
+                          ◷<b>最近通话</b>
+                        </span>
+                        <button onClick={() => setPhoneView("contacts")}>
+                          ♙<b>通讯录</b>
+                        </button>
+                        <span>
+                          ⌨<b>拨号键盘</b>
+                        </span>
+                      </nav>
+                    </div>
+                  )}
+                  {phoneView === "contacts" && (
+                    <div className="phone-app-view ios-list-app contacts-app">
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>通讯录</b>
+                        <span>＋</span>
+                      </header>
+                      <div className="ios-search">⌕　搜索</div>
+                      <h4>我的名片　林岚</h4>
+                      {[
+                        ["顾远", "摄影搭档"],
+                        ["妈妈", "林琴"],
+                        ["陈放", "不要接"],
+                        ["海潮药房", "处方"],
+                        ["潮生民宿", "雾港"],
+                        ["白鹭钟表行", "号码创建于2009年"],
+                      ].map(([name, meta]) => (
+                        <button
+                          className="contact-row"
+                          key={name}
+                          onClick={() => placeCall(name)}
+                        >
+                          <i>{name.slice(0, 1)}</i>
+                          <div>
+                            <b>{name}</b>
+                            <small>{meta}</small>
+                          </div>
+                          <span>☎</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {phoneView === "messages" && (
+                    <div className="phone-app-view ios-list-app messages-app">
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>‹</button>
+                        <b>信息</b>
+                        <span>□</span>
+                      </header>
+                      <div className="ios-search">⌕　搜索</div>
+                      <article>
+                        <i>妈</i>
+                        <div>
+                          <b>妈妈</b>
+                          <time>6月14日</time>
+                          <p>草稿：岚岚，如果我又叫错你的名字，不要回答……</p>
+                        </div>
+                      </article>
+                      <article>
+                        <i>顾</i>
+                        <div>
+                          <b>顾远</b>
+                          <time>昨天</time>
+                          <p>我到了以后给你回电话。</p>
+                        </div>
+                      </article>
+                      <article className="unread">
+                        <i>17</i>
+                        <div>
+                          <b>未知发件人</b>
+                          <time>03:17</time>
+                          <p>你捡到的不是手机，是她留下的位置。</p>
+                        </div>
+                      </article>
+                      <article>
+                        <i>中</i>
+                        <div>
+                          <b>中国移动</b>
+                          <time>2009/06/17</time>
+                          <p>欢迎回到雾港。本地服务有效期：17年。</p>
+                        </div>
+                      </article>
+                    </div>
+                  )}
+                  {phoneView === "browser" && (
+                    <div className="phone-app-view safari-app">
+                      <header>
+                        <button onClick={() => setPhoneView("home")}>
+                          完成
+                        </button>
+                        <b>历史记录</b>
+                        <span>清除</span>
+                      </header>
+                      <div className="safari-address">
+                        aA　⌕ 搜索或输入网址　↻
+                      </div>
+                      <section>
+                        <h3>今天</h3>
+                        {[
+                          ["23:08", "白鹭钟表行 雾港", "未找到仍在营业的商户"],
+                          ["22:51", "成年人失联多久可以报警", "公安政务服务"],
+                          [
+                            "21:17",
+                            "照片日期早于相机发布日期",
+                            "数码影像时间戳修复",
+                          ],
+                          [
+                            "20:43",
+                            "一个人会记得自己没经历过的事吗",
+                            "记忆错构与代际创伤",
+                          ],
+                          [
+                            "19:02",
+                            "归潮号 1992 雾港",
+                            "该搜索结果已根据当地法规移除",
+                          ],
+                        ].map(([time, title, meta]) => (
+                          <button key={time} onClick={() => toast(meta)}>
+                            <time>{time}</time>
+                            <div>
+                              <b>{title}</b>
+                              <small>{meta}</small>
+                            </div>
+                            <span>›</span>
+                          </button>
+                        ))}
+                      </section>
+                      <section>
+                        <h3>6月14日</h3>
+                        <button
+                          onClick={() =>
+                            toast("网页缓存只剩一句：别让第十八个人看见名单。")
+                          }
+                        >
+                          <time>03:17</time>
+                          <div>
+                            <b>雾港地方志 PDF 下载</b>
+                            <small>连接已失效</small>
+                          </div>
+                          <span>›</span>
+                        </button>
+                      </section>
+                    </div>
+                  )}
+                  {callState && (
+                    <div className="call-overlay">
+                      <small>
+                        {callState.status === "calling"
+                          ? "正在呼叫…"
+                          : "呼叫失败"}
+                      </small>
+                      <h3>{callState.name}</h3>
+                      <p>
+                        {callState.status === "calling"
+                          ? "雾港　移动电话"
+                          : "您拨打的号码不在服务区"}
+                      </p>
+                      <div className="call-actions">
+                        <i>静音</i>
+                        <i>键盘</i>
+                        <i>免提</i>
+                      </div>
+                      <button onClick={() => setCallState(null)}>☎</button>
+                    </div>
+                  )}
                 </div>
                 <div className="phone-extract">
                   <h3>随身录像</h3>
@@ -1121,72 +1370,6 @@ export default function Home() {
             </div>
           )}
 
-          {panel === "evidence" && (
-            <div className="panel-view">
-              <div className="section-heading">
-                <p>相机 SD 卡 · 恢复文件</p>
-                <h2>最后四张照片</h2>
-                <span>EXIF 时间均为 2009.06.17</span>
-              </div>
-              <div className="photo-grid">
-                {PHOTOS.map((p, i) => (
-                  <button
-                    className="photo-card"
-                    key={p.src}
-                    onClick={() => setPhoto(i)}
-                  >
-                    <img src={p.src} alt={p.title} />
-                    <span>
-                      <b>
-                        0{i + 1} / {p.title}
-                      </b>
-                      <small>
-                        {p.clue && found.includes(p.clue)
-                          ? "✓ 已检查"
-                          : "放大调查"}
-                      </small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <section className="recovered-strip">
-                <header>
-                  <div>
-                    <small>警方恢复文件 / REC-018</small>
-                    <h3>记录者最后四小时</h3>
-                  </div>
-                  <span>文件尾部损坏 31%</span>
-                </header>
-                <div>
-                  {[
-                    ["left top", "22:58:11 · 末班车"],
-                    ["right top", "00:41:06 · 白鹭钟表行"],
-                    ["left bottom", "02:52:37 · 0617号木箱"],
-                    ["right bottom", "03:17:42 · 最后画面"],
-                  ].map(([crop, title]) => (
-                    <button
-                      key={crop}
-                      onClick={() =>
-                        setPhonePhoto({
-                          src: "/evidence/rec-018-contact.png",
-                          title,
-                          crop,
-                          cropSize: "200% 200%",
-                        })
-                      }
-                    >
-                      <i style={{ backgroundPosition: crop }} />
-                      <span>{title}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-              <div className="uneasy-note">
-                前四张来自林岚发给顾远的聊天附件；后四帧来自身份不明记录者的随身相机。
-              </div>
-            </div>
-          )}
-
           {panel === "people" && (
             <div className="panel-view">
               <div className="section-heading">
@@ -1204,21 +1387,13 @@ export default function Home() {
                       className="person-photo-button"
                       aria-label={`查看${person.name}照片`}
                       onClick={() =>
-                        setPhonePhoto({
-                          src: person.sheet,
-                          title: person.name,
-                          gridColumns: person.sheetColumns,
-                          gridRows: person.sheetRows,
-                          gridIndex: person.sheetIndex,
-                        })
+                        setPhonePhoto({ src: person.photo, title: person.name })
                       }
                     >
-                      <SheetCrop
-                        src={person.sheet}
-                        columns={person.sheetColumns}
-                        rows={person.sheetRows}
-                        index={person.sheetIndex}
+                      <img
                         className="person-photo"
+                        src={person.photo}
+                        alt={person.name}
                       />
                     </button>
                     <div className="person-copy">
@@ -1352,11 +1527,15 @@ export default function Home() {
                   ].map((x, i) => (
                     <article key={x[0]}>
                       <div className="notice-face">
-                        <SheetCrop
-                          src="/people/three-identities.png"
-                          columns={3}
-                          rows={1}
-                          index={i}
+                        <img
+                          src={
+                            [
+                              "/people/zhou-lan-real.png",
+                              "/people/lin-qin-real.png",
+                              "/people/lin-lan-real.png",
+                            ][i]
+                          }
+                          alt={x[1]}
                         />
                       </div>
                       <b>寻 人 启 事</b>
@@ -1408,6 +1587,16 @@ export default function Home() {
                       <i className="redaction short" /> / 该版发行前全部回收
                     </span>
                   </footer>
+                  <div className="reporter-file">
+                    <img src="/people/shen-yan-real.png" alt="沈砚档案照" />
+                    <p>
+                      <b>沈砚</b>
+                      <span>记者 / 白鹭钟表行店主</span>
+                      <small>
+                        2009年火灾后失踪。警方档案没有尸检记录，却在死亡证明上盖了两次章。
+                      </small>
+                    </p>
+                  </div>
                 </article>
               )}
               {archiveResults.includes("ledger") && (
@@ -1793,17 +1982,7 @@ export default function Home() {
       {phonePhoto && (
         <div className="file-preview" onClick={() => setPhonePhoto(null)}>
           <button onClick={() => setPhonePhoto(null)}>关闭 ×</button>
-          {phonePhoto.gridColumns &&
-          phonePhoto.gridRows !== undefined &&
-          phonePhoto.gridIndex !== undefined ? (
-            <SheetCrop
-              src={phonePhoto.src}
-              columns={phonePhoto.gridColumns}
-              rows={phonePhoto.gridRows}
-              index={phonePhoto.gridIndex}
-              className="preview-sheet-crop"
-            />
-          ) : phonePhoto.crop ? (
+          {phonePhoto.crop ? (
             <div
               className="cropped-frame"
               style={{
@@ -1820,36 +1999,6 @@ export default function Home() {
       )}
       {notice && <div className="toast">{notice}</div>}
     </main>
-  );
-}
-
-function SheetCrop({
-  src,
-  columns,
-  rows,
-  index,
-  className = "",
-}: {
-  src: string;
-  columns: number;
-  rows: number;
-  index: number;
-  className?: string;
-}) {
-  const column = index % columns;
-  const row = Math.floor(index / columns);
-  return (
-    <span className={`sheet-crop ${className}`}>
-      <img
-        src={src}
-        alt=""
-        style={{
-          width: `${columns * 100}%`,
-          height: `${rows * 100}%`,
-          transform: `translate(${-column * (100 / columns)}%, ${-row * (100 / rows)}%)`,
-        }}
-      />
-    </span>
   );
 }
 

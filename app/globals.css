@@ -3728,3 +3728,512 @@ mark {
     margin: 0;
   }
 }
+
+/* 2024—2026 iPhone proportions and recovered-photo thumbnails. */
+.wechat-phone {
+  width: min(100%, 390px);
+  height: auto;
+  aspect-ratio: 390 / 844;
+  justify-self: center;
+  border-width: 7px;
+  border-radius: 48px;
+}
+.wechat-phone::before {
+  content: "";
+  position: absolute;
+  z-index: 12;
+  top: 8px;
+  left: 50%;
+  width: 92px;
+  height: 25px;
+  border-radius: 18px;
+  background: #101211;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.wechat-status {
+  height: 36px;
+  padding: 10px 22px 0;
+}
+.recovered-gallery-crop {
+  background-size: 200% 200% !important;
+  background-repeat: no-repeat !important;
+}
+.person-photo-button .person-photo {
+  display: block;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .wechat-phone {
+    width: min(100%, 390px);
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 390 / 844;
+    border-width: 6px;
+    border-radius: 42px;
+  }
+}
+
+/* iOS-style system apps */
+.phone-apps .app-contacts {
+  color: #fff;
+  background: linear-gradient(145deg, #b5bbc0, #777f87);
+  box-shadow: inset 0 -15px 0 rgba(255, 255, 255, 0.15);
+}
+.phone-apps .app-messages {
+  color: #fff;
+  background: linear-gradient(#58dc72, #20b949);
+}
+.phone-apps .app-browser {
+  color: #e94d52;
+  background: radial-gradient(
+    circle,
+    #fff 48%,
+    #45a8e6 50%,
+    #147fca 72%,
+    #fff 74%
+  );
+}
+.phone-dock button {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  text-shadow: none;
+}
+.phone-dock button i {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  font:
+    normal 12px Arial,
+    sans-serif;
+}
+.phone-dock button span {
+  font-size: 7px;
+  color: #fff;
+  text-shadow: 0 1px 3px #000;
+}
+.dock-phone,
+.dock-messages {
+  background: linear-gradient(#58dc72, #20b949);
+}
+.dock-wechat {
+  background: #08c160;
+}
+.dock-gallery {
+  background: linear-gradient(135deg, #f4d45d, #e97d77, #7c9fda);
+}
+.ios-map-app {
+  position: relative;
+  background: #d7ddd5;
+}
+.ios-map-canvas {
+  height: 58%;
+  position: relative;
+  background: url("/evidence/harbor-map.webp") center/cover;
+  overflow: hidden;
+}
+.ios-map-canvas:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    20deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.18)
+  );
+}
+.map-route {
+  position: absolute;
+  z-index: 1;
+  left: 19%;
+  top: 62%;
+  width: 62%;
+  height: 2px;
+  background: #4285d4;
+  transform: rotate(-28deg);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+}
+.ios-pin {
+  position: absolute;
+  z-index: 2;
+  padding: 5px 7px;
+  border: 0;
+  border-radius: 12px 12px 12px 0;
+  background: #e04c45;
+  color: #fff;
+  font: 8px monospace;
+  transform: rotate(-45deg);
+}
+.ios-pin::first-line {
+  transform: rotate(45deg);
+}
+.pin-a {
+  left: 14%;
+  top: 67%;
+}
+.pin-b {
+  left: 48%;
+  top: 44%;
+}
+.pin-c {
+  right: 12%;
+  top: 20%;
+  background: #293f91;
+}
+.map-card {
+  position: absolute;
+  z-index: 3;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.16);
+  text-align: left;
+}
+.map-card small {
+  color: #777;
+  font-size: 8px;
+}
+.map-card h3 {
+  margin: 4px 0;
+  font-size: 18px;
+}
+.map-card p {
+  margin: 0;
+  color: #777;
+  font-size: 9px;
+}
+.map-card > div {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+}
+.map-card > div b {
+  color: #d44942;
+}
+.ios-list-app {
+  background: #f5f5f7;
+}
+.ios-segment {
+  width: 210px;
+  margin: 10px auto;
+  padding: 2px;
+  display: flex;
+  border-radius: 7px;
+  background: #e2e2e6;
+  font-size: 10px;
+}
+.ios-segment > * {
+  flex: 1;
+  padding: 5px;
+  text-align: center;
+}
+.ios-segment b {
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 1px 3px #bbb;
+}
+.ios-call-row {
+  width: calc(100% - 18px);
+  min-height: 58px;
+  margin-left: 18px;
+  padding: 8px 10px 8px 0;
+  display: grid;
+  grid-template-columns: 28px 1fr 48px 22px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+  background: none;
+  text-align: left;
+}
+.ios-call-row > i {
+  color: #41a65a;
+  font-style: normal;
+}
+.ios-call-row b,
+.ios-call-row small {
+  display: block;
+}
+.ios-call-row b {
+  font-size: 13px;
+}
+.ios-call-row small,
+.ios-call-row time {
+  color: #888;
+  font-size: 8px;
+}
+.ios-call-row em {
+  color: #3684c5;
+  font-style: normal;
+}
+.ios-tabbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 52px;
+  display: flex;
+  justify-content: space-around;
+  padding-top: 5px;
+  border-top: 1px solid #ccc;
+  background: rgba(249, 249, 249, 0.96);
+}
+.ios-tabbar > *,
+.ios-tabbar button {
+  min-width: 50px;
+  border: 0;
+  background: none;
+  color: #777;
+  text-align: center;
+  font-size: 15px;
+}
+.ios-tabbar b {
+  display: block;
+  font-size: 7px;
+  font-weight: 400;
+}
+.ios-tabbar .active {
+  color: #2789d3;
+}
+.ios-search {
+  margin: 9px;
+  padding: 7px;
+  border-radius: 8px;
+  background: #e5e5e8;
+  color: #888;
+  text-align: center;
+  font-size: 10px;
+}
+.contacts-app h4 {
+  margin: 10px 16px;
+  color: #777;
+  font-size: 9px;
+}
+.contact-row {
+  width: 100%;
+  padding: 8px 14px;
+  display: grid;
+  grid-template-columns: 38px 1fr 25px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  text-align: left;
+}
+.contact-row > i {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #87999f;
+  color: #fff;
+  font-style: normal;
+}
+.contact-row b,
+.contact-row small {
+  display: block;
+}
+.contact-row b {
+  font-size: 12px;
+}
+.contact-row small {
+  margin-top: 2px;
+  color: #888;
+  font-size: 8px;
+}
+.contact-row > span {
+  color: #39a45b;
+}
+.messages-app article {
+  min-height: 72px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 43px 1fr;
+  gap: 9px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+.messages-app article > i {
+  width: 41px;
+  height: 41px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #788e9a;
+  color: #fff;
+  font-style: normal;
+}
+.messages-app article > div {
+  position: relative;
+  min-width: 0;
+}
+.messages-app article b {
+  font-size: 12px;
+}
+.messages-app article time {
+  position: absolute;
+  right: 0;
+  color: #999;
+  font-size: 8px;
+}
+.messages-app article p {
+  margin: 6px 0 0;
+  color: #777;
+  font-size: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.messages-app article.unread b:before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: #258ee3;
+}
+.messages-app article.unread > i {
+  background: #283c39;
+}
+.safari-app {
+  background: #f5f5f7;
+}
+.safari-address {
+  margin: 10px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: #e4e4e7;
+  color: #555;
+  font-size: 9px;
+}
+.safari-app section {
+  margin-top: 14px;
+  background: #fff;
+}
+.safari-app section h3 {
+  margin: 0;
+  padding: 8px 14px;
+  border-bottom: 1px solid #ddd;
+  font-size: 11px;
+}
+.safari-app section button {
+  width: 100%;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 38px 1fr 10px;
+  gap: 7px;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  text-align: left;
+}
+.safari-app section time {
+  color: #888;
+  font-size: 8px;
+}
+.safari-app section b,
+.safari-app section small {
+  display: block;
+}
+.safari-app section b {
+  font-size: 10px;
+}
+.safari-app section small {
+  margin-top: 3px;
+  color: #888;
+  font-size: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.call-overlay {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  padding-top: 100px;
+  background: linear-gradient(160deg, #31413f, #121817);
+  color: #fff;
+  text-align: center;
+}
+.call-overlay small {
+  opacity: 0.7;
+}
+.call-overlay h3 {
+  margin: 12px 0 4px;
+  font-size: 27px;
+}
+.call-overlay p {
+  margin: 0;
+  color: #b7c0bd;
+  font-size: 10px;
+}
+.call-actions {
+  margin: 80px auto 60px;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+}
+.call-actions i {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.13);
+  font-size: 9px;
+  font-style: normal;
+}
+.call-overlay > button {
+  width: 62px;
+  height: 62px;
+  border: 0;
+  border-radius: 50%;
+  background: #e54d4a;
+  color: #fff;
+  font-size: 23px;
+  transform: rotate(135deg);
+}
+.reporter-file {
+  margin-top: 18px;
+  padding: 13px;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 13px;
+  border: 1px solid #b8ae9e;
+  background: rgba(55, 61, 56, 0.06);
+}
+.reporter-file img {
+  width: 56px;
+  height: 66px;
+  object-fit: cover;
+  filter: grayscale(0.7);
+}
+.reporter-file p {
+  margin: 0 !important;
+  font-size: 10px !important;
+}
+.reporter-file b,
+.reporter-file span,
+.reporter-file small {
+  display: block;
+}
+.reporter-file span {
+  margin: 3px 0 7px;
+  color: var(--red);
+}
+.reporter-file small {
+  line-height: 1.6;
+  color: #777;
+}
