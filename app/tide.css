@@ -1,0 +1,39 @@
+.post-record {
+  border: 1px solid #ffffff30;
+  background: #ffffff0c;
+  padding: 18px;
+  margin: 22px 0;
+}
+.post-record span,
+.post-record strong,
+.post-record small { display: block; }
+.post-record span { font-size: 9px; letter-spacing: .15em; color: #b77264; }
+.post-record strong { font: 18px var(--serif); margin: 8px 0; }
+.post-record small { opacity: .6; }
+
+@media (min-width: 851px) {
+  .cover {
+    display: block;
+    background-image: url("/og.png");
+    background-size: cover;
+    background-position: center;
+  }
+  .cover .cover-noise,
+  .cover .island-mark { display: none; }
+  .cover-copy {
+    position: absolute;
+    left: 7%;
+    top: 58%;
+    width: 520px;
+    text-align: left;
+  }
+  .cover-copy .edition,
+  .cover-copy h1,
+  .cover-copy .subtitle {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .cover-copy .rules { justify-content: flex-start; }
+}
