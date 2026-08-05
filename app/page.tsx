@@ -13,37 +13,37 @@ type Item = { id: string; title: string; text: string };
 type PhoneFile = [name:string, meta:string, clueId:string];
 
 const CHAPTERS = [
-  { no: 1, device: "林岚的手机", title: "回潮口", question: "母亲为什么来雾港，她是否已经离开这座岛？", count: 6 },
+  { no: 1, device: "林岚的手机", title: "回潮口", question: "林琴离开306后去了哪里，她是否已经离开这座岛？", count: 6 },
   { no: 2, device: "林岚的手机", title: "旧名册", question: "散落在不同地区的十二份记录，为什么指向同一间病区？", count: 5 },
-  { no: 3, device: "林岚的手机", title: "雾笛之后", question: "雾港的编号在记录什么，郭维今晚准备做什么？", count: 5 },
+  { no: 3, device: "林岚的手机", title: "雾笛之后", question: "03:17将发生什么，怎样在救人时保全证据？", count: 5 },
 ];
 
 const CLUES: Clue[] = [
-  { id: "last-chat", chapter: 1, title: "6月14日母女微信", source: "林岚手机 / 微信 / 妈妈", text: "林琴18:42发来：‘到了，住潮生宾馆306。房间有点潮。’她没有购买返程票。" },
-  { id: "hotel-log", chapter: 1, title: "306房门卡记录", source: "潮生宾馆前台打印件", text: "入住：6月14日17:36；最后刷出：6月15日21:48；此后无开门记录。登记状态仍为在住。" },
+  { id: "last-chat", chapter: 1, title: "6月14日母女微信", source: "林岚手机 / 微信 / 妈妈", text: "林琴18:42发来：‘到了，住潮生宾馆306。房间有点潮。’之后没有再回复林岚。" },
+  { id: "hotel-log", chapter: 1, title: "306房门卡记录", source: "潮生宾馆登记系统 / 门锁离线缓存", text: "入住：6月14日17:36；最后刷出：6月15日21:48；此后无开门记录。登记状态仍为在住。" },
   { id: "ferry-list", chapter: 1, title: "林琴客轮实名记录", source: "客运码头自助终端", text: "6月14日16:30航班有登岛核验。6月14日至16日的离岛核验结果为空。" },
-  { id: "workboat", chapter: 1, title: "旧港22:20工作船记录", source: "港务简报 / 工作码头", text: "口头说明写离泊22:20；船员表登记3人；当次加油单为0升；大陆目的港没有对应卸货回执。" },
+  { id: "workboat", chapter: 1, title: "旧港22:20工作船记录", source: "港务简报 / 工作码头", text: "6月15日口头说明写离泊22:20；船员表登记3人；当次加油单为0升；大陆目的港没有对应卸货回执。" },
   { id: "weather", chapter: 1, title: "6月16日晚间航班通告", source: "雾港气象站 / 客运公告", text: "16:00发布能见度预警；18:30取消20:10客轮。公告期间移动通信与固定电话状态正常。" },
   { id: "badge1704", chapter: 1, title: "便利店夜班胸牌照片", source: "林岚手机 / 照片", text: "胸牌上栏标注‘门店17’，下栏标注‘员工04’。佩戴者为夜班店员陶小雨。" },
   { id: "voucher1704", chapter: 1, title: "306房早餐券照片", source: "林岚手机 / 照片", text: "早餐券右上角手写‘C17/04’，其后标注‘低盐’。房号栏为306。" },
-  { id: "room-timeline", chapter: 1, title: "306房间的时间断点", source: "调查手记 / 组合推演", text: "林琴18:42说自己已住进306；门卡记录却在次日21:48刷出后彻底中断。房间没有退房、返程或再次进入记录。" },
-  { id: "departure-gap", chapter: 1, title: "两套离岛记录互相冲突", source: "调查手记 / 组合推演", text: "客轮系统没有林琴离岛记录；被怀疑用于秘密离岛的工作船又没有燃油与目的港回执。两条离岛解释都缺少闭环。" },
+  { id: "room-timeline", chapter: 1, title: "306房间的时间断点", source: "调查手记 / 组合推演", text: "林琴18:42说自己已住进306；门卡记录却在次日21:48刷出后彻底中断。房间没有退房或再次进入记录。" },
+  { id: "departure-gap", chapter: 1, title: "两套离岛记录互相冲突", source: "调查手记 / 组合推演", text: "客轮系统没有林琴离岛记录；被怀疑用于秘密离岛的工作船又没有燃油与目的港回执。两种说法都缺少能证明她抵达大陆的记录。" },
   { id: "number-pattern", chapter: 1, title: "C17/04并非单一门店编号", source: "调查手记 / 组合推演", text: "员工胸牌将17和04分栏，306早餐券却把它们写成C17/04。同一顺序跨越零售与住宿系统，不能只用门店编号解释。" },
   { id: "weather-alibi", chapter: 1, title: "停航通告与通信记录的时间重叠", source: "调查手记 / 组合推演", text: "晚班客轮因雾取消，但同一时段移动通信与固定电话记录正常。" },
   { id: "twelve", chapter: 2, title: "十二张儿童寻人启事", source: "林琴旧机备份 / 沈砚资料夹", text: "启事发布地涉及六个县市，日期为1989年至1992年。每张均保留年龄、衣物和最后出现地点。" },
   { id: "ward", chapter: 2, title: "四张转院单扫描件", source: "林琴旧机备份 / 照片", text: "四张转院单的转出医院不同。接收栏均盖有‘潮生康养院乙区’椭圆章。" },
   { id: "nurse", chapter: 2, title: "周岚护士证及值班表", source: "1992年乙区档案", text: "护士证姓名为周岚。6月16日乙区夜班表中，她的值班时段为20:00至次日08:00。23:10后十二个床位的状态有手写改动。" },
   { id: "ship", chapter: 2, title: "归潮号领用及事故记录", source: "1992年港务内参", text: "归潮号核载6人，6月16日晚领用救生衣17件。6月19日公开稿标题为‘无人维护船漂移’。" },
-  { id: "qin-note", chapter: 2, title: "林琴2009年备忘录", source: "林琴旧机备份 / 备忘录", text: "备忘录写：‘名单先分开存。不能把收到器官的人和做这件事的人写在一起。沈砚如果没回来，先别交原件。’" },
+  { id: "qin-note", chapter: 2, title: "林琴2009年备忘录", source: "林琴旧机备份 / 备忘录", text: "备忘录写：‘名单先分开存。被带走的人、后来登记的人、做这件事的人不能混在一起。沈砚如果没回来，先别交原件。’" },
   { id: "ward-chain", chapter: 2, title: "启事与转院单出现四组对应项", source: "调查手记 / 组合推演", text: "四份启事的年龄、衣物描述能够与四张转院单逐项对应；接收栏都指向乙区。" },
   { id: "seventeen-children", chapter: 2, title: "床位改动与救生衣领用发生在同一晚", source: "调查手记 / 组合推演", text: "23:10后的床位改动与归潮号17件救生衣领用时间接近，船只核载为6人。" },
   { id: "victim-boundary", chapter: 2, title: "备忘录要求把名单分开保存", source: "调查手记 / 组合推演", text: "林琴明确写下不同身份不能混在一起，但现有启事没有标注分类结果。" },
   { id: "family-group", chapter: 3, title: "郭家健康群聊天记录", source: "郭宁设备备份 / 群聊", text: "群公告列出体检、服药、奖学金和出岛申请。发布者均为郭维。郭宁要求查看体检报告，未收到文件。" },
-  { id: "codes", chapter: 3, title: "C组年度随访表", source: "潮生健康账户 / 导出文件", text: "表格按A、B、C分页，每条记录另有两组数字。C17-01与C17-04位于同一页，字段用途没有说明。" },
-  { id: "payments", chapter: 3, title: "三份日期相邻的财务文件", source: "郭宁设备备份 / 文件", text: "文件分别为旧港冷链运输单、康养院耗材单和境外付款回执，日期均为2025年11月08日。运输附件另列一项‘B1镜像节点维护’，位置在冷链地下一层。" },
+  { id: "codes", chapter: 3, title: "C组年度随访表", source: "潮生健康账户 / 导出文件", text: "表格按A、B、C分页，每条记录另有两组数字。C17-01与C17-04位于同一页；页脚另列历史随访索引TX-0817-12，字段用途没有说明。" },
+  { id: "payments", chapter: 3, title: "三份执行时间相同的财务文件", source: "郭宁设备备份 / 文件", text: "文件分别为旧港冷链运输单、康养院耗材单和境外付款指令，执行时间均标注为2026年6月17日03:17。运输附件另列一项‘B1镜像节点维护’，位置在冷链地下一层。" },
   { id: "fog-horn", chapter: 3, title: "雾笛观察日志与录音", source: "白塔观察记录", text: "日志逐项记录低潮时间、雾笛播放、受试者姓名应答和生理数值。附录音时长18分42秒。" },
-  { id: "rescue", chapter: 3, title: "03:17日程及检修图", source: "郭维日程 / 白塔平面图", text: "日程写‘03:17，LQ转观察区’。平面图标出一条从白塔检修门通往地下观察区的通道。" },
-  { id: "lan-transplant", chapter: 3, title: "林岚儿童移植随访表", source: "潮生健康 / 旧档", text: "患者林岚，9岁；手术日期2008年8月17日；供体年龄12岁。公开副本的供体姓名栏被遮盖。" },
+  { id: "rescue", chapter: 3, title: "03:17日程及检修图", source: "郭维日程 / 白塔平面图", text: "日程只写‘03:17，LQ转入’。平面图标出一条从白塔检修门通往地下设备层的通道。" },
+  { id: "lan-transplant", chapter: 3, title: "林岚儿童移植随访表", source: "潮生健康 / 旧档", text: "患者林岚，9岁；手术日期2008年8月17日；供体年龄12岁；档案尾号TX-0817-12。公开副本的供体姓名栏被遮盖。" },
   { id: "observation-family", chapter: 3, title: "群公告与C组表使用相同字段", source: "调查手记 / 组合推演", text: "体检、服药与出岛审批日期在两份材料中重复出现，但两者为何同步仍无法从表面判断。" },
   { id: "transfer-chain", chapter: 3, title: "03:17前后的四份记录", source: "调查手记 / 组合推演", text: "冷链、耗材、付款与LQ日程集中在同一时间窗口；文件没有写明实际收货人。" },
   { id: "trigger-protocol", chapter: 3, title: "雾笛之后出现固定记录顺序", source: "调查手记 / 组合推演", text: "每次声音记录后都出现姓名缩写和数值，相关性明确，具体用途未注明。" },
@@ -51,11 +51,11 @@ const CLUES: Clue[] = [
 ];
 
 const DEDUCTIONS: Deduction[] = [
-  { id:"room-timeline",chapter:1,title:"把母亲微信与门卡时间放在一起",requires:["last-chat","hotel-log"],source:"6月14日母女微信 ＋ 306房门卡记录",text:"两条生活记录之间出现了无法解释的断点。",question:"她离开房间之后，为什么没有退房，也没有任何返程记录？" },
+  { id:"room-timeline",chapter:1,title:"把母亲微信与门卡时间放在一起",requires:["last-chat","hotel-log"],source:"6月14日母女微信 ＋ 306房门卡记录",text:"两条生活记录之间出现了无法解释的断点。",question:"她离开房间之后，为什么没有退房，也没有再次进入306？" },
   { id:"departure-gap",chapter:1,title:"比对客轮与工作船记录",requires:["ferry-list","workboat"],source:"客轮实名记录 ＋ 工作船记录",text:"公开与非公开两种离岛方式都缺少关键凭据。",question:"如果工作船没有真正抵达大陆，林琴是否仍在岛上？" },
   { id:"number-pattern",chapter:1,title:"记录两处重复出现的编号",requires:["badge1704","voucher1704"],source:"便利店胸牌 ＋ 306房早餐券",text:"17与04以相同顺序出现在两种用途完全不同的纸面记录上。",question:"这组数字是巧合、交接代码，还是另一套尚未找到的索引？" },
-  { id:"weather-alibi",chapter:1,title:"把停航通告与实名记录放在一起",requires:["weather","ferry-list"],source:"晚间航班通告 ＋ 客轮实名记录",text:"天气解释了停航，却解释不了通信正常时的彻底失联。",question:"是谁利用停航制造了‘她可能困在海上’的印象？" },
-  { id:"ward-chain",chapter:2,title:"对照寻人启事与转院单",requires:["twelve","ward"],source:"十二张寻人启事 ＋ 四张转院单",text:"地域不同的失踪记录开始指向同一套转院路径。",question:"是谁有能力同时改动福利、医疗与交通记录？" },
+  { id:"weather-alibi",chapter:1,title:"把停航通告与实名记录放在一起",requires:["weather","ferry-list"],source:"晚间航班通告 ＋ 客轮实名记录",text:"天气解释了停航，却解释不了通信正常时的彻底失联。",question:"停航是否只是失联发生时的背景，而不是她已经离岛的证据？" },
+  { id:"ward-chain",chapter:2,title:"对照寻人启事与转院单",requires:["twelve","ward"],source:"十二张寻人启事 ＋ 四张转院单",text:"地域不同的失踪记录开始指向同一套转院路径。",question:"这些跨地区记录为什么最终都落到乙区？" },
   { id:"seventeen-children",chapter:2,title:"把床位改动与救生衣数量对齐",requires:["nurse","ship"],source:"乙区值班表 ＋ 归潮号内参",text:"23:10后的床位改动与异常物资领用发生在同一晚。",question:"十七件救生衣究竟对应多少名孩子和工作人员？" },
   { id:"victim-boundary",chapter:2,title:"核对备忘录与十二张启事的分类方式",requires:["qin-note","twelve"],source:"2009年备忘录 ＋ 十二张寻人启事",text:"林琴反复提醒自己不要只按姓名归档，说明这十二份材料并非同一种记录。",question:"她原本打算依据什么重新分类？" },
   { id:"observation-family",chapter:3,title:"对照群公告与编号表的字段",requires:["family-group","codes"],source:"郭家健康群 ＋ 内部编号表",text:"服药、体检和出岛审批的日期能在编号表里找到对应栏位。",question:"两张表为何需要同步更新？" },
@@ -65,10 +65,10 @@ const DEDUCTIONS: Deduction[] = [
 ];
 
 const ITEMS: Record<string,Item> = {
-  "room-card": { id:"room-card", title:"306备用房卡", text:"前台核对报警回执和亲属关系后交给你。只能打开306，离开宾馆前需要归还。" },
+  "room-card": { id:"room-card", title:"306备用房卡", text:"前台核对你的身份证、林琴登记的紧急联系人信息，并向接警民警确认后交给你。只能打开306，调查结束前需要归还。" },
   "night-meal": { id:"night-meal", title:"夜班餐盒", text:"陈放按旧港夜班口味装了一份热饭。与其盘问门岗，不如先让他愿意停下来聊两句。" },
   "archive-slip": { id:"archive-slip", title:"档案调阅单", text:"陈列馆开具的纸质调阅单，盖有当日阅览章，可调取一册1992年港务领用簿。" },
-  "locker-key": { id:"locker-key", title:"旧铁柜钥匙", text:"许伯从停走的挂钟背板后取出的黄铜钥匙，标签只剩一个模糊的“六”。" },
+  "locker-key": { id:"locker-key", title:"旧铁柜钥匙", text:"旧港六号柜的备用钥匙。许伯核对陈列馆调阅单后，只同意陪林岚去仓库试锁，钥匙不能带走。" },
   "maintenance-tag": { id:"maintenance-tag", title:"冷链检修挂牌", text:"无牌冷藏车副驾遗落的检修挂牌，背面写着白塔低潮通行窗口。" },
   "mirror-index": { id:"mirror-index", title:"监控镜像索引", text:"从B1节点复制出的只读索引，保留五处镜头编号与时间戳，没有复制或破坏原始录像。" },
   "bed-location": { id:"bed-location", title:"LQ床位定位截图", text:"地下终端显示LQ仍有生命体征，位置在B-06。截图只保留床位、时间与状态，没有拍到病人。" },
@@ -82,11 +82,11 @@ const ordinaryTitles = [
   ["市集", "周三渔获早市摊位调整"], ["社区", "停水通知：南坡巷管道检修"], ["人物", "许伯和他修了四十年的钟"],
   ["地方志", "雾港岛为什么像一只合拢的手"], ["旅游", "雨天在雾港可以去的五个地方"], ["生活", "潮生宾馆早餐供应时间调整"],
   ["教育", "海岛学生往返大陆补贴办法"], ["论坛", "本地人真的会怕三声雾笛吗"], ["文化", "旧港木器铺口述史整理完成"],
-  ["政务", "2026旧港更新项目意见征集"], ["天气", "今晚20:10航班可能受能见度影响"], ["商业", "一勺外卖新增夜间配送区域"],
+  ["政务", "旧港更新项目意见征集"], ["天气", "今晚20:10航班可能受能见度影响"], ["商业", "一勺外卖新增夜间配送区域"],
   ["档案", "1992年港务月报开放查阅目录"], ["论坛", "为什么地图上没有引水洞"], ["医疗", "潮生康养院旧址修缮说明"],
   ["历史", "归潮号事故报道版本索引"], ["社会", "2009年老街钟表铺火灾回访"], ["公告", "地方陈列馆扫描档案纠错说明"],
   ["港务", "工作船实名登记试行办法"], ["社区", "寻找1992年乙区旧职工"], ["健康", "海岛儿童健康档案数字化完成"],
-  ["民俗", "沉名礼原来要在岸上叫一次名字"], ["法治", "失踪人口报案与跨区协查流程"], ["观察", "旧港改造前的最后一个汛期"],
+  ["民俗", "旧港叫名礼原来要在岸上喊一次真名"], ["法治", "失踪人口报案与跨区协查流程"], ["观察", "旧港改造前的最后一个汛期"],
 ];
 
 const articleDetails = [
@@ -123,15 +123,29 @@ const articleDetails = [
   "港务站试行工作船实名登记，离泊前须同时核验人员、燃油和目的港。|船长提交船员表，油料员填写加油数，目的港回执由收货方确认。三项缺一，值班员不得补签放行。|夜间紧急抢险可以先口头报备，但须在次日上午补齐记录并说明任务。",
   "社区寻找1992年曾在潮生康养院乙区工作的护理、后勤及维修人员。|征集用于补充地方医疗史，提供口述可匿名，原始证件由本人决定是否扫描。公告没有公布现存职工名单。|联系人使用陈列馆办公电话，来访者需预约，不接受未核实的转述。",
   "卫生站宣布完成1986年至2010年海岛儿童健康档案数字化。|项目录入接种、常规体检和转诊索引，医疗正文仍需监护关系或本人授权查阅。不同医院重复建档的记录暂不合并。|少量档案只有编号没有姓名，工作人员将保留原状，等待纸本来源核对。",
-  "民俗研究者梳理‘沉名礼’时发现，仪式最后一步恰恰是公开叫回真名。|家属先把写有乳名的木牌沉入浅水，退潮后在岸上喊一次户籍姓名，象征让海知道人已归家。不同村落没有统一日期。|文章指出后来流传的‘永远不提名字’缺乏早期记录，可能是近几十年的误传。",
+  "民俗研究者梳理旧港叫名礼时发现，仪式最后一步恰恰是公开叫回真名。|家属先把写有乳名的木牌沉入浅水，退潮后在岸上喊一次户籍姓名，象征让海知道人已归家。不同村落没有统一日期。|文章指出后来流传的‘永远不提名字’缺乏早期记录，可能是近几十年的误传。",
   "警方说明，成年人失联不满二十四小时也可以报案，不存在必须等待的统一规定。|接报后将根据最后出现地点、危险因素和通信情况决定查找措施；跨区出行可调取实名交通记录协查。旅馆发现住客异常应及时联系登记人并报警。|家属应提供近期照片、衣着和医疗风险，不要自行发布身份证完整号码。",
   "旧港改造前最后一个汛期，六码头仍承担岛上大部分建材和冷藏货物。|记者跟随夜班记录潮位、车辆和船舶交接。门岗使用纸本登记，凌晨后有两次涂改，值班员解释为雨水浸湿后重写。|报道只呈现当晚所见，未核实更早年份的事故传闻。"
 ];
 
+const articleDates = [
+  "2026.06.01","2026.06.02","2026.06.03","2026.06.06","2026.05.28","2025.09.12",
+  "2026.06.10","2026.06.12","2024.08.15","2026.06.13","2026.06.09","2026.06.08",
+  "2026.06.15","2026.06.15","2024.11.04","2023.07.21","2026.05.30","2026.06.11",
+  "2025.08.26","2024.10.07","2025.12.03","2026.04.18","2026.06.16","2026.06.12",
+  "2024.06.13","2024.05.04","2026.03.17","2024.06.13","2024.05.04","2026.02.18",
+  "2023.09.01","2024.05.04","2026.02.13","2023.08.17","2025.10.21","2022.06.30",
+];
+
+const articleSourceFor = (tag:string) => tag === "论坛" ? "岛民论坛"
+  : ["政务","公告","交通","法治"].includes(tag) ? "雾港政务公开"
+  : ["档案","地方志","历史","民俗"].includes(tag) ? "雾港地方档案"
+  : "今日雾港";
+
 const ARTICLES: Article[] = ordinaryTitles.map(([tag, title], i) => ({
-  id: `a${i + 1}`, chapter: i > 31 ? 2 : 1, tag, title, date: `${2026 - Math.floor(i / 12)}.${String(6 - (i % 6)).padStart(2, "0")}.${String((i * 3) % 15 + 1).padStart(2, "0")}`,
+  id: `a${i + 1}`, chapter: i >= 24 ? 2 : 1, tag, title, date: articleDates[i],
   excerpt: articleDetails[i].split("|")[0],
-  body: articleDetails[i].split("|"), source: ["今日雾港","雾港政务公开","雾港地方档案","岛民论坛"][i%4], author: i%5===0?"记者 许蔚":"编辑部整理",
+  body: articleDetails[i].split("|").slice(1), source: articleSourceFor(tag), author: tag==="论坛"?"岛民投稿":i%5===0?"记者 许蔚":"编辑部整理",
   image: [0,1,2,3,5,10,15,17,22,26,30,35].includes(i) ? ["/photos/venue-terminal.webp","/photos/venue-restaurant.webp","/photos/lighthouse-door.webp","/photos/venue-plaza.webp","/photos/wugang-aerial.webp","/photos/venue-cold-chain.webp","/photos/wugang-aerial.webp","/photos/venue-hotel.webp","/photos/venue-terminal.webp","/photos/venue-hotel.webp","/photos/venue-cold-chain.webp","/photos/wugang-aerial.webp"][[0,1,2,3,5,10,15,17,22,26,30,35].indexOf(i)] : undefined,
   deleted: i === 25 || i === 31, redacted: i === 27 || i === 32,
 }));
@@ -144,7 +158,7 @@ ARTICLES.push(
   {id:"a40",chapter:1,tag:"人物",date:"2024.11.03",title:"望潮饭店经营者陈放：休渔期也得把来源写清楚",excerpt:"一篇普通的本地商户访谈，记录陈放从修相机到经营饭店的经历。",source:"雾港商户通讯",author:"记者 许蔚",image:"/photos/venue-restaurant.webp",body:["陈放，1988年生，早年在大陆影像器材店工作，2021年回岛接手亲属饭店。工商登记、食品许可与采访信息一致。","采访附件中的个人履历止于2021年，未涉及港务、医疗或康养院。"]},
   {id:"a41",chapter:1,tag:"旅业",date:"2025.12.19",title:"潮生宾馆年度消防检查记录",excerpt:"检查记录列出经营者与当班员工，住客信息依法不公开。",source:"雾港政务公开",author:"消防联络点",image:"/photos/venue-hotel.webp",redacted:true,body:["宾馆1998年登记营业，现有客房二十八间。前台员工蒋小蕊于2024年完成消防培训。","附件三‘万能卡领用人员’在网页扫描中缺失，目录显示原件共两页，当前只能打开第一页。"]},
   {id:"a42",chapter:1,tag:"巡检",date:"2026.06.15",title:"白塔东侧夜间异响完成设备排查",excerpt:"港务站称异响来自检修门受风振动，暂未发现线路故障。",source:"今日雾港",author:"港务站值班室",image:"/photos/lighthouse-door.webp",body:["巡检时间为22:40至23:15，东侧道路因边坡维护未向公众开放。","巡检单的第二名签字被水浸开，只能辨认姓氏左半部分。港务站称纸本会在月底统一扫描。"]},
-  {id:"a43",chapter:2,tag:"今日雾港",date:"2026.06.17",title:"陈列馆开放一批旧港医疗史目录",excerpt:"新增目录包括转院单、值班表和器材领用簿，正文仍按隐私等级开放。",source:"今日雾港",author:"文化版编辑",image:"/photos/nurse-id-1992.webp",body:["本次只开放题名、年代、页数和来源，不公开未成年人姓名及医疗正文。","工作人员发现1992年六月卷有四页缺口，装订线显示纸张曾被人为拆走，缺页去向没有移交记录。"]},
+  {id:"a43",chapter:2,tag:"今日雾港",date:"2026.06.16",title:"陈列馆夜间更新一批旧港医疗史目录",excerpt:"新增目录包括转院单、值班表和器材领用簿，正文仍按隐私等级开放。",source:"今日雾港",author:"文化版编辑",image:"/photos/nurse-id-1992.webp",body:["这批目录于22:00完成上传，只开放题名、年代、页数和来源，不公开未成年人姓名及医疗正文。","工作人员发现1992年六月卷有四页缺口，装订线显示纸张曾被人为拆走，缺页去向没有移交记录。"]},
   {id:"a44",chapter:2,tag:"人物残档",date:"2010.02.08",title:"沈砚旧港口述史项目登记卡",excerpt:"项目登记人存在，但联系方式、结项页和两盘访谈带均已缺失。",source:"雾港地方档案",author:"目录自动生成",image:"/photos/wugang-map-archive.webp",body:["沈砚，男，项目登记时34岁，身份栏填写‘自由研究者’。2008年至2009年申请查阅旧港、康养院和失踪人口剪报。","登记卡背面被整页撕去，只剩订书钉孔。联系电话已停用，档案馆没有保存身份证复印件。"]},
   {id:"a45",chapter:2,tag:"执业索引",date:"1993.01.12",title:"周岚护理执业登记变更索引",excerpt:"公开索引显示执业地点曾为潮生康养院乙区，变更附件无法查看。",source:"卫生档案目录",author:"系统迁移",redacted:true,body:["周岚的登记状态于1993年1月变更，原因字段被遮盖。公开页没有照片、住址和后续执业地点。","目录显示附件应有三页，目前扫描包只有封面；纸本借阅卡最后一次签出时间为2009年。"]},
   {id:"a46",chapter:2,tag:"事故旧闻",date:"1992.06.20",title:"归潮号搜索第四日：仅发现空油桶与缆绳",excerpt:"当年短讯没有提到人员，只称工作船可能在大雾中漂移。",source:"《临海晚报》剪报",author:"记者署名缺失",deleted:true,body:["剪报下半段被撕掉，现存文字无法确认船上是否有人。照片背面却写有‘家属在客运站等候’。","同日港务月报将事故归为设备损失，两份材料的叙述对象并不一致。"]},
@@ -168,8 +182,8 @@ const APPS: { id: AppId; icon: string; name: string }[] = [
 const PHOTO_SETS = {
   1: [
     { title: "便利店夜班胸牌", caption: "潮声便利店 · 门店17 / 员工04", clue: "badge1704", src: "/photos/clerk-badge.webp", meta: "2026/06/16 20:07 · 林岚的手机", transcript: "胸牌上栏：潮声便利店　门店17\n姓名：陶小雨\n岗位：夜班收银\n员工号：04" },
-    { title: "宾馆早餐券", caption: "306房随身物品 · C17 / 04 · 低盐", clue: "voucher1704", src: "/photos/breakfast-voucher.webp", meta: "2026/06/16 10:31 · 林岚的手机", transcript: "潮生宾馆早餐券\n房号：306\n餐别：低盐\n右上角手写：C17 / 04\n使用日期：6月15日" },
-    { title: "306房门", caption: "门锁指示正常，走廊靠近安全楼梯", clue: "", src: "/photos/hotel-306.webp", meta: "2026/06/16 10:22 · 林岚的手机", transcript: "房门号：306\n电子门锁指示灯：绿色\n拍摄时间：2026年6月16日 10:22\n位置：潮生宾馆三层东侧走廊" },
+    { title: "宾馆早餐券", caption: "306房随身物品 · C17 / 04 · 低盐", clue: "voucher1704", src: "/photos/breakfast-voucher.webp", meta: "2026/06/16 17:18 · 林岚的手机", transcript: "潮生宾馆早餐券\n房号：306\n餐别：低盐\n右上角手写：C17 / 04\n使用日期：6月15日" },
+    { title: "306房门", caption: "门锁指示正常，走廊靠近安全楼梯", clue: "", src: "/photos/hotel-306.webp", meta: "2026/06/16 17:12 · 林岚的手机", transcript: "房门号：306\n电子门锁指示灯：绿色\n拍摄时间：2026年6月16日 17:12\n位置：潮生宾馆三层东侧走廊" },
   ],
   2: [
     { title: "四张转院单", caption: "来自不同县市，均残留乙区印章", clue: "ward", src: "/photos/transfer-forms.webp", meta: "林琴旧机备份导入 · 原件年代1989—1992", transcript: "四份原件分别签发于1989、1990、1991和1992年。\n转出医院不同，接收栏均盖有：潮生康养院乙区。\n患者年龄依次为12岁、9岁、11岁、13岁。\n四张单据的转院理由均写作“进一步观察”。" },
@@ -177,7 +191,7 @@ const PHOTO_SETS = {
     { title: "十二件衣物", caption: "寻人启事中的衣物描述复原陈列", clue: "twelve", src: "/photos/children-clothes.webp", meta: "沈砚资料夹 · 2009年翻拍" },
   ],
   3: [
-    { title: "年度随访表", caption: "同一页上的C17-01与C17-04", clue: "codes", src: "/photos/health-records.webp", meta: "郭宁设备备份导入 · 2026/06/17", transcript: "潮生健康年度随访\nC17-01　郭维　心率\nC17-02　吴启明　服药\nC17-03　郭宁　夜间脑电\nC17-04　陶小雨　声音应答\n备注栏缺失，表头没有解释C、17和末位数字的含义。" },
+    { title: "年度随访表", caption: "同一页上的C17-01与C17-04", clue: "codes", src: "/photos/health-records.webp", meta: "郭宁设备备份导入 · 2026/06/17", transcript: "潮生健康年度随访\nB11-05　郭维　心率\nB09-02　吴启明　服药\nC17-01　郭宁　夜间脑电\nC17-04　陶小雨　声音应答\n页脚：历史随访索引 TX-0817-12\n备注栏缺失，表头没有解释字母和数字的含义。" },
     { title: "白塔检修门", caption: "门禁日程显示03:17自动解锁", clue: "rescue", src: "/photos/lighthouse-door.webp", meta: "郭宁设备备份导入 · 雨夜", transcript: "白塔东侧检修门\n门禁状态：锁定\n计划任务：03:17 自动解锁\n关联日程：LQ 转入\n门后通道：地下设备层" },
     { title: "郭家聚餐", caption: "饭局看起来和平常没有不同", clue: "", src: "/photos/family-dinner.webp", meta: "家庭共享相册 · 2026/05/02" },
   ],
@@ -200,7 +214,7 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
     { side: "them", text: "我没这么说 先看记录" },
     ];
     const second:ChatLine[] = [
-    {side:"system",text:"6月17日 09:04"},
+    {side:"system",text:"6月16日 22:04"},
     { side: "me", text: "十二张 看得我眼睛疼" }, { side: "them", text: "名字先放一边" },
     { side: "me", text: "那看什么" }, { side: "them", text: "年龄 衣服 章 哪个重复就圈哪个" },
     { side: "me", text: "你以前干过这个" }, { side: "them", text: "没有 就是不喜欢别人把人写成编号" },
@@ -236,9 +250,9 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
       { side: "me", text: "好 你先别跟老板争" }, { side: "them", text: "嗯 路上慢点 码头地砖很滑🌧️" },
     ],
     "2:沈砚（旧号码）": [
-      { side: "them", text: "别查名字 名单后补过" }, { side: "me", text: "你谁 为什么用沈砚的号" },
+      { side: "them", text: "别查名字 名单后补过" }, { side: "them", text: "[文件] 十二张启事_扫描件.pdf" }, { side: "me", text: "你谁 为什么用沈砚的号" },
       { side: "them", text: "先看年龄 衣服 转院章" }, { side: "me", text: "你认识我妈" },
-      { side: "them", text: "认识 她不一定记得" },
+      { side: "them", text: "认识 她不一定记得" }, { side: "system", text: "该账号已停止接收消息" },
     ],
     "2:许医生": [
       { side: "them", text: "这次量表比三月稳定 药先不加" },
@@ -247,7 +261,7 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
     ],
     "3:郭家健康群": [
       { side: "them", text: "本月C组复查改周五 早餐后别自己加药" }, { side: "me", text: "我周五模拟考 能不能下周去" },
-      { side: "them", text: "不能 今晚03:17转观察区 C组家属不要靠近白塔" }, { side: "me", text: "为什么每次都不给我们看报告" },
+      { side: "them", text: "不能 今晚03:17统一转入 C组家属不要靠近白塔" }, { side: "me", text: "为什么每次都不给我们看报告" },
       { side: "them", text: "按群通知来" },
     ],
     "3:爸爸": [
@@ -372,7 +386,12 @@ export default function Home() {
         : ["先把‘今晚会发生什么’和‘这套编号长期在做什么’分开梳理。","选择一条能说明今晚行动的组合推演。救援位置比公开名单更有时间压力。"];
       notify(ideas[Math.min(attempts-1,ideas.length-1)]); return;
     }
-    if (chapter < 3) { setUnlocked(chapter + 1); setChapter(chapter + 1); setArea("phone"); setApp("home"); setSelected([]); setAnswer(""); notify(`第${chapter + 1}章已开启：手机收到新的导入内容`); }
+    if (chapter < 3) {
+      const nextNotice=chapter===1
+        ? "警方完成登记，306内的无卡旧手机已交给林岚；备份已导入本机。"
+        : "郭宁在便利店后门交出只读备份；聊天、文件和健康记录已导入。";
+      setUnlocked(chapter + 1); setChapter(chapter + 1); setArea("phone"); setApp("home"); setSelected([]); setAnswer(""); notify(nextNotice);
+    }
     else setEnding("truth");
   };
   const reset = () => { localStorage.removeItem("wugang-v6");localStorage.removeItem("wugang-tool-installed");localStorage.removeItem("wugang-wechat-log");[1,2,3].forEach(n=>localStorage.removeItem(`wugang-recovered-${n}`)); setStarted(false); setIntroSeen(false); setChapter(1); setUnlocked(1); setFound([]); setInventory([]); setEnding(null); setArea("phone"); setApp("home"); };
@@ -394,14 +413,14 @@ export default function Home() {
 
   if (ending) return <main className="ending">
     <p>TRUE ENDING · 名字归岸</p><h1>先救人，再让证据说话。</h1>
-    <div className="ending-text"><p>郭宁关闭雾笛，吴启明交出第三代观察记录。你沿白塔检修道找到林琴，把救援位置、低潮时间和三套证据分别发给岛外警方、律师与媒体。</p><p>引水洞里的归潮号终于被找到。受害者姓名由家属确认，无辜受体的医疗隐私没有成为猎奇标题。</p><p>恢复的移植原件给了你最后一个名字：<b>叶知潮，十二岁，死亡于2008年8月17日。</b>同一天，九岁的林岚接受急诊肝移植。你再打开微信，“潮”的会话不存在；系统从未记录过这个联系人。</p><p>他没有替你找到任何线索。他只是把你已经看见的东西，换个顺序放回去。</p><div className="post-record"><span>档案反查 / TX-0817-12</span><strong>叶知潮死亡登记　↔　林岚移植随访证明</strong><small>签发机构相距342公里，经办人却属于同一间潮生康养院。</small></div><p>监护设备停下后，空病房录到一句孩子的声音：“这次有人记得我们了。”房里没有音频设备。</p></div>
+    <div className="ending-text"><p>郭宁关闭雾笛，吴启明交出第三代观察记录。你沿白塔检修道找到林琴，把救援位置、低潮时间和三套证据分别发给岛外警方、律师与媒体。</p><p>引水洞里的归潮号终于被找到。受害者姓名由家属确认，无辜受体的医疗隐私没有成为猎奇标题。</p><p>恢复工具只找回手术日期、供体年龄和档案尾号。TX-0817-12同时出现在一条正文缺页的民政死亡登记索引里。岛外警方调取纸本原卷后，最后一个名字才出现：<b>叶知潮，十二岁，死亡于2008年8月17日。</b>同一天，九岁的林岚接受急诊肝移植。你再打开微信，“潮”的会话不存在；系统从未记录过这个联系人。</p><p>他没有替你找到任何线索。他只是把你已经看见的东西，换个顺序放回去。</p><div className="post-record"><span>档案反查 / TX-0817-12</span><strong>叶知潮死亡登记　↔　林岚移植随访证明</strong><small>签发机构相距342公里，经办人却属于同一间潮生康养院。</small></div><p>监护设备停下后，空病房录到一句孩子的声音：“这次有人记得我们了。”房里没有音频设备。</p></div>
     <button className="primary" onClick={reset}>重新调查</button>
   </main>;
 
   return <main className="game-shell">
     {toast && <div className="toast">{toast}</div>}
     {collectionNotice && <div className={`collection-modal ${collectionNotice.source.includes("组合推演")?"deduction-achievement":""}`} role="dialog" aria-modal="true"><article>{collectionNotice.source.includes("组合推演")?<div className="achievement-mark"><i/><span>推演成立</span></div>:<div className="clue-mark">＋</div>}<small>{collectionNotice.source.includes("组合推演")?"新的材料关系已写入调查手记":`线索已收录 · ${CHAPTERS[collectionNotice.chapter-1].title}`}</small><h2>{collectionNotice.title}</h2><b>{collectionNotice.source}</b><p>{collectionNotice.text}</p><button onClick={()=>setCollectionNotice(null)}>{collectionNotice.source.includes("组合推演")?"查看新的推演":"我已查看"}</button></article></div>}
-    {itemNotice && <div className="item-modal item-achievement" role="dialog" aria-modal="true"><article><div className="achievement-rays"/><small>道具获得 · 已放入随身物品</small><div className="item-icon">{itemNotice.title.slice(0,1)}</div><h2>{itemNotice.title}</h2><p>{itemNotice.text}</p><button onClick={()=>setItemNotice(null)}>收好并继续调查</button></article></div>}
+    {itemNotice && <div className="item-modal item-achievement" role="dialog" aria-modal="true"><article><div className="achievement-rays"/><small>道具获得 · 已加入调查清单</small><div className="item-icon">{itemNotice.title.slice(0,1)}</div><h2>{itemNotice.title}</h2><p>{itemNotice.text}</p><button onClick={()=>setItemNotice(null)}>记下并继续调查</button></article></div>}
     <header className="topbar">
       <button className="brand" onClick={() => openArea("phone")}>雾港来信 <small>调查记录 0616</small></button>
       <div className="chapter-tabs">{CHAPTERS.map(c => <button key={c.no} className={chapter === c.no ? "active" : ""} onClick={() => changeChapter(c.no)}><span>0{c.no}</span>{c.title}{c.no > unlocked && <i>锁</i>}</button>)}</div>
@@ -451,17 +470,17 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
   const recoveryItems = chapter===1 ? [
     {id:"workboat",name:"工作船说明.txt",method:"日志尾部被零字节覆盖，可用同目录校验记录重建。",result:"已恢复离泊时间、船员数与目的港回执字段。",clue:true},
     {id:"cache-weather",name:"天气页离线缓存",method:"网页缓存头损坏，正文分片仍在。",result:"恢复出6月16日16:00发布的能见度预警副本。",clue:false},
-    {id:"thumb-306",name:"IMG_306 缩略图索引",method:"原图已不存在，只剩相册数据库里的缩略图。",result:"恢复一张306走廊缩略图，拍摄时间为10:22。",clue:false}
+    {id:"thumb-306",name:"IMG_306 缩略图索引",method:"原图已不存在，只剩相册数据库里的缩略图。",result:"恢复一张306走廊缩略图，拍摄时间为17:12。",clue:false}
   ] : chapter===2 ? [
     {id:"ship",name:"归潮号港务内参.pdf",method:"网页副本已删除，但本机缓存保留六个不连续分片。",result:"恢复出核载人数、救生衣领用数与事故标题。",clue:true},
     {id:"shen-contact",name:"沈砚联系人残片.db",method:"通讯录条目已删除，号码备注区仍有残片。",result:"号码最后一次修改于2009年，备注只剩‘别用真名’。",clue:false},
     {id:"ward-index",name:"乙区扫描目录.idx",method:"目录页损坏，可按文件创建时间重排。",result:"四份扫描件来自不同医院，入库时间却在同一天。",clue:false}
   ] : [
-    {id:"payments",name:"冷链付款对账.pdf",method:"导出索引损坏，可从临时缓存拼合三张付款表。",result:"三份付款文件的日期列恢复完成。",clue:true},
+    {id:"payments",name:"冷链付款对账.pdf",method:"导出索引损坏，可从临时缓存拼合三张付款表。",result:"三份文件的执行时间均恢复为6月17日03:17。",clue:true},
     {id:"lan-transplant",name:"林岚_儿童移植随访.pdf",method:"正文页被覆盖，打印缓存留有低清文本层。",result:"恢复手术日期与供体年龄，姓名仍被合法遮盖。",clue:true},
     {id:"camera-fragment",name:"B1监控缩略图缓存",method:"视频不存在，只剩设备生成的关键帧。",result:"关键帧显示一名背影进入旧港冷链B1层。",clue:false}
   ];
-  const noteSets=[[{title:"去雾港前",date:"6月15日",text:"相机 充电线 雨衣\n先去宾馆 再去派出所\n妈妈记忆不太好 这事先别跟不相干的人说"},{title:"护膝订单",date:"6月12日",text:"M码 深灰\n别买太厚 她嫌热\n送到宾馆前台也行"},{title:"要问的",date:"6月14日",text:"为什么只有去程票\n陈放有没有见过她\n306的行李少了什么"}],[{title:"导入 · 如果又忘了",date:"2009年9月",text:"别先问名字\n先看年龄 衣服 转院章\n几类记录不能混在一起"},{title:"导入 · 乙区",date:"1992年8月",text:"十二张床\n夜班只签了一个姓周的\n第二页被抽走了"},{title:"导入 · 沈砚",date:"未保存",text:"这个名字不一定是真的\n他说名单是后来补的\n先查归潮号"}],[{title:"导入 · 不想继续体检",date:"8月4日",text:"爸爸说药 学校和出岛都靠家里\n可为什么保护一个人\n要把她做过的梦删掉"},{title:"导入 · 小雨",date:"8月4日",text:"C17/04\n又梦见没窗的走廊\n她说03:17会听见雾笛"},{title:"白塔",date:"今天",text:"东侧检修门\n低潮时开二十二分钟\n先把位置发出去"}]];
+  const noteSets=[[{title:"去雾港前",date:"6月15日",text:"相机 充电线 雨衣\n先去宾馆 再去派出所\n妈妈记忆不太好 这事先别跟不相干的人说"},{title:"护膝订单",date:"6月12日",text:"M码 深灰\n别买太厚 她嫌热\n送到宾馆前台也行"},{title:"要问的",date:"6月14日",text:"为什么只有去程票\n陈放有没有见过她\n306的行李少了什么"}],[{title:"导入 · 如果又忘了",date:"2009年9月",text:"别先问名字\n先看年龄 衣服 转院章\n几类记录不能混在一起"},{title:"导入 · 乙区",date:"1992年8月",text:"十二张床\n夜班只签了一个姓周的\n第二页被抽走了"},{title:"导入 · 沈砚",date:"未保存",text:"这个名字不一定是真的\n他说名单是后来补的\n先查归潮号"}],[{title:"导入 · 不想继续体检",date:"6月15日",text:"爸爸说药 学校和出岛都靠家里\n可为什么保护一个人\n要把她做过的梦删掉"},{title:"导入 · 小雨",date:"6月16日",text:"C17/04\n又梦见没窗的走廊\n她说03:17会听见雾笛"},{title:"白塔",date:"今天",text:"东侧检修门\n低潮时开二十二分钟\n先把位置发出去"}]];
   const notes=noteSets.slice(0,chapter).flat();
   const [now, setNow] = useState(() => new Date());
   const [batteryLevel, setBatteryLevel] = useState(.78);
@@ -548,7 +567,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     };
   }, []);
   const phoneTime = now.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
-  const phoneDay = chapter===1?"6月16日周二":"6月17日周三";
+  const phoneDay = chapter===3?"6月17日周三":"6月16日周二";
   const signalLevel = airplaneOn || !mobileOn ? 0 : 2 + (now.getMinutes() % 3);
   const phoneContacts = chapter===1 ? [
     {name:"妈妈",number:"138 0616 2041"},{name:"潮生宾馆",number:"0580 761 0306"},{name:"陈放",number:"137 8804 1127"},{name:"雾港客运站",number:"0580 761 0120"}
@@ -588,11 +607,10 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     if(next!=="camera")stopCamera();
     if(next!=="phone")setActiveCall(null);
     if (next === "weather" && chapter === 1 && !found.includes("weather")) collect("weather");
-    if (next === "notes" && chapter === 2 && !found.includes("qin-note")) collect("qin-note");
     transition(() => { setThread(""); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(null); setApp(next); });
   };
   const openThread = (name: string) => {
-    const clue = chapter === 1 && name === "妈妈" ? "last-chat" : chapter === 2 && name === "沈砚（旧号码）" ? "twelve" : chapter === 3 && name === "郭家健康群" ? "family-group" : "";
+    const clue = chapter === 1 && name === "妈妈" ? "last-chat" : chapter === 2 && name === "沈砚（旧号码）" ? "twelve" : chapter === 3 && name.includes("郭家健康群") ? "family-group" : "";
     if (clue && !found.includes(clue)) collect(clue);
     transition(() => { setThread(name); setComposer(null); setVoiceMode(false); });
   };
@@ -698,10 +716,10 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     {app === "phone" && <div className="phone-page system-phone-page"><PhoneHead title="电话" back={back}/>{activeCall?<div className={`system-call-screen ${activeCall.status}`}><small>{activeCall.status==="dialing"?"正在呼叫…":activeCall.status==="connected"?callDuration(activeCall.elapsed):"无法接通"}</small><h2>{activeCall.name}</h2><p>{activeCall.number}</p>{activeCall.status!=="dialing"&&<blockquote>{activeCall.reply}</blockquote>}<div className="call-controls"><button><i>静</i><span>静音</span></button><button><i>键</i><span>键盘</span></button><button><i>扬</i><span>免提</span></button></div><button className="system-hangup" onClick={()=>setActiveCall(null)} aria-label="挂断电话">☎</button></div>:<><div className="phone-tab-content">{phoneTab==="recents"&&<div className="call-list"><h3>最近通话</h3>{phoneContacts.slice(0,3).map((item,index)=><button key={item.number} onClick={()=>startPhoneCall(item.number,item.name)}><i className={index===0?"missed":""}>↗</i><span><b>{item.name}</b><small>{index===0?"未接来电":"呼出电话"} · {index===0?"今天":"昨天"}</small></span><em>ⓘ</em></button>)}</div>}{phoneTab==="contacts"&&<div className="call-list contacts"><h3>通讯录</h3>{phoneContacts.map(item=><button key={item.number} onClick={()=>startPhoneCall(item.number,item.name)}><span><b>{item.name}</b><small>{item.number}</small></span><em>☎</em></button>)}</div>}{phoneTab==="keypad"&&<div className="dialer"><output>{dialNumber||"输入号码"}</output><div>{["1","2","3","4","5","6","7","8","9","*","0","#"].map(key=><button key={key} onClick={()=>setDialNumber(value=>(value+key).slice(0,14))}>{key}</button>)}</div><footer><button className="dial-call" disabled={!dialNumber} onClick={()=>startPhoneCall(dialNumber)}>☎</button><button className="dial-delete" onClick={()=>setDialNumber(value=>value.slice(0,-1))}>⌫</button></footer></div>}</div><nav className="phone-tabs">{([['recents','最近通话','时'],['contacts','通讯录','人'],['keypad','拨号键盘','键']] as const).map(([id,label,icon])=><button key={id} className={phoneTab===id?"active":""} onClick={()=>setPhoneTab(id)}><i>{icon}</i><span>{label}</span></button>)}</nav></>}</div>}
     {app === "photos" && <div className="phone-page"><PhoneHead title="照片" back={back}/><div className="photo-grid">{photos.map(photo => <button key={photo.title} onClick={() => { setPhotoOpen(photo as any); setTranscriptOpen(false); if (photo.clue && !found.includes(photo.clue)) collect(photo.clue); }}><img src={photo.src} alt={photo.title}/><b>{photo.title}</b><span>{photo.caption}</span>{photo.clue && found.includes(photo.clue) && <em>已收录</em>}</button>)}</div>{photoOpen && <div className="photo-viewer"><button className="photo-close" onClick={() => { setPhotoOpen(null); setTranscriptOpen(false); }}>关闭</button><button className="photo-image-button" onClick={() => setTranscriptOpen(true)}><img src={photoOpen.src} alt={photoOpen.title}/><span>点击查看文字内容</span></button><div><b>{photoOpen.title}</b><p>{photoOpen.caption}</p><small>{photoOpen.meta}</small></div>{transcriptOpen && <div className="transcript-modal" role="dialog" aria-modal="true"><article><small>照片文字抄录</small><h3>{photoOpen.title}</h3><p>{photoOpen.transcript || `${photoOpen.caption}\n${photoOpen.meta}`}</p><button onClick={() => setTranscriptOpen(false)}>关闭文字内容</button></article></div>}</div>}</div>}
     {app === "files" && <div className="phone-page"><PhoneHead title={selectedFile?String(selectedFile[0]):"文件"} back={selectedFile?()=>setSelectedFile(null):back} backLabel={selectedFile?"文件":"桌面"}/>{selectedFile?<article className="file-detail"><i>文</i><h3>{selectedFile[0]}</h3><small>{selectedFile[1]}</small>{selectedRecovery&&!found.includes(selectedRecovery.id)?<div className="corrupt-file"><b>无法完整读取</b><p>文件正文出现连续空白块，修改时间与缓存索引不一致。</p><small>{recoveryInstalled?"已安装的数据复原可以检查这份文件。":"本机没有能处理残留分片的工具，可去 App Store 搜索‘数据恢复’。"}</small><button onClick={()=>{setSelectedFile(null);setApp(recoveryInstalled?"cracker":"appstore")}}>{recoveryInstalled?"用数据复原打开":"去 App Store 搜索"}</button></div>:<><p>{CLUES.find(c=>c.id===selectedFile[2])?.text}</p><div><span>来源</span><b>{CLUES.find(c=>c.id===selectedFile[2])?.source}</b></div></>}<button onClick={()=>setSelectedFile(null)}>返回文件列表</button></article>:<div className="file-list">{phoneFiles.map(f => {const damaged=recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]);return <button key={f[0]} onClick={() => {setSelectedFile(f);if(!recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]))collect(f[2]);}}><i>文</i><span><b>{f[0]}</b><small>{damaged?"读取异常 · 文件可能损坏":f[1]}</small></span><em>{found.includes(f[2]) ? "✓" : "打开"}</em></button>})}</div>}</div>}
-    {app === "notes" && <div className="phone-page"><PhoneHead title={noteOpen!==null?notes[noteOpen].title:"备忘录"} back={noteOpen!==null?()=>setNoteOpen(null):back} backLabel={noteOpen!==null?"备忘录":"桌面"}/>{noteOpen!==null?<article className="note-paper note-detail"><small>{notes[noteOpen].date}</small><h3>{notes[noteOpen].title}</h3><p>{notes[noteOpen].text}</p></article>:<div className="note-list">{notes.map((note,i)=><button key={note.title} onClick={()=>setNoteOpen(i)}><b>{note.title}</b><p>{note.text.split("\n")[0]}</p><time>{note.date}</time></button>)}</div>}</div>}
+    {app === "notes" && <div className="phone-page"><PhoneHead title={noteOpen!==null?notes[noteOpen].title:"备忘录"} back={noteOpen!==null?()=>setNoteOpen(null):back} backLabel={noteOpen!==null?"备忘录":"桌面"}/>{noteOpen!==null?<article className="note-paper note-detail"><small>{notes[noteOpen].date}</small><h3>{notes[noteOpen].title}</h3><p>{notes[noteOpen].text}</p></article>:<div className="note-list">{notes.map((note,i)=><button key={note.title} onClick={()=>{setNoteOpen(i);if(note.title.includes("如果又忘了")&&!found.includes("qin-note"))collect("qin-note");}}><b>{note.title}</b><p>{note.text.split("\n")[0]}</p><time>{note.date}</time></button>)}</div>}</div>}
     {app === "shopping" && <div className="phone-page lifestyle taobao-page"><PhoneHead title={selectedOrder?"订单详情":"手机淘宝"} back={selectedOrder?()=>setSelectedOrder(null):back} backLabel={selectedOrder?"我的订单":"桌面"}/>{selectedOrder?<article className="order-detail"><header><i>{selectedOrder.icon}</i><div><h3>{selectedOrder.name}</h3><p>{selectedOrder.detail}</p></div></header><strong>{selectedOrder.price}</strong><section><b>物流信息</b>{selectedOrder.logistics.map((line,i)=><p key={line} className={i===0?"current":""}>{line}</p>)}</section><footer>收货人：林岚　尾号0616</footer></article>:<><input placeholder="搜索淘宝商品"/><h3>我的订单</h3>{orders.map(order=><button key={order.name} onClick={()=>setSelectedOrder(order)}><i>{order.icon}</i><span><b>{order.name}</b><small>{order.status} · 查看物流</small></span></button>)}</>}</div>}
     {app === "music" && <div className="phone-page lifestyle"><PhoneHead title="泊声音乐" back={back}/><div className="album"><i>泊</i><div><b>{tracks[track]}</b><span>林岚的通勤收藏</span><input aria-label="播放进度" type="range" min="0" max="100" value={musicProgress} onChange={e=>setMusicProgress(Number(e.target.value))}/></div><button onClick={()=>setPlaying(!playing)}>{playing?"暂停":"播放"}</button></div>{tracks.map((t,i)=><button className={track===i?"playing":""} key={t} onClick={()=>{setTrack(i);setMusicProgress(0);setPlaying(true)}}><span>{String(i+1).padStart(2,"0")}</span><b>{t}</b><small>{2+i}:1{i}</small></button>)}</div>}
-    {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className={`weather-card weather-${chapter}`}><b>雾港岛</b><strong>{chapter===1?"19°":chapter===2?"20°":"16°"}</strong><p>{chapter===1?"阵雨转平流雾":chapter===2?"低云 风弱":"浓雾 低潮"}</p><nav><button className={weatherMode==="hourly"?"active":""} onClick={()=>setWeatherMode("hourly")}>逐小时</button><button className={weatherMode==="daily"?"active":""} onClick={()=>setWeatherMode("daily")}>十日天气</button></nav>{weatherMode==="hourly"?<ul>{(chapter===1?["16:00　阵雨停 19°","18:30　能见度复核 18°","20:10　末班船待定 17°"]:chapter===2?["09:00　低云 20°","12:00　短时见光 22°","17:00　海雾回流 19°"]:["02:00　浓雾 16°","03:17　低潮 15°","04:00　能见度不足百米 15°"]).map(x=><li key={x}>{x}</li>)}</ul>:<ul>{["今天　雨 / 雾","明天　阴","周五　阵雨","周六　多云"].map(x=><li key={x}>{x}</li>)}</ul>}</div></div>}
+    {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className={`weather-card weather-${chapter}`}><b>雾港岛</b><strong>{chapter===1?"19°":chapter===2?"17°":"16°"}</strong><p>{chapter===1?"阵雨转平流雾":chapter===2?"海雾回流 风弱":"浓雾 低潮"}</p><nav><button className={weatherMode==="hourly"?"active":""} onClick={()=>setWeatherMode("hourly")}>逐小时</button><button className={weatherMode==="daily"?"active":""} onClick={()=>setWeatherMode("daily")}>十日天气</button></nav>{weatherMode==="hourly"?<ul>{(chapter===1?["16:00　阵雨停 19°","18:30　能见度复核 18°","20:10　末班船待定 17°"]:chapter===2?["21:00　低云 18°","23:00　海雾回流 17°","02:00　能见度下降 16°"]:["02:00　浓雾 16°","03:17　低潮 15°","04:00　能见度不足百米 15°"]).map(x=><li key={x}>{x}</li>)}</ul>:<ul>{["今天　雨 / 雾","明天　阴","周五　阵雨","周六　多云"].map(x=><li key={x}>{x}</li>)}</ul>}</div></div>}
     {app === "appstore" && <div className="phone-page app-store-page"><PhoneHead title="App Store" back={back}/><header><small>App 与游戏</small><h2>实用工具</h2></header><div className="store-search">⌕　搜索 App</div><article><i className="store-weather">云</i><div><b>岛屿天气</b><span>天气 · 本地预警</span><small>逐小时降雨、海雾与客轮天气提醒。</small></div><button onClick={()=>setApp("weather")}>打开</button></article><article><i className="store-scan">扫</i><div><b>简扫</b><span>效率 · 文档扫描</span><small>调用相机拍摄纸张，支持离线文字查看。</small></div><button onClick={()=>setApp("camera")}>打开</button></article><article className={installingRecovery?"installing":recoveryInstalled?"installed":""}><i>拾</i><div><b>拾遗 · 本地数据复原</b><span>工具 · 仅扫描本机文件</span><small>重建仍留在设备上的缓存与索引，不恢复正确遮盖的内容。</small></div><button className="store-install" disabled={installingRecovery} onClick={()=>recoveryInstalled?setApp("cracker"):(setInstallProgress(0),setInstallingRecovery(true))}>{installingRecovery?<i className="install-ring" style={{background:`conic-gradient(#1875d1 ${installProgress*3.6}deg,#d8d9dc 0)`}}><span/></i>:recoveryInstalled?"打开":"获取"}</button></article><article><i className="store-tide">汐</i><div><b>潮汐表</b><span>天气 · 海事数据</span><small>近岸潮位预报与日出日落时间。</small></div><button onClick={()=>setApp("weather")}>打开</button></article>{installingRecovery&&<div className="install-status"><span style={{width:`${installProgress}%`}}/><b>正在下载并验证… {installProgress}%</b></div>}{recoveryInstalled&&<div className="install-complete"><i>✓</i><span>安装完成，应用已经出现在桌面</span></div>}<section><h3>隐私说明</h3><p>安装前请核对工具申请的权限。本地处理不等于能够恢复彻底删除或依法遮盖的信息。</p></section></div>}
     {app === "cracker" && <div className="phone-page recovery-app"><PhoneHead title="数据复原" back={back}/><header><i>拾</i><div><b>本机扫描完成</b><span>按文件逐项检查可恢复内容</span></div></header><div className="recovery-list">{recoveryItems.map(item=>{const done=found.includes(item.id)||recoveredItems.includes(item.id);const active=recovering===item.id;return <article key={item.id} className={done?"done":""}><small>{item.clue?"文件残片":"缓存残片"}</small><h3>{item.name}</h3><p>{done?item.result:item.method}</p><div className="recovery-track"><span style={{width:`${done?100:active?recoveryProgress:0}%`}}/></div><em>{done?(item.clue?"恢复完成 · 已收录到调查手记":"恢复完成 · 仅保存在工具内"):active?`正在重建 ${recoveryProgress}%`:"可尝试恢复"}</em><button disabled={Boolean(recovering)} onClick={()=>done?setRecoveryOpen(item.id):(setRecoveryProgress(0),setRecovering(item.id))}>{done?"查看恢复内容":"开始复原"}</button></article>})}</div><p className="recovery-rule">恢复结果只是原始材料。工具保留原文件名、来源路径与缺损位置，不替你作判断。</p>{recoveryOpen&&(()=>{const item=recoveryItems.find(entry=>entry.id===recoveryOpen);return item?<div className="recovery-view" role="dialog" aria-modal="true"><article><small>只读恢复副本</small><h3>{item.name}</h3><p>{item.result}</p><dl><dt>复原方法</dt><dd>{item.method}</dd><dt>完整性</dt><dd>{item.clue?"可读字段已写入调查手记；缺损字段保持空白。":"仅恢复缓存信息，不作为独立结论材料。"}</dd></dl><button onClick={()=>setRecoveryOpen(null)}>关闭</button></article></div>:null})()}</div>}
     {app === "camera" && <div className="phone-page camera-app"><PhoneHead title="相机" back={back}/><div className={`camera-preview ${cameraGlitch?"glitch":""}`}>{cameraStream?<video ref={videoRef} autoPlay playsInline muted/>:<div className="camera-permission"><i>相</i><p>启用后会调用你的摄像头<br/>画面只在当前页面处理</p><button onClick={()=>startCamera("user")}>启用前置摄像头</button>{cameraError&&<small>{cameraError}</small>}</div>}{cameraGlitch&&<div className="focus-anomaly"><i/><span>正在重新对焦</span></div>}</div>{cameraStream&&<div className="camera-controls"><button onClick={()=>startCamera(cameraFacing==="user"?"environment":"user")}>切换</button><button className="shutter" aria-label="拍照" onClick={captureCamera}/><button onClick={()=>{stopCamera();setCameraShot("")}}>关闭</button></div>}{cameraShot&&<div className="camera-shot" role="dialog"><img src={cameraShot} alt="刚拍摄的照片"/><button onClick={()=>setCameraShot("")}>继续拍摄</button></div>}</div>}
@@ -714,12 +732,12 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
 function PhoneHead({title,back,backLabel="桌面",actions}:{title:string;back:()=>void;backLabel?:string;actions?:any}) { return <header className="phone-head"><button onClick={back}>‹ {backLabel}</button><b>{title}</b>{actions||<span />}</header> }
 
 function Browser({ query, setQuery, results, article, setArticle, collect, found, chapter }: any) {
-  const openArticle = (next: Article) => { const clue = next.id === "a23" ? "weather" : next.id === "a31" ? "workboat" : next.id === "a28" && chapter >= 2 ? "ship" : ""; if (clue && !found.includes(clue)) collect(clue); setArticle(next); };
+  const openArticle = (next: Article) => { const clue = next.id === "a23" ? "weather" : next.id === "a28" && chapter >= 2 ? "ship" : ""; if (clue && !found.includes(clue)) collect(clue); setArticle(next); };
   const updateIds=chapter===1?["a39","a42"]:chapter===2?["a43","a44","a46"]:["a47","a48","a51"];
   const updates=updateIds.map(id=>ARTICLES.find(a=>a.id===id)).filter(Boolean) as Article[];
   if (article) return <div className="browser-page article-page"><header className="browser-bar"><button onClick={()=>setArticle(null)}>← 返回结果</button><span>archive.wugang.local / {article.id}</span></header><article><div className="article-meta"><span>{article.tag}</span><time>{article.date}</time></div><h1>{article.title}</h1><div className="article-byline"><b>{article.source || "雾港地方资料库"}</b><span>{article.author || "资料整理员"}</span><time>发布于 {article.date}</time></div><p className="lead">{article.excerpt}</p>{article.image&&<figure><img src={article.image} alt=""/><figcaption>{article.caption||`${article.title}相关现场资料图，图片时间以正文记录为准。`}</figcaption></figure>}{article.deleted && <div className="deleted">原页面已删除。当前内容来自搜索摘要、RSS与纸质剪报交叉恢复。</div>}{article.redacted && <p>公开档案中的经办人：<mark>　　　　　　</mark>。遮盖由2026年数字化整理时添加，理由为“个人信息”。</p>}{article.body.map((p:string,i:number)=><p key={i}>{p}</p>)}<footer className="article-footer">资料编号 {article.id.toUpperCase()} · 页面按原发布来源整理；修订与删除状态单独保留。</footer></article></div>;
   return <div className="browser-page"><header className="browser-bar"><span>今日雾港</span><form onSubmit={(e)=>e.preventDefault()}><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜索地点、机构、年份或事件"/><button>搜索</button></form></header>
-    {!query && <><section className={`portal-hero portal-chapter-${chapter}`}><div><p>{chapter===1?"2026年6月16日　星期二":chapter===2?"2026年6月17日　星期三":"2026年6月17日　凌晨版"}</p><h1>今日雾港</h1><span>{chapter===1?"19°C　阵雨刚停　末班船待复核":chapter===2?"20°C　低云　陈列馆新增目录":"16°C　浓雾　03:17低潮窗口"}</span></div><aside><b>{chapter===1?"航班提醒":chapter===2?"档案更新":"夜间提醒"}</b><p>{chapter===1?"20:10客轮是否开航，将于18:30根据能见度决定。":chapter===2?"一批旧港医疗史目录今天开放，正文仍按隐私等级查阅。":"白塔东段正在设备运输，公众不要进入封闭路段。"}</p></aside></section><section className="portal-updates"><header><b>本章新增</b><span>调查推进后，首页会保留当时可见的更新</span></header>{updates.map(a=><button key={a.id} onClick={()=>openArticle(a)}><time>{a.date}</time><b>{a.title}</b><p>{a.excerpt}</p></button>)}</section></>}
+    {!query && <><section className={`portal-hero portal-chapter-${chapter}`}><div><p>{chapter===1?"2026年6月16日　星期二":chapter===2?"2026年6月16日　夜间版":"2026年6月17日　凌晨版"}</p><h1>今日雾港</h1><span>{chapter===1?"19°C　阵雨刚停　末班船待复核":chapter===2?"17°C　海雾回流　档案目录更新":"16°C　浓雾　03:17低潮窗口"}</span></div><aside><b>{chapter===1?"航班提醒":chapter===2?"档案更新":"夜间提醒"}</b><p>{chapter===1?"20:10客轮是否开航，将于18:30根据能见度决定。":chapter===2?"一批旧港医疗史目录已于22:00更新，正文仍按隐私等级查阅。":"白塔东段正在设备运输，公众不要进入封闭路段。"}</p></aside></section><section className="portal-updates"><header><b>本章新增</b><span>调查推进后，首页会保留当时可见的更新</span></header>{updates.map(a=><button key={a.id} onClick={()=>openArticle(a)}><time>{a.date}</time><b>{a.title}</b><p>{a.excerpt}</p></button>)}</section></>}
     <div className="browser-layout"><div><div className="result-head"><b>{query ? `“${query}”的结果` : "本地资讯与档案"}</b></div>{results.length ? <div className="article-list">{results.map((a:Article)=><button key={a.id} onClick={()=>openArticle(a)}><div><span>{a.tag}</span><time>{a.date}</time>{a.deleted&&<em>原页删除</em>}</div><h3>{a.title}</h3><p>{a.excerpt}</p></button>)}</div> : <div className="no-result"><b>没有找到完全匹配的页面</b><p>可以更换地点、机构或年份重新搜索。</p></div>}</div>
     <aside className="browser-side"><h3>资料分类</h3>{[{label:"岛内新闻",q:"雾港"},{label:"生活商业",q:"生活"},{label:"历史民俗",q:"民俗"},{label:"1992事故",q:"1992"},{label:"健康教育",q:"健康"}].map(item=><button key={item.label} onClick={()=>setQuery(item.q)}>{item.label}</button>)}</aside></div>
   </div>;
@@ -735,9 +753,9 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
   useEffect(()=>{if(chapter!==3||sessionStorage.getItem("wugang-map-glitch"))return;sessionStorage.setItem("wugang-map-glitch","1");const start=window.setTimeout(()=>setMapGlitch(true),650);const end=window.setTimeout(()=>setMapGlitch(false),2700);return()=>{window.clearTimeout(start);window.clearTimeout(end)}},[chapter]);
   const chapterOne:Record<string,{sub:string;desc:string;image:string;actions:MapAction[]}>={
     "客运码头":{sub:"北岸渡口",desc:"实名客轮每日四班，候船厅与售票窗口仍在营业。",image:"/photos/venue-terminal.webp",actions:[["查询实名航班","自助终端显示：林琴6月14日16:30登岛，之后没有离岛核验。","ferry-list"],["询问售票员","售票员翻了纸质补票册：这两天没有林琴，也没有使用她证件的旅客。"]]},
-    "潮生宾馆":{sub:"老街东口",desc:"一间经营二十余年的家庭宾馆。警方登记过306，但房内物品尚未移交家属。",image:"/photos/venue-hotel.webp",actions:[["向前台说明身份","蒋小蕊核对你的身份证、报警回执和林琴登记信息后，交给你一张只能开启306的备用房卡。",undefined,"room-card"],["询问昨晚值班情况","前台只确认林琴整夜未归。完整门卡记录不能口头提供，她建议你先核对房内物品是否有缺失。"]]},
+    "潮生宾馆":{sub:"老街东口",desc:"一间经营二十余年的家庭宾馆。警方登记过306，但房内物品尚未移交家属。",image:"/photos/venue-hotel.webp",actions:[["向前台说明身份","蒋小蕊核对你的身份证、林琴登记的紧急联系人信息，又向接警民警确认后，交给你一张只能开启306的备用房卡。",undefined,"room-card"],["询问昨晚值班情况","前台只确认林琴整夜未归。完整门卡记录不能口头提供，她建议你先核对房内物品是否有缺失。"]]},
     "306房间":{sub:"潮生宾馆 · 三楼",desc:"房卡亮起绿灯。行李箱、外套和未拆封的护膝都在，房间不像正常退房。",image:"/photos/hotel-306.webp",actions:[["检查电子门锁缓存","门内锁体保留最近一条离线缓存：6月15日21:48刷出，此后没有开门记录。","hotel-log"],["查看书桌上的早餐券","房号306，右上角手写C17/04，后面标注低盐。","voucher1704"],["核对随身行李","相机包还在，常穿的灰外套也在；林琴只带走了手机和房卡。"]]},
-    "潮声便利店":{sub:"归潮广场西侧",desc:"二十四小时营业，收银台上贴着三张轮班表。",image:"/photos/clerk-badge.webp",actions:[["和夜班店员交谈","陶小雨说林琴来买过矿泉水，问过白塔东段为什么封路。她胸前的号码分成上下两栏。","badge1704"],["查看小票箱","6月15日22点后的废票还在，但没有找到林琴的付款记录。"]]},
+    "潮声便利店":{sub:"归潮广场西侧",desc:"二十四小时营业，收银台上贴着三张轮班表。",image:"/photos/clerk-badge.webp",actions:[["和夜班店员交谈","陶小雨说林琴来买过矿泉水，问过白塔东段为什么封路。她胸前的号码分成上下两栏。","badge1704"],["请店员核对旧小票","陶小雨把6月15日22点后的废票逐张翻了一遍，没有找到林琴的付款记录。"]]},
     "望潮饭店":{sub:"内湾堤岸",desc:"晚市以工作码头的工人为主，后厨九点半熄火。",image:"/photos/venue-restaurant.webp",actions:[["坐下点餐","陈放认出你是林琴的女儿。他没见过她离岛，只记得她来问过一艘夜间工作船。"],["替旧港门岗带份夜宵","陈放没收钱：‘他胃不好，别放辣。你别一上来就问失踪的人，先问那晚谁值班。’",undefined,"night-meal"],["听邻桌说话","装卸工只肯确认22:20听见过汽笛，是否离泊他没有亲眼看到。"]]},
     "归潮广场":{sub:"镇中心",desc:"公交、露天电影和居民活动都集中在这里。",image:"/photos/venue-plaza.webp",actions:[["阅读航班公告","公告栏保留着6月16日晚班船因平流雾取消的通知。","weather"],["看露天电影排片","今晚放映《海街旧事》，旁边坐着等末班公交的学生。广场看起来一切正常。"]]},
     "旧港冷链":{sub:"西侧工作码头",desc:"冷库仍在运转。访客隔着门岗玻璃，根本看不到登记夹。",image:"/photos/venue-cold-chain.webp",actions:[["敲门询问夜班记录","门卫没有开窗，只指了指‘访客止步’。你一个外地人直接盘问，他没有理由配合。"],["把夜宵递给门岗","他先核对餐盒上陈放写的名字，才把窗推开一点。闲聊中他让你看了一眼22:20登记：三名船员、加油0升，目的港回执空白。","workboat",undefined,"night-meal"]]},
@@ -745,9 +763,9 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
   };
   const chapterTwo:typeof chapterOne={
     "地方陈列馆":{sub:"老街北口",desc:"旧港、学校与康养院的纸本档案在这里数字化。",image:"/photos/nurse-id-1992.webp",actions:[["查转院单目录","四张来自不同县市的转院单，都留下潮生康养院乙区印章。","ward"],["填写纸质调阅申请","管理员核验资料用途后盖了当天的阅览章。凭这张单可以去旧港仓库查一册尚未数字化的领用簿。",undefined,"archive-slip"],["申请查看值班表","1992年6月16日夜班护士为周岚，23:10后十二个床位被手写改动。","nurse"]]},
-    "潮生康养院旧址":{sub:"南坡尽头",desc:"主楼正在修缮，乙区旧病房没有进入施工范围。",image:"/photos/venue-hotel.webp",actions:[["查看施工平面图","公开平面图没有地下层，乙区被标成‘权属待核’。"],["拍摄乙区旧章","门房抽屉里的旧章与四张转院单残留的椭圆章一致。","ward"]]},
+    "潮生康养院旧址":{sub:"南坡尽头",desc:"主楼正在修缮。陈列馆管理员同意陪你查看尚未移交完的乙区旧物。",image:"/photos/venue-hotel.webp",actions:[["查看施工平面图","公开平面图没有地下层，乙区被标成‘权属待核’。"],["核对移交箱里的旧章","管理员从封存箱取出乙区旧章；外形与四张转院单残留的椭圆章一致。","ward"]]},
     "旧港仓库":{sub:"西侧六码头",desc:"废弃木仓旁保留着1992年的船具领用房。",image:"/photos/venue-cold-chain.webp",actions:[["调阅船具领用簿","管理员先收下调阅单才开库门。归潮号核载6人，当晚却领走17件救生衣。","ship",undefined,"archive-slip"],["试开六号铁柜","钥匙能转动，但柜门仍贴着调查机关封条。你只记录了锁号，没有擅自破坏封存。",undefined,undefined,"locker-key"]]},
-    "许伯钟表铺":{sub:"老街中段",desc:"火灾后重新开过门，墙上的钟仍慢七分钟。",image:"/photos/clerk-badge.webp",actions:[["帮许伯校准挂钟","取下背板时掉出一把旧钥匙。许伯认出它属于旧港六号铁柜，让你查完后送回来。",undefined,"locker-key"],["核对旧报时间","报警记录比报纸写的起火时间早八分钟。"]]},
+    "许伯钟表铺":{sub:"老街中段",desc:"火灾后重新开过门，墙上的钟仍慢七分钟。",image:"/photos/clerk-badge.webp",actions:[["出示调阅单并询问旧钥匙","许伯核对陈列馆的调阅章后，才拿出旧港六号柜的备用钥匙。他只答应陪你去仓库试锁，不能把钥匙带走。",undefined,"locker-key","archive-slip"],["核对旧报时间","报警记录比报纸写的起火时间早八分钟。"]]},
     "客运码头":{sub:"北岸渡口",desc:"陈列馆移交记录里，有一批档案从这里运往大陆。",image:"/photos/venue-terminal.webp",actions:[["查1992年工作船","公开客轮系统查不到归潮号，它登记在工作船名录。","ship"],["问旧站务员","他记得事故后几天，码头曾连夜运走一批病床。"]]},
     "白塔":{sub:"北坡尽头",desc:"旧雾笛时刻与归潮号事故发生在同一晚。",image:"/photos/lighthouse-door.webp",actions:[["查看旧时刻表","1992年6月16日23:10后有一次未说明原因的人工播报。"],["看塔内维修签名","维修栏里‘周岚’两个字与护士值班表同名，但笔迹不同。"]]}
   };
@@ -755,24 +773,24 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
     "白塔":{sub:"北坡尽头 · 03:17",desc:"检修门将在低潮时自动解锁，门后通向地下设备层。",image:"/photos/lighthouse-door.webp",actions:[["检查检修门","门禁日程显示03:17自动解锁，关联任务只写了‘LQ转入’。","rescue"],["刷检修挂牌进入控制室","挂牌通过离线核验。控制室日志逐项记录低潮、姓名缩写和生理数值。","fog-horn",undefined,"maintenance-tag"]]},
     "地下观察区":{sub:"白塔下层",desc:"平面图中没有这个房间，电力来自旧港冷链备用线。",image:"/photos/health-records.webp",actions:[["查看床位终端","终端按A、B、C分页显示对象，C17-01至04在同一页，表头没有解释编号含义。","codes"],["确认LQ床位","B-06床位仍有生命体征，转运状态显示‘等待03:17’。你只截取位置和时间，避免拍到病人。",undefined,"bed-location"]]},
     "旧港冷链":{sub:"西侧工作码头",desc:"夜间仍有一条电缆和一辆无牌冷藏车在运行。",image:"/photos/venue-cold-chain.webp",actions:[["查看对账机柜","机柜只留下三条文件路径，正文已经从现场终端清除。要看内容，得回手机恢复本地副本。"],["检查无牌冷藏车","副驾脚垫下压着一块冷链检修挂牌；背面写有白塔03:17的低潮通行窗口。",undefined,"maintenance-tag"]]},
-    "郭家旧宅":{sub:"归潮广场东巷",desc:"郭家的健康群、奖学金和出岛申请都由这里统一处理。",image:"/photos/family-dinner.webp",actions:[["查看家庭群公告","群公告把体检、服药和出岛申请写在同一张表里。","family-group"],["翻药箱标签","四个药袋分别写着C17-01至C17-04。","codes"]]},
+    "郭家旧宅":{sub:"归潮广场东巷",desc:"郭宁带你从后门进入自己的房间。她不肯交出家人的隐私，只同意核对与自己有关的记录。",image:"/photos/family-dinner.webp",actions:[["查看郭宁导出的群公告","群公告把体检、服药和出岛申请写在同一张表里。","family-group"],["核对郭宁保存的药袋照片","四个药袋分别写着C17-01至C17-04；她只让你拍编号，没有拍姓名。","codes"]]},
     "引水洞":{sub:"旧港北侧海蚀通道",desc:"普通地图没有标注，退潮后入口才露出半米。",image:"/photos/wugang-aerial.webp",actions:[["核对潮位","03:17前后有二十二分钟可通行窗口。","rescue"],["查看洞口拖痕","新鲜轮痕从冷链码头方向一直延伸到水线。"]]},
     "客运码头":{sub:"北岸渡口",desc:"救援位置和证据可在这里接入岛外网络发送。",image:"/photos/venue-terminal.webp",actions:[["测试岛外上传","固定网络可用，三个加密备份目标均已连通。"],["查询凌晨船班","04:20有一艘海事巡逻艇靠岸，可作为撤离接应。"]]},
     "旧港监控室":{sub:"冷链地下一层 · 镜像节点",desc:"五套本应彼此独立的监控，在这里被接进同一面屏幕墙。中心画面正停在你经过冷链东门的那一帧。",image:"/photos/surveillance-room.png",actions:[["查看中心屏幕","画面里是你的背影。左侧小屏按时间倒序保存着你进入宾馆、客运站和旧港的路线；陌生号码不是在猜。"],["复制只读镜像索引","你用手机扫描节点二维码，只复制镜头编号与时间戳，原始录像仍留在设备中。",undefined,"mirror-index"],["断开远端观看","确认只读索引已经保存后，你拔掉标为WAN的上行线。本地录像继续运行，远端画面中断。",undefined,undefined,"mirror-index"]]}
   };
   const places=chapter===1?chapterOne:chapter===2?chapterTwo:chapterThree;
   const mapImage=chapter===1?"/photos/wugang-map-rain.webp":chapter===2?"/photos/wugang-map-archive.webp":"/photos/wugang-map-night.webp";
-  const monitorUnlocked=chapter===3&&found.includes("payments")&&found.includes("rescue");
+  const monitorUnlocked=chapter===3&&found.includes("payments")&&found.includes("rescue")&&inventory.includes("maintenance-tag");
   const visiblePlaces=Object.keys(places).filter(name=>name!=="306房间"&&(name!=="地下观察区"||inventory.includes("maintenance-tag"))&&(name!=="旧港监控室"||monitorUnlocked));
   const imageFor=(action:MapAction,item:{image:string})=>action[2]==="hotel-log"?"/photos/hotel-306.webp":action[2]==="badge1704"?"/photos/clerk-badge.webp":action[2]==="ward"?"/photos/transfer-forms.webp":action[2]==="nurse"?"/photos/nurse-id-1992.webp":action[2]==="codes"?"/photos/health-records.webp":item.image;
   const visit=(name:string)=>{setPlace(name);setInside(name);setEvent(null);};
-  const act=(action:MapAction,item:any)=>{if(action[4]&&!inventory.includes(action[4])){const needed=ITEMS[action[4]];setEvent({title:"现在还做不了",text:`这里不会因为你点了一下就配合。先找到“${needed?.title||"必要物品"}”，再回来试。`,image:item.image});return}setEvent({title:action[0],text:action[1],image:imageFor(action,item)});if(action[2]&&!found.includes(action[2]))collect(action[2]);if(action[3])acquireItem(action[3]);};
+  const act=(action:MapAction,item:any)=>{if(action[4]&&!inventory.includes(action[4])){const needed=ITEMS[action[4]];setEvent({title:"现在还缺一个由头",text:`对方没有理由配合。先找到“${needed?.title||"必要物品"}”，也许能让这次交涉有个自然的开场。`,image:item.image});return}setEvent({title:action[0],text:action[1],image:imageFor(action,item)});if(action[2]&&!found.includes(action[2]))collect(action[2]);if(action[3])acquireItem(action[3]);};
   if(inside){const item=places[inside];const hasRoomCard=inventory.includes("room-card");return <div className={`venue-page venue-chapter-${chapter}`} style={{backgroundImage:`linear-gradient(180deg,rgba(10,18,16,.12),rgba(10,18,16,.82)),url(${item.image})`}}><header><button onClick={()=>{inside==="306房间"?setInside("潮生宾馆"):setInside(null);setEvent(null);}}>← {inside==="306房间"?"返回前台":"离开，返回地图"}</button><span>{CHAPTERS[chapter-1].title} · {item.sub}</span></header><section><p>当前地点</p><h1>{inside}</h1><strong>{item.desc}</strong>{inside==="潮生宾馆"&&<button className={`room-entry ${hasRoomCard?"unlocked":"locked"}`} onClick={()=>hasRoomCard?setInside("306房间"):notify("前台不会让你直接上楼。先说明身份并完成登记。")}>{hasRoomCard?"刷卡进入306房间 →":"306房间 · 需要房卡"}</button>}<div className="venue-actions">{item.actions.map((action,i)=><button key={i} onClick={()=>act(action,item)}><span>{String(i+1).padStart(2,"0")}</span>{action[0]}</button>)}</div></section>{event&&<div className="venue-modal" role="dialog" aria-modal="true"><article><figure><img src={event.image} alt=""/></figure><small>{event.title.includes("房卡")||event.title.includes("身份")?"交互结果":"现场查看"}</small><h2>{event.title}</h2><p>{event.text}</p><button onClick={()=>setEvent(null)}>关闭</button></article></div>}</div>}
-  return <div className={`map-page map-chapter-${chapter}`}><div className="map-canvas real-map" style={{backgroundImage:`linear-gradient(rgba(15,28,25,.16),rgba(15,28,25,.22)),url(${mapImage})`}}>{visiblePlaces.map((p,i)=><button key={p} style={{left:`${12+(i*15)%70}%`,top:`${14+(i*21)%64}%`}} className={place===p?"active":""} onClick={()=>setPlace(p)}><i>{i+1}</i>{p}</button>)}<div className="map-time"><b>{chapter===1?"16:42":chapter===2?"09:10":"03:17"}</b><span>{chapter===1?"阵雨刚停":chapter===2?"档案重建视图":"低潮 · 浓雾"}</span></div>{mapGlitch&&<div className="map-glitch"><i/><b>当前位置</b><span>白塔下方 · -12m</span><em>定位信号异常</em></div>}</div><aside><p>{CHAPTERS[chapter-1].title} · 岛内地图</p><h2>{place}</h2><b>{places[place].sub}</b><p>{places[place].desc}</p>{inventory.length>0&&<div className="map-items"><span>随身物品</span>{inventory.map((id:string)=><b key={id}>{ITEMS[id]?.title}</b>)}</div>}<button className="route" onClick={()=>visit(place)}>进入地点</button></aside></div>
+  return <div className={`map-page map-chapter-${chapter}`}><div className="map-canvas real-map" style={{backgroundImage:`linear-gradient(rgba(15,28,25,.16),rgba(15,28,25,.22)),url(${mapImage})`}}>{visiblePlaces.map((p,i)=><button key={p} style={{left:`${12+(i*15)%70}%`,top:`${14+(i*21)%64}%`}} className={place===p?"active":""} onClick={()=>setPlace(p)}><i>{i+1}</i>{p}</button>)}<div className="map-time"><b>{chapter===1?"20:26":chapter===2?"22:36":"03:17"}</b><span>{chapter===1?"海雾渐浓":chapter===2?"海雾回流":"低潮 · 浓雾"}</span></div>{mapGlitch&&<div className="map-glitch"><i/><b>当前位置</b><span>白塔下方 · -12m</span><em>定位信号异常</em></div>}</div><aside><p>{CHAPTERS[chapter-1].title} · 岛内地图</p><h2>{place}</h2><b>{places[place].sub}</b><p>{places[place].desc}</p>{inventory.length>0&&<div className="map-items"><span>调查道具</span>{inventory.map((id:string)=><b key={id}>{ITEMS[id]?.title}</b>)}</div>}<button className="route" onClick={()=>visit(place)}>进入地点</button></aside></div>
 }
 
 const clueQuestion=(id:string)=>({
-  "last-chat":"她说“事情办完再买”，来雾港究竟要办什么？","hotel-log":"宾馆在发现住客整夜未归后，具体什么时候报了警？","ferry-list":"没有离岛核验，是否还存在不走客轮的离岛方式？","workboat":"加油量为0、目的港无回执，这艘船当晚真的离泊了吗？","badge1704":"门店17与员工04为什么会以相同顺序出现在别处？","voucher1704":"早餐券上的C17/04由谁手写，代表房客还是后厨？","ward":"不同县市的孩子为什么都被转入同一病区？","nurse":"23:10之后是谁改动了十二张床位记录？","ship":"核载6人的船为什么领走17件救生衣？","codes":"生活记录里的数字为何又出现在这张随访表中？","payments":"同一天出现的三套单据，对应的是同一批货还是同一次安排？","fog-horn":"雾笛日志为什么记录人的姓名应答？","lan-transplant":"被遮盖的供体姓名能否通过档案尾号反查？"
+  "last-chat":"她说“事情办完再买”，说明返程日期没有确定。最后一次报平安之后，她去了哪里？","hotel-log":"21:48刷出后，她有没有出现在宾馆附近的其他记录里？","ferry-list":"没有离岛核验，是否还存在不走客轮的离岛方式？","workboat":"加油量为0、目的港无回执，这艘船当晚真的离泊了吗？","badge1704":"门店17与员工04为什么会以相同顺序出现在别处？","voucher1704":"早餐券上的C17/04由谁手写，代表房客还是后厨？","ward":"不同县市的孩子为什么都被转入同一病区？","nurse":"23:10之后是谁改动了十二张床位记录？","ship":"核载6人的船为什么领走17件救生衣？","codes":"生活记录里的数字为何又出现在这张随访表中？","payments":"同一时间执行的三套单据，对应的是同一批货还是同一次安排？","fog-horn":"雾笛日志为什么记录人的姓名应答？","lan-transplant":"被遮盖的供体姓名能否通过档案尾号反查？"
 } as Record<string,string>)[id];
 
 function Evidence({found,chapter,collect}:{found:string[];chapter:number;collect:(id:string)=>void}) {
@@ -785,4 +803,21 @@ function Evidence({found,chapter,collect}:{found:string[];chapter:number;collect
     {items.length?<div className="evidence-grid">{items.map((c,i)=><button className={`evidence-card ${c.source.includes("组合推演")?"deduced":""}`} key={c.id} onClick={()=>setOpen(c)}><span>{String(i+1).padStart(2,"0")} · {CHAPTERS[c.chapter-1].title}</span><h3>{c.title}</h3><p>{c.text}</p><small>来源：{c.source}</small><em>查看详情 →</em></button>)}</div>:<div className="empty-evidence">本章手记内尚无材料。</div>}<footer>当前章节：{CHAPTERS[chapter-1].title}</footer>{open&&<div className="evidence-modal" role="dialog" aria-modal="true"><article><small>{CHAPTERS[open.chapter-1].title} · {open.source.includes("组合推演")?"材料关系":"原始材料"}</small><h2>{open.title}</h2><b>{open.source}</b><p>{open.text}</p>{(clueQuestion(open.id)||DEDUCTIONS.find(d=>d.id===open.id)?.question)&&<aside><span>尚未解决</span><p>{clueQuestion(open.id)||DEDUCTIONS.find(d=>d.id===open.id)?.question}</p></aside>}<button onClick={()=>setOpen(null)}>关闭</button></article></div>}</div>
 }
 
-function Board({chapter,collected,selected,toggle,answer,setAnswer,submit,investigate}:any) { const deductions=collected.filter((c:Clue)=>c.source.includes("组合推演"));const hasDeduction=deductions.length>0;return <div className="board-page"><header><p>阶段结论随时开放</p><h1>{CHAPTERS[chapter-1].question}</h1><span>选择一条已经成立的组合推演，再写下阶段判断。原始材料已记录在推演内部，不需要重复提交。</span></header>{!hasDeduction&&<div className="investigate-callout"><div><b>先把材料之间的关系理出来</b><p>回到调查手记。能在时间、人物或编号上互相印证的记录，会出现“组合推演”。</p></div><button onClick={investigate}>继续调查 →</button></div>}<form onSubmit={submit}><div className="board-columns"><section><h3>一、选择论证 <small>{selected.length}/1</small></h3>{hasDeduction?deductions.map((c:Clue)=><button type="button" key={c.id} className={`${selected.includes(c.id)?"selected":""} deduced`} onClick={()=>toggle(c.id)}><i>{selected.includes(c.id)?"✓":"+"}</i><span><b>{c.title}</b><small>{c.source}</small></span></button>):<div className="board-empty"><p>还没有完成组合推演。</p><button type="button" onClick={investigate}>先从手机里的日常记录查起</button></div>}</section><section><h3>二、写下阶段判断</h3>{chapter===1?<div className="answers"><label><input type="radio" name="a" value="left" checked={answer==="left"} onChange={e=>setAnswer(e.target.value)}/>林琴已经通过非公开方式离岛</label><label><input type="radio" name="a" value="island" checked={answer==="island"} onChange={e=>setAnswer(e.target.value)}/>没有可靠记录证明她离岛，她仍在岛上的可能性最高</label><label><input type="radio" name="a" value="accident" checked={answer==="accident"} onChange={e=>setAnswer(e.target.value)}/>她在海上遭遇了无法解释的事故</label></div>:chapter===2?<div className="answers"><label><input type="radio" name="a" value="coincidence" checked={answer==="coincidence"} onChange={e=>setAnswer(e.target.value)}/>十二份记录只是年代接近</label><label><input type="radio" name="a" value="transfer" checked={answer==="transfer"} onChange={e=>setAnswer(e.target.value)}/>儿童经福利、医疗和港口系统被分散转运到乙区</label><label><input type="radio" name="a" value="ghost" checked={answer==="ghost"} onChange={e=>setAnswer(e.target.value)}/>孩子们被民俗仪式召集到岛上</label></div>:<div className="answers"><label><input type="radio" name="a" value="publish" checked={answer==="publish"} onChange={e=>setAnswer(e.target.value)}/>立刻公开所有供体、受体与后代姓名</label><label><input type="radio" name="a" value="destroy" checked={answer==="destroy"} onChange={e=>setAnswer(e.target.value)}/>先销毁编号表，阻止灵异扩散</label><label><input type="radio" name="a" value="rescue-first" checked={answer==="rescue-first"} onChange={e=>setAnswer(e.target.value)}/>先按检修道救人并异地备份，再分层公开犯罪证据</label></div>}<button className="submit-conclusion">{chapter===3?"执行最终行动":"提交阶段结论"}</button><small className="submit-note">推演已经保存了引用来源。这里仅判断哪条推演最能支撑你的结论。</small></section></div></form></div> }
+function Board({chapter,collected,selected,toggle,answer,setAnswer,submit,investigate}:any) {
+  const deductions=collected.filter((c:Clue)=>c.source.includes("组合推演"));
+  const hasDeduction=deductions.length>0;
+  const choices=chapter===1?[
+    ["left","林琴已经通过非公开方式离岛"],
+    ["island","没有可靠记录证明她离岛，她仍在岛上的可能性最高"],
+    ["accident","她在海上遭遇了无法解释的事故"],
+  ]:chapter===2?[
+    ["coincidence","康养院只是集中接收疑难患儿，记录重合源于当年归档混乱"],
+    ["transfer","儿童经福利、医疗和港口系统被分散转运到乙区"],
+    ["ghost","十二份记录只是年代接近，无法证明存在统一转运"],
+  ]:[
+    ["publish","立刻公开所有供体、受体与后代姓名"],
+    ["destroy","立即切断白塔电力并带走设备，人员和证据之后再处理"],
+    ["rescue-first","先按检修道救人并异地备份，再分层公开犯罪证据"],
+  ];
+  return <div className="board-page"><header><p>阶段结论随时开放</p><h1>{CHAPTERS[chapter-1].question}</h1><span>选择一条已经成立的组合推演，再写下阶段判断。原始材料已记录在推演内部，不需要重复提交。</span></header>{!hasDeduction&&<div className="investigate-callout"><div><b>先把材料之间的关系理出来</b><p>回到调查手记。能在时间、人物或编号上互相印证的记录，会出现“组合推演”。</p></div><button onClick={investigate}>继续调查 →</button></div>}<form onSubmit={submit}><div className="board-columns"><section><h3>一、选择论证 <small>{selected.length}/1</small></h3>{hasDeduction?deductions.map((c:Clue)=><button type="button" key={c.id} className={`${selected.includes(c.id)?"selected":""} deduced`} onClick={()=>toggle(c.id)}><i>{selected.includes(c.id)?"✓":"+"}</i><span><b>{c.title}</b><small>{c.source}</small></span></button>):<div className="board-empty"><p>还没有完成组合推演。</p><button type="button" onClick={investigate}>先从手机里的日常记录查起</button></div>}</section><section><h3>二、写下阶段判断</h3><div className="answers">{choices.map(([value,label])=><label key={value}><input type="radio" name="a" value={value} checked={answer===value} onChange={e=>setAnswer(e.target.value)}/>{label}</label>)}</div><button className="submit-conclusion">{chapter===3?"执行最终行动":"提交阶段结论"}</button><small className="submit-note">推演已经保存了引用来源。这里仅判断哪条推演最能支撑你的结论。</small></section></div></form></div>
+}
