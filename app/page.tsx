@@ -424,7 +424,14 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
     window.setTimeout(() => appendMessage(thread,{side:"them",text:kind === "位置" ? "位置收到了。别从东段步道走，那里围栏是新换的。" : "收到了，我先保存原件，不转发。"}), 650);
   };
   const back = () => transition(() => { setThread(""); setComposer(null); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(false); setApp("home"); });
-  return <div className="phone-stage"><div className={`phone phone-${chapter}`} onTouchStart={event => setTouchStart(event.touches[0].clientY)} onTouchEnd={event => { if (touchStart !== null && event.changedTouches[0].clientY - touchStart > 46) setControlOpen(true); setTouchStart(null); }}>
+  return <div className="phone-stage"><div className={`phone phone-${chapter}`} onTouchStart={event => {
+    const y = event.touches[0].clientY;
+    const phoneTop = event.currentTarget.getBoundingClientRect().top;
+    setTouchStart(y - phoneTop <= 64 ? y : null);
+  }} onTouchEnd={event => {
+    if (touchStart !== null && event.changedTouches[0].clientY - touchStart > 46) setControlOpen(true);
+    setTouchStart(null);
+  }} onTouchCancel={() => setTouchStart(null)}>
     <button className="phone-status" onClick={() => setControlOpen(true)} aria-label="打开控制中心"><span>{phoneTime}</span><b><i className="signal-bars">{[1,2,3,4].map(level => <span key={level} className={level <= signalLevel ? "on" : ""} />)}</i><i className={`wifi ${wifiOn && !airplaneOn ? "on" : ""}`}>⌁</i><i className={`battery ${charging ? "charging" : ""}`}><span style={{width:`${Math.round(batteryLevel * 100)}%`}} /></i></b></button>
     <div className={`control-center ${controlOpen ? "open" : ""}`} aria-hidden={!controlOpen}>
       <button className="control-dismiss" onClick={() => setControlOpen(false)} aria-label="关闭控制中心" />
