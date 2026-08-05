@@ -8,9 +8,9 @@ type Article = { id: string; chapter: number; tag: string; date: string; title: 
 type Clue = { id: string; chapter: number; title: string; source: string; text: string };
 
 const CHAPTERS = [
-  { no: 1, device: "林岚的手机", title: "回潮口", question: "母亲为什么来雾港，她是否已经离开这座岛？", count: 6 },
+  { no: 1, device: "林岚的手机", title: "回潮口", question: "母亲为什么来雾港，她是否已经离开这座岛？", count: 7 },
   { no: 2, device: "林琴的旧手机", title: "旧名册", question: "散落在不同地区的十二份记录，为什么指向同一间病区？", count: 5 },
-  { no: 3, device: "郭宁的手机", title: "雾笛之后", question: "雾港的编号在记录什么，郭维今晚准备做什么？", count: 5 },
+  { no: 3, device: "郭宁的手机", title: "雾笛之后", question: "雾港的编号在记录什么，郭维今晚准备做什么？", count: 6 },
 ];
 
 const CLUES: Clue[] = [
@@ -133,17 +133,19 @@ const HINTS = [
 type ChatLine = { side: "them" | "me" | "system"; text: string };
 function conversationFor(chapter: number, thread: string): ChatLine[] {
   if (thread === "潮") return chapter === 1 ? [
-    { side: "them", text: "到岛上了？雨大不大。" }, { side: "me", text: "刚停。宾馆的人说话都留半句，听着难受。" },
-    { side: "them", text: "先吃饭。饿着的时候容易把猜测当事实。" }, { side: "me", text: "你怎么总能一下抓到重点？" },
-    { side: "them", text: "我只是把你已经看见的东西，换个顺序放回去。" }, { side: "them", text: "一个人要离开岛，总得在某套记录里留下重量。" },
+    { side: "them", text: "到了？" }, { side: "me", text: "嗯。刚下过雨。" },
+    { side: "them", text: "你妈住哪间。" }, { side: "me", text: "306。人不在，行李还在。" },
+    { side: "them", text: "先查门卡。再查船票。" }, { side: "me", text: "你觉得她没走？" },
+    { side: "them", text: "我没这么说。先看记录。" },
   ] : chapter === 2 ? [
-    { side: "me", text: "十二张启事，十二个名字。我越看越像有人故意让我看不懂。" }, { side: "them", text: "那就先别看名字。名字最容易被改。" },
-    { side: "them", text: "年龄、衣服、转院章，挑两样不会一起撒谎的。" }, { side: "me", text: "你小时候是不是特别会整理错题？" },
-    { side: "them", text: "不记得了。可能我只是讨厌别人把人写成编号。" },
+    { side: "me", text: "十二张。看得我眼睛疼。" }, { side: "them", text: "名字先放一边。" },
+    { side: "me", text: "那看什么？" }, { side: "them", text: "年龄。衣服。章。哪个重复就圈哪个。" },
+    { side: "me", text: "你以前干过这个？" }, { side: "them", text: "没有。就是觉得名字不太靠得住。" },
   ] : [
-    { side: "them", text: "你找到她的位置了？" }, { side: "me", text: "差不多。但名单也在我手里。" },
-    { side: "them", text: "先把救人的路线和公开证据分开。名单里不只有坏人。" }, { side: "me", text: "你今天说话特别像我妈。" },
-    { side: "them", text: "那你就当有两个人催你别逞强。" },
+    { side: "them", text: "找到人了？" }, { side: "me", text: "知道在哪。还没进去。" },
+    { side: "them", text: "位置先发出去。" }, { side: "me", text: "名单呢？一起发？" },
+    { side: "them", text: "别。里面有病人。先备份。" }, { side: "me", text: "你到底站哪边。" },
+    { side: "them", text: "你这边。快点。" },
   ];
   const chats: Record<string, ChatLine[]> = {
     "1:妈妈": [
@@ -167,9 +169,9 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
       { side: "me", text: "好。你先别跟老板争，我到了再说。" }, { side: "them", text: "嗯，路上慢点，码头地砖下雨很滑。" },
     ],
     "2:沈砚（旧号码）": [
-      { side: "them", text: "别从姓名入手。那十二个名字里至少七个是后来补的。" }, { side: "me", text: "你到底是谁？为什么用沈砚的号码？" },
-      { side: "them", text: "先看年龄、衣物、转院章。周岚当晚带走的不是病历，是人。" }, { side: "me", text: "你认识我母亲？" },
-      { side: "them", text: "她比她自己记得的更早认识雾港。" },
+      { side: "them", text: "别查名字。那份名单后补过。" }, { side: "me", text: "你谁？为什么拿沈砚的号给我发消息？" },
+      { side: "them", text: "先看年龄、衣服，还有转院章。" }, { side: "me", text: "你认识我妈？" },
+      { side: "them", text: "认识。她不一定记得。" },
     ],
     "2:妈妈": [
       { side: "me", text: "妈，医生说你最近又忘记关火。要不换个带定时的灶？" }, { side: "them", text: "是汤扑了，不是忘了。你别听陈姨夸张。" },
@@ -212,8 +214,8 @@ const avatarFor = (name: string) => name === "潮" ? "/avatars/tide.webp" : name
   ? "/avatars/doctor.webp" : name.includes("陶") || name.includes("蒋") ? "/avatars/clerk.webp" : "/avatars/chen.webp";
 
 const replyChoicesFor = (chapter:number, name:string) => {
-  if(name === "潮") return chapter === 1 ? ["如果她没有离岛，还能藏在哪里？","我应该先核对哪两份记录？","那些重复编号值得查吗？"] : chapter === 2 ? ["为什么不能先查姓名？","十二份记录该怎么排？","归潮号和乙区有什么关系？"] : ["今晚应该先救人还是先公开？","你到底是谁？","白塔下面真的有人吗？"];
-  if(name === "妈妈") return ["你现在还在宾馆吗？","我明天去接你。","看到消息马上回我。"];
+  if(name === "潮") return chapter === 1 ? ["先查哪儿？","你觉得她还在岛上？","便利店那个编号呢？"] : chapter === 2 ? ["为啥不查名字？","这十二张怎么排？","归潮号跟乙区有关系？"] : ["先救人还是先发名单？","你到底谁啊？","白塔下面有人？"];
+  if(name === "妈妈") return ["妈，你还在宾馆吗？","我明天去接你。","看见了回我一下。"];
   if(name.includes("宾馆")) return ["请不要动306里的东西。","能把门卡记录发给我吗？","你们什么时候发现她没回来？"];
   if(name.includes("郭家")) return ["体检原始报告在哪里？","今晚我不去白塔。","编号是谁定的？"];
   if(name === "爸爸") return ["把我的体检报告发来。","你们到底在保护谁？","我今晚不会回家。"];
@@ -221,14 +223,14 @@ const replyChoicesFor = (chapter:number, name:string) => {
 };
 
 const autoReplyFor = (chapter:number, name:string, text:string) => {
-  if(name === "潮") return text.includes("谁") ? "等你找到TX-0817-12，名字会自己回来。" : text.includes("救人") ? "先把位置发到岛外，再进检修道。证据可以复制，人不能。" : text.includes("编号") ? "先记下它出现在哪些互不相干的地方，别急着给它命名。" : "把宾馆、客轮和工作码头按时间排一遍，缺口会自己露出来。";
+  if(name === "潮") return text.includes("谁") ? "现在说了你也不信。先找TX-0817-12。" : text.includes("救人")||text.includes("名单") ? "先发位置。名单等等。里面不全是坏人。" : text.includes("编号") ? "拍下来。先别问店员。" : text.includes("哪儿") ? "宾馆。码头。先这两个。" : "有可能。先别下结论。";
   if(name === "妈妈") return "消息已发出，但一直没有送达。";
-  if(name.includes("宾馆")) return text.includes("门卡") ? "可以。前台打印机有点慢，我拍清楚后发给您。" : "老板已经报警备案，306暂时封存，只有前台和民警能开门。";
+  if(name.includes("宾馆")) return text.includes("门卡") ? "行，我打印一下。等会儿拍给你。" : "报过了。306现在锁着，东西没动。";
   if(name.includes("郭家")) return "郭维：家里的事回家说，不要在群里讨论编号。";
   if(name === "爸爸") return text.includes("报告") ? "纸质原件不在我这里。你先回来，我当面解释。" : "你现在情绪不稳定，别一个人去白塔。";
   if(name.includes("陶") || name.includes("蒋")) return "我把照片原图留着了。下班以后当面给你看，微信里先别转发。";
   if(name.includes("医生")) return "我只能确认档案编号，涉及患者身份的部分需要本人到场申请。";
-  return "我再翻一下手边的记录，找到原件就拍给你。";
+  return "我找找。等下回你。";
 };
 
 export default function Home() {
@@ -252,6 +254,7 @@ export default function Home() {
 
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("wugang-v5") || "null"); if (v) { setStarted(v.started); setChapter(v.chapter); setUnlocked(v.unlocked); setFound(v.found || []); } } catch {} }, []);
   useEffect(() => { localStorage.setItem("wugang-v5", JSON.stringify({ started, chapter, unlocked, found })); }, [started, chapter, unlocked, found]);
+  useEffect(() => { window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" })); }, [area, chapter]);
 
   const chapterClues = CLUES.filter(c => c.chapter === chapter);
   const collected = chapterClues.filter(c => found.includes(c.id));
@@ -320,7 +323,7 @@ export default function Home() {
     <section className="mission">
       <div><span>当前设备</span><b>{CHAPTERS[chapter - 1].device}</b></div>
       <div className="question"><span>本章调查问题</span><strong>{CHAPTERS[chapter - 1].question}</strong></div>
-      <div className="chapter-progress"><b>{collected.length}</b> / {chapterClues.length}<span>相关材料</span></div>
+      <div className="chapter-progress"><b>{collected.length}</b> / {chapterClues.length}<span>本章材料</span></div>
     </section>
     {hint > 0 && <div className="hint-strip"><b>提示 {hint}</b><p>{HINTS[chapter - 1][hint - 1]}</p><button onClick={() => setHint(0)}>收起</button></div>}
 
@@ -346,6 +349,8 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
   const tracks = ["内湾晴天", "返程票", "二楼走廊", "夜船不开", "未命名录音"];
   const orders = [{name:"防潮相机袋",icon:"袋",status:"交易成功",detail:"深灰色 · 单肩防水款",price:"¥79.00",logistics:["6月9日 14:12 已签收","6月9日 09:30 到达雾港客运站","6月8日 18:05 临海转运中心发出"]},{name:"速溶咖啡 20条",icon:"咖",status:"交易成功",detail:"无糖黑咖啡 · 20条",price:"¥32.80",logistics:["6月11日 16:40 前台代收","6月11日 11:20 随客轮进岛"]},{name:"白色运动鞋",icon:"鞋",status:"交易成功",detail:"37码 · 米白色",price:"¥159.00",logistics:["5月28日 19:08 本人签收","5月28日 13:10 派送中"]},{name:"给妈妈的护膝",icon:"礼",status:"已签收",detail:"保暖护膝 · 深灰 · M码",price:"¥68.00",logistics:["6月13日 17:46 潮生宾馆前台代收","6月13日 16:55 到达老街配送点","6月12日 20:20 临海转运中心发出"]}];
   const phoneFiles = chapter === 1 ? [["客轮实名订单.pdf","仅有登岛票","ferry-list"],["工作船说明.txt","郭维口述", "workboat"]] : chapter === 2 ? [["1992_乙区值班表.pdf","扫描件 · 4页","nurse"],["归潮号港务内参.pdf","公开版已删除","ship"],["2009_就诊备忘.txt","林琴自述","qin-note"]] : [["第三代观察表.xlsx","内部导出","codes"],["冷链付款对账.pdf","三套系统日期一致","payments"],["今晚处置日程.ics","03:17 观察区","rescue"],["雾笛反应日志.m4a","原始录音","fog-horn"],["林岚_儿童移植随访.pdf","供体姓名已遮盖","lan-transplant"]];
+  const primaryNote = chapter === 1 ? {title:"去雾港前",time:"6月14日 09:18",preview:"相机、充电线、雨衣……",body:"相机、充电线、雨衣。\n先去宾馆，再去派出所。\n妈那件灰外套别忘了拿。\n她以前记性不好这事，先别跟不相干的人说。"} : chapter === 2 ? {title:"如果又忘了",time:"2009年9月3日 23:41",preview:"名单分开存……",body:"名单分开存。\n失踪的、做过手术的、家里后来留下来的，别混一块。\n沈砚要是没回来，原件先别交。"} : {title:"我不想继续体检",time:"6月16日 01:06",preview:"爸又催体检……",body:"爸又催体检。\n他说药、奖学金、出岛名额都是家里给的。\n可我就想看一眼自己的报告。为什么不行？"};
+  const noteEntries=[primaryNote,{title:"要买的",time:"6月13日 20:04",preview:"电池、创可贴、矿泉水",body:"电池\n创可贴\n矿泉水\n给妈妈带一件薄外套"},{title:"船班",time:"6月12日 17:22",preview:"16:30去，后天再看返程",body:"去程先买16:30。\n返程等妈办完事再定。\n大雾会停船，出发前再看一次。"}];
   const [now, setNow] = useState(() => new Date());
   const [batteryLevel, setBatteryLevel] = useState(.78);
   const [charging, setCharging] = useState(false);
@@ -367,14 +372,20 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
   const [wechatSub,setWechatSub]=useState("");
   const [selectedOrder,setSelectedOrder]=useState<(typeof orders)[number]|null>(null);
   const [selectedFile,setSelectedFile]=useState<any[]|null>(null);
-  const [noteOpen,setNoteOpen]=useState(false);
+  const [noteOpen,setNoteOpen]=useState<number|null>(null);
+  const [shopQuery,setShopQuery]=useState("");
   const [weatherMode,setWeatherMode]=useState<"hourly"|"daily">("hourly");
   const [musicProgress,setMusicProgress]=useState(0);
+  const [utility,setUtility]=useState<"timer"|"calculator"|null>(null);
+  const [timerRunning,setTimerRunning]=useState(false);
+  const [timerSeconds,setTimerSeconds]=useState(0);
+  const [calc,setCalc]=useState("0");
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
   useEffect(()=>{if(!playing)return;const timer=window.setInterval(()=>setMusicProgress(value=>value>=100?0:value+1),1200);return()=>window.clearInterval(timer)},[playing,track]);
+  useEffect(()=>{if(!timerRunning)return;const timer=window.setInterval(()=>setTimerSeconds(value=>value+1),1000);return()=>window.clearInterval(timer)},[timerRunning]);
   useEffect(() => {
     let active = true;
     let battery: any;
@@ -406,12 +417,23 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
   const openApp = (next: AppId) => {
     if (next === "weather" && chapter === 1 && !found.includes("weather")) collect("weather");
     if (next === "notes" && chapter === 2 && !found.includes("qin-note")) collect("qin-note");
-    transition(() => { setThread(""); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(false); setApp(next); });
+    transition(() => { setThread(""); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(null); setApp(next); });
   };
   const openThread = (name: string) => {
     const clue = chapter === 1 && name === "妈妈" ? "last-chat" : chapter === 1 && name === "潮生宾馆" ? "hotel-log" : chapter === 2 && name === "沈砚（旧号码）" ? "twelve" : chapter === 3 && name === "郭家健康群" ? "family-group" : "";
     if (clue && !found.includes(clue)) collect(clue);
     transition(() => { setThread(name); setComposer(null); setVoiceMode(false); });
+  };
+  const renderWechatSub = () => {
+    if (wechatSub === "朋友圈") return <><article><img src="/photos/venue-plaza.webp" alt="归潮广场"/><b>蒋小蕊</b><p>今天广场电影取消了，椅子都收仓库了。</p></article><article><img src="/photos/venue-restaurant.webp" alt="望潮饭店"/><b>陈放</b><p>休渔期菜单，别问有没有刚上岸的。</p></article></>;
+    if (wechatSub === "扫一扫") return <div className="scan-page"><i>⌗</i><p>将二维码放入框内，即可自动扫描</p><button onClick={()=>setWechatSub("扫描结果")}>从相册选取</button></div>;
+    if (wechatSub === "扫描结果") return <div className="wechat-article"><small>扫描结果</small><h3>未发现二维码</h3><p>所选照片只有一张褪色的门牌和手写日期，未识别出可打开的链接。</p></div>;
+    if (wechatSub === "看一看") return <div className="look-page"><button onClick={()=>setWechatSub("末班船复核")}>雾港今晚末班船待复核</button><button onClick={()=>setWechatSub("白塔封闭")}>白塔东段继续封闭</button></div>;
+    if (wechatSub === "末班船复核") return <article className="wechat-article"><img src="/photos/venue-terminal.webp" alt="雨中的雾港客运码头"/><small>今日雾港 · 16:40</small><h3>雾港今晚末班船待复核</h3><p>客运站称，20:10班次将于18:30依据海面能见度决定是否开航。已购票旅客可在窗口改签，行李托运暂不受理。</p></article>;
+    if (wechatSub === "白塔封闭") return <article className="wechat-article"><img src="/photos/lighthouse-door.webp" alt="白塔东侧检修门"/><small>岛务通知 · 昨天</small><h3>白塔东段继续封闭</h3><p>东侧检修路因边坡维护继续封闭。封闭告示上的日期被雨水浸花，现场未公布恢复通行时间。</p></article>;
+    if (wechatSub === "设置") return <div className="setting-page"><label>消息通知<input type="checkbox" defaultChecked/></label><label>听筒模式<input type="checkbox"/></label><button onClick={()=>setWechatSub("聊天记录")}>聊天记录迁移</button></div>;
+    if (wechatSub === "聊天记录") return <div className="wechat-article"><small>聊天记录迁移</small><h3>记录保存在这台手机</h3><p>需要另一台设备扫描确认后才能迁移。目前没有已登录的其他设备。</p></div>;
+    return <div className="wechat-empty"><b>{wechatSub}</b><p>{wechatSub==="文件"?"最近文件会按会话来源保存在这里。":wechatSub==="群聊"?"当前设备里没有保存的群聊。":"当前没有新的内容。"}</p></div>;
   };
   const appendMessage = (name:string,line:ChatLine) => setSentMessages(value => ({...value,[`${chapter}:${name}`]:[...(value[`${chapter}:${name}`]||[]),line]}));
   const sendPreset = (text:string) => {
@@ -423,15 +445,9 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
     appendMessage(thread,{side:"me",text:content}); setComposer(null);
     window.setTimeout(() => appendMessage(thread,{side:"them",text:kind === "位置" ? "位置收到了。别从东段步道走，那里围栏是新换的。" : "收到了，我先保存原件，不转发。"}), 650);
   };
-  const back = () => transition(() => { setThread(""); setComposer(null); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(false); setApp("home"); });
-  return <div className="phone-stage"><div className={`phone phone-${chapter}`} onTouchStart={event => {
-    const y = event.touches[0].clientY;
-    const phoneTop = event.currentTarget.getBoundingClientRect().top;
-    setTouchStart(y - phoneTop <= 64 ? y : null);
-  }} onTouchEnd={event => {
-    if (touchStart !== null && event.changedTouches[0].clientY - touchStart > 46) setControlOpen(true);
-    setTouchStart(null);
-  }} onTouchCancel={() => setTouchStart(null)}>
+  const calculate=()=>{const match=calc.match(/^(-?\d+(?:\.\d+)?)([＋−×÷])(-?\d+(?:\.\d+)?)$/);if(!match)return;const a=Number(match[1]),b=Number(match[3]);const result=match[2]==="＋"?a+b:match[2]==="−"?a-b:match[2]==="×"?a*b:b===0?NaN:a/b;setCalc(Number.isFinite(result)?String(Math.round(result*100000)/100000):"错误")};
+  const back = () => transition(() => { setThread(""); setComposer(null); setWechatSub(""); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(null); setApp("home"); });
+  return <div className="phone-stage"><div className={`phone phone-${chapter} ${torchOn?"torch-on":""}`} style={{filter:`brightness(${Math.max(.45,brightness/82)})`}} onTouchStart={event => setTouchStart(event.touches[0].clientY)} onTouchEnd={event => { if (touchStart !== null && event.changedTouches[0].clientY - touchStart > 46) setControlOpen(true); setTouchStart(null); }}>
     <button className="phone-status" onClick={() => setControlOpen(true)} aria-label="打开控制中心"><span>{phoneTime}</span><b><i className="signal-bars">{[1,2,3,4].map(level => <span key={level} className={level <= signalLevel ? "on" : ""} />)}</i><i className={`wifi ${wifiOn && !airplaneOn ? "on" : ""}`}>⌁</i><i className={`battery ${charging ? "charging" : ""}`}><span style={{width:`${Math.round(batteryLevel * 100)}%`}} /></i></b></button>
     <div className={`control-center ${controlOpen ? "open" : ""}`} aria-hidden={!controlOpen}>
       <button className="control-dismiss" onClick={() => setControlOpen(false)} aria-label="关闭控制中心" />
@@ -445,10 +461,11 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
         </div>
         <label className="control-slider"><span>☀</span><input type="range" min="15" max="100" value={brightness} onChange={event => setBrightness(Number(event.target.value))}/></label>
         <label className="control-slider"><span>声</span><input type="range" min="0" max="100" value={volume} onChange={event => setVolume(Number(event.target.value))}/></label>
-        <div className="control-bottom"><button className={torchOn?"active":""} onClick={() => setTorchOn(value=>!value)}>灯</button><button onClick={() => notify("计时器：00:00:00")}>计</button><button onClick={() => notify("计算器已准备")}>算</button><button onClick={() => openApp("photos")}>相</button></div>
+        <div className="control-bottom"><button className={torchOn?"active":""} onClick={() => setTorchOn(value=>!value)}>灯</button><button onClick={() => {setUtility("timer");setControlOpen(false)}}>计</button><button onClick={() => {setUtility("calculator");setControlOpen(false)}}>算</button><button onClick={() => {setControlOpen(false);openApp("photos")}}>相</button></div>
         <button className="control-handle" onClick={() => setControlOpen(false)} aria-label="收起控制中心" />
       </div>
     </div>
+    {utility&&<div className="utility-app"><PhoneHead title={utility==="timer"?"秒表":"计算器"} back={()=>setUtility(null)} backLabel="返回"/>{utility==="timer"?<div className="timer-page"><b>{String(Math.floor(timerSeconds/3600)).padStart(2,'0')}:{String(Math.floor(timerSeconds/60)%60).padStart(2,'0')}:{String(timerSeconds%60).padStart(2,'0')}</b><div><button onClick={()=>setTimerRunning(value=>!value)}>{timerRunning?"暂停":"开始"}</button><button onClick={()=>{setTimerRunning(false);setTimerSeconds(0)}}>复位</button></div></div>:<div className="calculator-page"><output>{calc}</output><div>{["7","8","9","÷","4","5","6","×","1","2","3","−","C","0",".","＋"].map(key=><button key={key} onClick={()=>key==="C"?setCalc("0"):setCalc(value=>value==="0"?key:value+key)}>{key}</button>)}</div><button className="equals" onClick={calculate}>＝</button></div>}</div>}
     {app === "home" && <div className="phone-home">
       <div className="phone-date"><b>{phoneTime}</b><span>{phoneDay} · {chapter === 1 ? "阵雨" : "雾"}</span></div>
       <div className="app-grid">{APPS.map((a,i) => <button key={a.id} onClick={() => openApp(a.id)}><i className={`app-icon ai-${i}`}>{a.icon}</i><span>{a.name}</span>{((chapter === 1 && a.id === "messages") || (chapter === 2 && ["files","photos"].includes(a.id)) || (chapter === 3 && ["messages","files"].includes(a.id))) && <em />}</button>)}</div>
@@ -459,7 +476,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
         {!wechatSub&&wechatTab==="contacts"&&<div className="contact-list"><div className="contact-tools"><button onClick={()=>setWechatSub("新的朋友")}>＋<span>新的朋友</span></button><button onClick={()=>setWechatSub("群聊")}>群<span>群聊</span></button></div><p>联系人</p>{messages[chapter].map((m:string)=><button key={m} onClick={()=>openThread(m)}><img src={avatarFor(m)} alt=""/><span>{m}</span></button>)}</div>}
         {!wechatSub&&wechatTab==="discover"&&<div className="wechat-menu"><button onClick={()=>setWechatSub("朋友圈")}><i>◎</i><span>朋友圈</span><b>›</b></button><button onClick={()=>setWechatSub("扫一扫")}><i>⌗</i><span>扫一扫</span><b>›</b></button><button onClick={()=>setWechatSub("看一看")}><i>看</i><span>看一看</span><b>›</b></button></div>}
         {!wechatSub&&wechatTab==="me"&&<div className="wechat-me"><header><img src="/avatars/clerk.webp" alt=""/><div><b>林岚</b><span>微信号：lan_0616</span></div></header><div className="wechat-menu"><button onClick={()=>setWechatSub("收藏")}><i>☆</i><span>收藏</span><b>›</b></button><button onClick={()=>setWechatSub("文件")}><i>文</i><span>文件</span><b>›</b></button><button onClick={()=>setWechatSub("设置")}><i>⚙</i><span>设置</span><b>›</b></button></div></div>}
-        {wechatSub&&<div className="wechat-subpage">{wechatSub==="朋友圈"?<><article><img src="/photos/venue-plaza.webp" alt=""/><b>蒋小蕊</b><p>今天广场电影取消了，椅子都收仓库了。</p></article><article><img src="/photos/venue-restaurant.webp" alt=""/><b>陈放</b><p>休渔期菜单，别问有没有刚上岸的。</p></article></>:wechatSub==="扫一扫"?<div className="scan-page"><i>⌗</i><p>将二维码放入框内，即可自动扫描</p><button onClick={()=>notify("相册中没有可识别的二维码")}>从相册选取</button></div>:wechatSub==="看一看"?<div className="look-page"><button onClick={()=>notify("文章已在微信内打开")}>雾港今晚末班船待复核</button><button onClick={()=>notify("文章已在微信内打开")}>白塔东段继续封闭</button></div>:wechatSub==="设置"?<div className="setting-page"><label>消息通知<input type="checkbox" defaultChecked/></label><label>听筒模式<input type="checkbox"/></label><button onClick={()=>notify("聊天记录已保留在本机")}>聊天记录迁移</button></div>:<div className="wechat-empty"><b>{wechatSub}</b><p>{wechatSub==="文件"?"最近文件会按会话来源保存在这里。":wechatSub==="群聊"?"郭家健康群将在第三章设备中出现。":"当前没有新的内容。"}</p></div>}</div>}
+        {wechatSub&&<div className="wechat-subpage">{renderWechatSub()}</div>}
       </div><nav className="wechat-tabs">{([['chats','微信','◉'],['contacts','通讯录','♟'],['discover','发现','◎'],['me','我','●']] as const).map(([id,label,icon])=><button key={id} className={wechatTab===id?"active":""} onClick={()=>{setWechatTab(id);setWechatSub("");}}><i>{icon}</i><span>{label}</span></button>)}</nav></> : <><PhoneHead title={thread} back={() => transition(() => setThread(""))} backLabel="微信" />
       <div className="conversation"><div className="chat-day">{phoneDay}</div>{[...conversationFor(chapter, thread),...(sentMessages[`${chapter}:${thread}`]||[])].map((line, index) => line.side === "system" ? <time className="system-note" key={index}>{line.text}</time> : <div className={`chat-row ${line.side}`} key={index}>{line.side === "them" && <img src={avatarFor(thread)} alt=""/>}<p className={`bubble ${line.side}`}>{line.text}</p>{line.side === "me" && <img src="/og.png" alt=""/>}</div>)}</div>
       {composer === "replies" && <div className="composer-sheet reply-sheet"><header><b>选择一句回复</b><button onClick={()=>setComposer(null)}>关闭</button></header>{replyChoicesFor(chapter,thread).map(text=><button key={text} onClick={()=>sendPreset(text)}>{text}<span>发送</span></button>)}</div>}
@@ -468,13 +485,11 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
       <div className="wechat-input"><button className={voiceMode?"active":""} onClick={()=>{setVoiceMode(value=>!value);setComposer(null);}} aria-label="切换语音输入">◉</button><button className="composer-field" onClick={()=>voiceMode?sendPreset("[语音] 3″"):setComposer(composer==="replies"?null:"replies")}>{voiceMode?"按住说话":"发消息"}</button><button onClick={()=>setComposer(composer==="emoji"?null:"emoji")} aria-label="打开表情">☺</button><button onClick={()=>setComposer(composer==="more"?null:"more")} aria-label="打开更多">＋</button></div></>}
     </div>}
     {app === "photos" && <div className="phone-page"><PhoneHead title="照片" back={back}/><div className="photo-grid">{photos.map(photo => <button key={photo.title} onClick={() => { setPhotoOpen(photo as any); setTranscriptOpen(false); if (photo.clue && !found.includes(photo.clue)) collect(photo.clue); }}><img src={photo.src} alt={photo.title}/><b>{photo.title}</b><span>{photo.caption}</span>{photo.clue && found.includes(photo.clue) && <em>已收录</em>}</button>)}</div>{photoOpen && <div className="photo-viewer"><button className="photo-close" onClick={() => { setPhotoOpen(null); setTranscriptOpen(false); }}>关闭</button><button className="photo-image-button" onClick={() => setTranscriptOpen(true)}><img src={photoOpen.src} alt={photoOpen.title}/><span>点击查看文字内容</span></button><div><b>{photoOpen.title}</b><p>{photoOpen.caption}</p><small>{photoOpen.meta}</small></div>{transcriptOpen && <div className="transcript-modal" role="dialog" aria-modal="true"><article><small>照片文字抄录</small><h3>{photoOpen.title}</h3><p>{photoOpen.transcript || `${photoOpen.caption}\n${photoOpen.meta}`}</p><button onClick={() => setTranscriptOpen(false)}>关闭文字内容</button></article></div>}</div>}</div>}
-    {app === "files" && <div className="phone-page"><PhoneHead title="文件" back={back}/><div className="file-list">
-      {(chapter === 1 ? [["客轮实名订单.pdf","仅有登岛票","ferry-list"],["工作船说明.txt","郭维口述", "workboat"]] : chapter === 2 ? [["1992_乙区值班表.pdf","扫描件 · 4页","nurse"],["归潮号港务内参.pdf","公开版已删除","ship"],["2009_就诊备忘.txt","林琴自述","qin-note"]] : [["第三代观察表.xlsx","内部导出","codes"],["冷链付款对账.pdf","三套系统日期一致","payments"],["今晚处置日程.ics","03:17 观察区","rescue"],["雾笛反应日志.m4a","原始录音","fog-horn"],["林岚_儿童移植随访.pdf","供体姓名已遮盖","lan-transplant"]]).map((f:any) => <button key={f[0]} onClick={() => collect(f[2])}><i>文</i><span><b>{f[0]}</b><small>{f[1]}</small></span><em>{found.includes(f[2]) ? "✓" : "打开"}</em></button>)}
-    </div></div>}
-    {app === "notes" && <div className="phone-page"><PhoneHead title="备忘录" back={back}/><article className="note-paper"><h3>{chapter === 1 ? "去雾港前" : chapter === 2 ? "如果又忘了" : "我不想继续体检"}</h3><p>{chapter === 1 ? "相机、充电线、雨衣。先去宾馆，再去派出所。不要把妈妈以前的记忆问题告诉不相干的人。" : chapter === 2 ? "沈砚说，公开名单前先分清失踪者、受体和后代。有人做了坏事，不等于岛上每个人都知道。" : "爸爸说这是保护，说奖学金、药和出岛名额都靠家里。可是为什么保护一个人，需要删掉她做过的梦？"}</p></article></div>}
-    {app === "shopping" && <div className="phone-page lifestyle taobao-page"><PhoneHead title="手机淘宝" back={back}/><input placeholder="搜索淘宝商品"/><h3>我的订单</h3>{["防潮相机袋","速溶咖啡 20条","白色运动鞋","给妈妈的护膝"].map((x,i)=><button key={x} onClick={()=>notify(i===3?"物流：6月13日已由林琴签收":"订单详情已打开")}><i>{["袋","咖","鞋","礼"][i]}</i><span><b>{x}</b><small>{i===3?"已签收 · 潮生宾馆代收":"交易成功 · 再次购买"}</small></span></button>)}</div>}
-    {app === "music" && <div className="phone-page lifestyle"><PhoneHead title="泊声音乐" back={back}/><div className="album"><i>泊</i><div><b>{tracks[track]}</b><span>林岚的通勤收藏</span></div><button onClick={()=>setPlaying(!playing)}>{playing?"暂停":"播放"}</button></div>{tracks.map((t,i)=><button className={track===i?"playing":""} key={t} onClick={()=>{setTrack(i);setPlaying(true)}}><span>{String(i+1).padStart(2,"0")}</span><b>{t}</b><small>{2+i}:1{i}</small></button>)}</div>}
-    {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className="weather-card"><b>雾港岛</b><strong>19°</strong><p>阵雨转平流雾</p><ul><li>16:00　能见度下降预警</li><li>18:30　复核20:10末班船</li><li>通信　正常</li></ul></div></div>}
+    {app === "files" && <div className="phone-page">{selectedFile?<><PhoneHead title={selectedFile[0]} back={()=>setSelectedFile(null)} backLabel="文件"/><article className="file-preview"><small>{selectedFile[1]}</small><h3>{selectedFile[0]}</h3><p>{CLUES.find(c=>c.id===selectedFile[2])?.text}</p><div><span>创建日期</span><b>{chapter===1?"2026年6月16日":chapter===2?"2009年9月3日":"2026年6月17日"}</b></div><div><span>文件来源</span><b>{CLUES.find(c=>c.id===selectedFile[2])?.source}</b></div></article></>:<><PhoneHead title="文件" back={back}/><div className="file-list">{phoneFiles.map((f:any) => <button key={f[0]} onClick={() => {setSelectedFile(f);if(!found.includes(f[2]))collect(f[2]);}}><i>文</i><span><b>{f[0]}</b><small>{f[1]}</small></span><em>›</em></button>)}</div></>}</div>}
+    {app === "notes" && <div className="phone-page notes-app">{noteOpen!==null?<><PhoneHead title={noteEntries[noteOpen].title} back={()=>setNoteOpen(null)} backLabel="备忘录"/><article className="note-paper"><time>{noteEntries[noteOpen].time}</time><p>{noteEntries[noteOpen].body}</p></article></>:<><PhoneHead title="备忘录" back={back}/><div className="notes-list">{noteEntries.map((note,i)=><button key={note.title} onClick={()=>{setNoteOpen(i);if(i===0&&chapter===2&&!found.includes('qin-note'))collect('qin-note')}}><b>{note.title}</b><small>{note.preview}</small></button>)}</div></>}</div>}
+    {app === "shopping" && <div className="phone-page lifestyle taobao-page">{selectedOrder?<><PhoneHead title="订单详情" back={()=>setSelectedOrder(null)} backLabel="我的订单"/><article className="order-detail"><header><b>{selectedOrder.status}</b><span>{selectedOrder.logistics[0]}</span></header><section><i>{selectedOrder.icon}</i><div><b>{selectedOrder.name}</b><small>{selectedOrder.detail}</small></div><strong>{selectedOrder.price}</strong></section><h3>物流信息</h3>{selectedOrder.logistics.map((step,i)=><p key={step} className={i===0?"current":""}><i/>{step}</p>)}<footer><span>收货人　林岚</span><span>收货地址　雾港岛潮生宾馆前台</span><span>订单编号　202606{selectedOrder.name.length}1704</span></footer></article></>:<><PhoneHead title="手机淘宝" back={back}/><input value={shopQuery} onChange={e=>setShopQuery(e.target.value)} placeholder="搜索淘宝商品"/><h3>{shopQuery?"搜索结果":"我的订单"}</h3>{orders.filter(order=>order.name.includes(shopQuery.trim())).map(order=><button key={order.name} onClick={()=>setSelectedOrder(order)}><i>{order.icon}</i><span><b>{order.name}</b><small>{order.status} · 查看详情</small></span><em>›</em></button>)}{shopQuery&&orders.every(order=>!order.name.includes(shopQuery.trim()))&&<div className="shop-empty">没有找到相关订单</div>}</>}</div>}
+    {app === "music" && <div className="phone-page lifestyle music-app"><PhoneHead title="泊声音乐" back={back}/><div className="album"><i>泊</i><div><b>{tracks[track]}</b><span>{playing?"正在播放":"已暂停"} · {Math.floor(musicProgress*2.4/60)}:{String(Math.floor(musicProgress*2.4)%60).padStart(2,'0')}</span><input type="range" min="0" max="100" value={musicProgress} onChange={e=>setMusicProgress(Number(e.target.value))}/></div><button onClick={()=>setPlaying(!playing)}>{playing?"暂停":"播放"}</button></div>{tracks.map((t,i)=><button className={track===i?"playing":""} key={t} onClick={()=>{setTrack(i);setMusicProgress(0);setPlaying(true)}}><span>{String(i+1).padStart(2,"0")}</span><b>{t}</b><small>{2+i}:1{i}</small></button>)}</div>}
+    {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className={`weather-card weather-${chapter}`}><b>{chapter===1?"雾港岛":chapter===2?"雾港岛 · 历史天气":"雾港岛 · 白塔"}</b><strong>{chapter===3?"16°":"19°"}</strong><p>{chapter===1?"阵雨转平流雾":chapter===2?"1992年6月16日 · 雾":"低云 · 能见度420米"}</p><div className="weather-tabs"><button className={weatherMode==="hourly"?"active":""} onClick={()=>setWeatherMode("hourly")}>逐小时</button><button className={weatherMode==="daily"?"active":""} onClick={()=>setWeatherMode("daily")}>未来天气</button></div>{weatherMode==="hourly"?<ul>{["16:00　19°　阵雨","18:30　18°　雾","20:10　17°　能见度下降","03:17　16°　低潮"].map(x=><li key={x}>{x}</li>)}</ul>:<ul>{["今天　阵雨转雾　16—20°","明天　多云　17—23°","周四　小雨　18—22°"].map(x=><li key={x}>{x}</li>)}</ul>}<small>通信正常 · 海上风力3级</small></div></div>}
   </div><aside className="phone-caption"><b>{CHAPTERS[chapter-1].device}</b><p>{chapter === 1 ? "使用习惯：摄影、出行、给母亲买东西。" : chapter === 2 ? "无SIM卡。资料被刻意拆散，但没有谜语密码。" : "家族管理渗进健康、学校和日常聊天。"}</p></aside></div>;
 }
 
