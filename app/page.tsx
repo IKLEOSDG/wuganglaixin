@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Area = "phone" | "browser" | "map" | "evidence" | "board";
-type AppId = "home" | "messages" | "photos" | "notes" | "files" | "shopping" | "music" | "weather" | "cracker" | "camera";
+type AppId = "home" | "messages" | "photos" | "notes" | "files" | "shopping" | "music" | "weather" | "cracker" | "camera" | "calculator" | "amap";
 type Article = { id: string; chapter: number; tag: string; date: string; title: string; excerpt: string; body: string[]; source?: string; author?: string; image?: string; caption?: string; deleted?: boolean; redacted?: boolean };
 type Clue = { id: string; chapter: number; title: string; source: string; text: string };
 type Deduction = { id: string; chapter: number; title: string; requires: [string,string]; source: string; text: string; question: string };
@@ -37,12 +37,12 @@ const CLUES: Clue[] = [
   { id: "victim-boundary", chapter: 2, title: "名单必须区分受害者与受体", source: "调查手记 / 组合推演", text: "林琴特意要求拆分名单，说明档案里同时存在失踪儿童、器官受体和执行者。公开姓名并不等于还原真相。" },
   { id: "family-group", chapter: 3, title: "郭家健康群聊天记录", source: "郭宁手机 / 群聊", text: "群公告列出体检、服药、奖学金和出岛申请。发布者均为郭维。郭宁要求查看体检报告，未收到文件。" },
   { id: "codes", chapter: 3, title: "内部观察编号表", source: "潮生健康账户 / 导出文件", text: "表格分为A、B、C三组，每名对象另有两组数字。C17-01与C17-04位于同一分组页。" },
-  { id: "payments", chapter: 3, title: "三份日期相邻的财务文件", source: "郭宁手机 / 文件", text: "文件分别为旧港冷链运输单、康养院耗材单和境外付款回执。三份文件的日期均为2025年11月08日。" },
+  { id: "payments", chapter: 3, title: "三份日期相邻的财务文件", source: "郭宁手机 / 文件", text: "文件分别为旧港冷链运输单、康养院耗材单和境外付款回执，日期均为2025年11月08日。运输附件另列一项‘B1镜像节点维护’，位置在冷链地下一层。" },
   { id: "fog-horn", chapter: 3, title: "雾笛观察日志与录音", source: "白塔观察记录", text: "日志逐项记录低潮时间、雾笛播放、受试者姓名应答和生理数值。附录音时长18分42秒。" },
   { id: "rescue", chapter: 3, title: "03:17日程及检修图", source: "郭维日程 / 白塔平面图", text: "日程写‘03:17，LQ转观察区’。平面图标出一条从白塔检修门通往地下观察区的通道。" },
   { id: "lan-transplant", chapter: 3, title: "林岚儿童移植随访表", source: "潮生健康 / 旧档", text: "患者林岚，9岁；手术日期2008年8月17日；供体年龄12岁。公开副本的供体姓名栏被遮盖。" },
   { id: "observation-family", chapter: 3, title: "家庭管理就是观察分组", source: "调查手记 / 组合推演", text: "郭家群里的体检、服药、奖学金与出岛审批，对应内部表格的A/B/C观察组。家庭关系被用作长期控制工具。" },
-  { id: "transfer-chain", chapter: 3, title: "03:17转运与付款属于同一行动", source: "调查手记 / 组合推演", text: "冷链运输、医疗耗材和境外付款日期一致；03:17日程又安排LQ转入观察区，今晚不是常规体检，而是一次已经结算的转运。" },
+  { id: "transfer-chain", chapter: 3, title: "03:17转运与付款属于同一行动", source: "调查手记 / 组合推演", text: "冷链运输、医疗耗材和境外付款日期一致；03:17日程又安排LQ转入观察区。附件里的B1镜像节点同时暴露了旧港监控室。" },
   { id: "trigger-protocol", chapter: 3, title: "雾笛是观察实验的触发器", source: "调查手记 / 组合推演", text: "雾笛日志记录姓名应答和生理数值，内部表又按编号分组。雾笛不是仪式，而是一套长期条件反应实验。" },
   { id: "donor-link", chapter: 3, title: "林岚也在第三代观察范围内", source: "调查手记 / 组合推演", text: "林岚的儿童移植日期和供体年龄，与内部观察表的代际字段吻合。她并非偶然卷入调查，而是观察对象之一。" },
 ];
@@ -152,6 +152,7 @@ const APPS: { id: AppId; icon: string; name: string }[] = [
   { id: "shopping", icon: "淘", name: "手机淘宝" }, { id: "music", icon: "声", name: "泊声音乐" },
   { id: "weather", icon: "雾", name: "天气" }, { id: "cracker", icon: "解", name: "数据复原" },
   { id: "camera", icon: "相", name: "相机" },
+  { id: "amap", icon: "图", name: "高德地图" }, { id: "calculator", icon: "算", name: "计算器" },
 ];
 
 const PHOTO_SETS = {
@@ -180,6 +181,13 @@ const HINTS = [
 
 type ChatLine = { side: "them" | "me" | "system"; text: string };
 function conversationFor(chapter: number, thread: string): ChatLine[] {
+  if(thread==="陌生号码") return chapter===1?[
+    {side:"them",text:"306的备用卡不是给你翻东西用的"},{side:"me",text:"你是谁"},{side:"them",text:"你刚从三楼下来 雨衣左肩破了"}
+  ]:chapter===2?[
+    {side:"them",text:"缺掉的页不是遗失"},{side:"me",text:"沈砚在哪"},{side:"them",text:"旧纸会烂 人也会 别再查乙区"}
+  ]:[
+    {side:"them",text:"别去白塔"},{side:"them",text:"[监控照片] 旧港冷链东门 02:41"},{side:"me",text:"林琴在下面对不对"},{side:"them",text:"现在回头 你还能当没看见"},{side:"system",text:"对方撤回了一条消息"}
+  ];
   if (thread === "潮") return chapter === 1 ? [
     { side: "them", text: "到了" }, { side: "me", text: "刚到 雨停了" },
     { side: "them", text: "你妈住哪间" }, { side: "me", text: "306 人不在 行李还在" },
@@ -257,7 +265,7 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
   ];
 }
 
-const avatarFor = (name: string) => name === "潮" ? "/avatars/tide.webp" : name.includes("妈妈") || name === "爸爸" || name.includes("郭家")
+const avatarFor = (name: string) => name === "潮" || name === "陌生号码" ? "/avatars/tide.webp" : name.includes("妈妈") || name === "爸爸" || name.includes("郭家")
   ? "/avatars/mom.webp" : name.includes("宾馆") ? "/avatars/hotel-key.webp" : name.includes("沈砚")
   ? "/avatars/shen-yan.webp" : name.includes("医生") ? "/avatars/doctor.webp" : name.includes("陶") || name.includes("蒋") ? "/avatars/clerk.webp" : "/avatars/chen.webp";
 
@@ -416,7 +424,9 @@ export default function Home() {
 }
 
 function Phone({ chapter, app, setApp, thread, setThread, collect, found, playing, setPlaying, track, setTrack, notify }: any) {
-  const messages: Record<number, string[]> = { 1: ["潮", "妈妈", "潮生宾馆", "陈放", "蒋小蕊"], 2: ["潮", "沈砚（旧号码）", "妈妈", "许医生"], 3: ["潮", "郭家健康群", "爸爸", "吴医生", "陶小雨"] };
+  const chapterFound=CLUES.filter(c=>c.chapter===chapter&&found.includes(c.id)&&!c.source.includes("组合推演")).length;
+  const threatUnlocked=chapterFound>=(chapter===1?3:chapter===2?3:2);
+  const messages: Record<number, string[]> = { 1: ["潮", "妈妈", "潮生宾馆", "陈放", "蒋小蕊",...(threatUnlocked?["陌生号码"]:[])], 2: ["潮", "沈砚（旧号码）", "妈妈", "许医生",...(threatUnlocked?["陌生号码"]:[])], 3: ["潮", "郭家健康群", "爸爸", "吴医生", "陶小雨",...(threatUnlocked?["陌生号码"]:[])] };
   const photos = PHOTO_SETS[chapter as 1 | 2 | 3] as Array<{title:string;caption:string;clue:string;src:string;meta:string;transcript?:string}>;
   const tracks = ["内湾晴天", "返程票", "二楼走廊", "夜船不开", "未命名录音"];
   const orders = [{name:"防潮相机袋",icon:"袋",status:"交易成功",detail:"深灰色 · 单肩防水款",price:"¥79.00",logistics:["6月9日 14:12 已签收","6月9日 09:30 到达雾港客运站","6月8日 18:05 临海转运中心发出"]},{name:"速溶咖啡 20条",icon:"咖",status:"交易成功",detail:"无糖黑咖啡 · 20条",price:"¥32.80",logistics:["6月11日 16:40 前台代收","6月11日 11:20 随客轮进岛"]},{name:"白色运动鞋",icon:"鞋",status:"交易成功",detail:"37码 · 米白色",price:"¥159.00",logistics:["5月28日 19:08 本人签收","5月28日 13:10 派送中"]},{name:"给妈妈的护膝",icon:"礼",status:"已签收",detail:"保暖护膝 · 深灰 · M码",price:"¥68.00",logistics:["6月13日 17:46 潮生宾馆前台代收","6月13日 16:55 到达老街配送点","6月12日 20:20 临海转运中心发出"]}];
@@ -455,6 +465,11 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
   const [cameraShot,setCameraShot]=useState("");
   const [cameraError,setCameraError]=useState("");
   const [cameraGlitch,setCameraGlitch]=useState(false);
+  const [calcInput,setCalcInput]=useState("0");
+  const [calcSecret,setCalcSecret]=useState(false);
+  const [amapQuery,setAmapQuery]=useState("雾港");
+  const [torchStream,setTorchStream]=useState<MediaStream|null>(null);
+  const [screenLight,setScreenLight]=useState(false);
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
@@ -495,6 +510,8 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
     try{stopCamera();setCameraError("");const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});setCameraStream(stream);setCameraFacing(facing);window.setTimeout(()=>{if(videoRef.current)videoRef.current.srcObject=stream},0);if(chapter===3)window.setTimeout(()=>{setCameraGlitch(true);window.setTimeout(()=>setCameraGlitch(false),950)},2600)}catch{setCameraError("摄像头没有启用 可以在浏览器权限里重新允许")}
   };
   const captureCamera=()=>{const video=videoRef.current;if(!video||!video.videoWidth)return;const canvas=document.createElement("canvas");canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext("2d")?.drawImage(video,0,0);setCameraShot(canvas.toDataURL("image/jpeg",.86))};
+  const toggleTorch=async()=>{if(torchOn){torchStream?.getTracks().forEach(track=>track.stop());setTorchStream(null);setScreenLight(false);setTorchOn(false);return}try{const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});const track=stream.getVideoTracks()[0];const capabilities=track.getCapabilities() as MediaTrackCapabilities&{torch?:boolean};if(capabilities.torch){await track.applyConstraints({advanced:[{torch:true} as MediaTrackConstraintSet]});setTorchStream(stream);setTorchOn(true)}else{stream.getTracks().forEach(item=>item.stop());setScreenLight(true);setTorchOn(true)}}catch{setScreenLight(true);setTorchOn(true)}};
+  const pressCalc=(key:string)=>{if(key==="C"){setCalcInput("0");setCalcSecret(false);return}if(key==="="){if(calcInput==="999999"){setCalcSecret(true);return}const match=calcInput.match(/^(-?\d+(?:\.\d+)?)([+\-×÷])(-?\d+(?:\.\d+)?)$/);if(match){const a=Number(match[1]),b=Number(match[3]),op=match[2];setCalcInput(String(op==="+"?a+b:op==="-"?a-b:op==="×"?a*b:b===0?"错误":a/b))}return}setCalcInput(value=>value==="0"&&!".+-×÷".includes(key)?key:value+key)};
   const openApp = (next: AppId) => {
     if(next!=="camera")stopCamera();
     if (next === "weather" && chapter === 1 && !found.includes("weather")) collect("weather");
@@ -538,7 +555,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
         </div>
         <label className="control-slider"><span>☀</span><input type="range" min="15" max="100" value={brightness} onChange={event => setBrightness(Number(event.target.value))}/></label>
         <label className="control-slider"><span>声</span><input type="range" min="0" max="100" value={volume} onChange={event => setVolume(Number(event.target.value))}/></label>
-        <div className="control-bottom"><button className={torchOn?"active":""} onClick={() => setTorchOn(value=>!value)}>灯</button><button onClick={() => notify("计时器：00:00:00")}>计</button><button onClick={() => notify("计算器已准备")}>算</button><button onClick={() => openApp("photos")}>相</button></div>
+        <div className="control-bottom"><button className={torchOn?"active":""} onClick={toggleTorch}>灯</button><button onClick={() => notify("计时器 00:00:00")}>计</button><button onClick={() => {setControlOpen(false);openApp("calculator")}}>算</button><button onClick={() => openApp("camera")}>相</button></div>
         <button className="control-handle" onClick={() => setControlOpen(false)} aria-label="收起控制中心" />
       </div>
     </div>
@@ -554,7 +571,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
         {!wechatSub&&wechatTab==="me"&&<div className="wechat-me"><header><img src="/avatars/lin-lan.webp" alt="林岚"/><div><b>林岚</b><span>微信号：lan_0616</span></div></header><div className="wechat-menu"><button onClick={()=>setWechatSub("收藏")}><i>☆</i><span>收藏</span><b>›</b></button><button onClick={()=>setWechatSub("文件")}><i>文</i><span>文件</span><b>›</b></button><button onClick={()=>setWechatSub("设置")}><i>⚙</i><span>设置</span><b>›</b></button></div></div>}
         {wechatSub&&<div className="wechat-subpage">{wechatSub==="朋友圈"?<><article><img src="/photos/venue-plaza.webp" alt=""/><b>蒋小蕊</b><p>广场电影又取消了 椅子全搬回仓库</p><small>陈放：这雨看着还得下</small></article><article><img src="/photos/venue-restaurant.webp" alt=""/><b>陈放</b><p>休渔期菜单 别再问有没有刚上岸的😂</p></article></>:wechatSub==="扫一扫"?<div className="scan-page"><i>⌗</i><p>将二维码放入框内自动扫描</p><button onClick={()=>setWechatSub("扫描结果")}>从相册选择门卡背面</button></div>:wechatSub==="扫描结果"?<div className="wechat-article"><small>扫描结果</small><h3>潮生宾馆住客无线网</h3><p>网络：CHAOSHENG_GUEST</p><p>有效期：退房当日12:00</p><p>二维码下方印着前台电话和消防疏散图编号，并没有调查提示。</p></div>:wechatSub==="看一看"?<div className="look-page"><button onClick={()=>setWechatSub("末班船复核")}><b>雾港今晚末班船待复核</b><span>港务站 · 18分钟前</span></button><button onClick={()=>setWechatSub("白塔封闭")}><b>白塔东段继续封闭</b><span>市政提醒 · 昨天</span></button></div>:wechatSub==="末班船复核"?<div className="wechat-article"><img src="/photos/wugang-map-rain.webp" alt="雨后雾港客运码头"/><small>今日雾港</small><h3>20:10末班船仍待能见度复核</h3><p>港务站将在18:30再次测量航道能见度。此前售出的船票可以改签，但系统不会自动生成返程订单。</p><p>工作船不使用客运闸机，船员和临时乘员另记纸质名册。</p></div>:wechatSub==="白塔封闭"?<div className="wechat-article"><img src="/photos/lighthouse-door.webp" alt="白塔检修门"/><small>雾港市政</small><h3>白塔东段检修步道继续封闭</h3><p>封闭范围只到地面步道。夜间设备运输由旧港冷链入口进出，不经过游客入口。</p></div>:wechatSub==="设置"?<div className="setting-page"><label>消息通知<input type="checkbox" defaultChecked/></label><label>听筒模式<input type="checkbox"/></label><button onClick={()=>setWechatSub("聊天记录")}>聊天记录</button></div>:wechatSub==="聊天记录"?<div className="wechat-article"><h3>聊天记录</h3><p>本机记录已恢复至6月16日12:46</p><p>语音与图片原件保存在设备内，不会自动上传。</p><button onClick={()=>setWechatSub("设置")}>返回设置</button></div>:<div className="wechat-empty"><b>{wechatSub}</b><p>{wechatSub==="文件"?"最近文件会按会话来源保存在这里。":wechatSub==="群聊"?"当前设备里没有置顶群聊。":"没有新的内容"}</p></div>}</div>}
       </div><nav className="wechat-tabs">{([['chats','微信','◉'],['contacts','通讯录','♟'],['discover','发现','◎'],['me','我','●']] as const).map(([id,label,icon])=><button key={id} className={wechatTab===id?"active":""} onClick={()=>{setWechatTab(id);setWechatSub("");}}><i>{icon}</i><span>{label}</span></button>)}</nav></> : <><PhoneHead title={thread} back={() => transition(() => setThread(""))} backLabel="微信" />
-      <div className="conversation"><div className="chat-day">{phoneDay}</div>{[...conversationFor(chapter, thread),...(sentMessages[`${chapter}:${thread}`]||[])].map((line, index) => line.side === "system" ? <time className="system-note" key={index}>{line.text}</time> : <div className={`chat-row ${line.side}`} key={index}>{line.side === "them" && <img src={avatarFor(thread)} alt=""/>}<p className={`bubble ${line.side}`}>{line.text}</p>{line.side === "me" && <img src="/avatars/lin-lan.webp" alt="林岚"/>}</div>)}</div>
+      <div className="conversation"><div className="chat-day">{phoneDay}</div>{[...conversationFor(chapter, thread),...(sentMessages[`${chapter}:${thread}`]||[])].map((line, index) => line.side === "system" ? <time className="system-note" key={index}>{line.text}</time> : <div className={`chat-row ${line.side}`} key={index}>{line.side === "them" && <img src={avatarFor(thread)} alt=""/>}{line.text.startsWith("[监控照片]")?<figure className="chat-surveillance"><img src="/photos/surveillance-room.png" alt="旧港监控截图中林岚的背影"/><figcaption>{line.text.replace("[监控照片]","")}</figcaption></figure>:<p className={`bubble ${line.side}`}>{line.text}</p>}{line.side === "me" && <img src="/avatars/lin-lan.webp" alt="林岚"/>}</div>)}</div>
       {composer === "replies" && <div className="composer-sheet reply-sheet"><header><b>选择一句回复</b><button onClick={()=>setComposer(null)}>关闭</button></header>{replyChoicesFor(chapter,thread).map(text=><button key={text} onClick={()=>sendPreset(text)}>{text}<span>发送</span></button>)}</div>}
       {composer === "emoji" && <div className="composer-sheet emoji-sheet"><header><b>表情</b><button onClick={()=>setComposer(null)}>关闭</button></header><div>{["🙂","😟","👌","🙏","❓","🌫️","📍","⚠️"].map(icon=><button key={icon} onClick={()=>sendPreset(icon)}>{icon}</button>)}</div></div>}
       {composer === "more" && <div className="composer-sheet more-sheet"><header><b>更多</b><button onClick={()=>setComposer(null)}>关闭</button></header><div>{["照片","位置","文件"].map((kind,i)=><button key={kind} onClick={()=>sendAttachment(kind)}><i>{["▧","⌖","文"][i]}</i><span>{kind}</span></button>)}</div></div>}
@@ -568,6 +585,9 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, playin
     {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className={`weather-card weather-${chapter}`}><b>雾港岛</b><strong>{chapter===1?"19°":chapter===2?"20°":"16°"}</strong><p>{chapter===1?"阵雨转平流雾":chapter===2?"低云 风弱":"浓雾 低潮"}</p><nav><button className={weatherMode==="hourly"?"active":""} onClick={()=>setWeatherMode("hourly")}>逐小时</button><button className={weatherMode==="daily"?"active":""} onClick={()=>setWeatherMode("daily")}>十日天气</button></nav>{weatherMode==="hourly"?<ul>{(chapter===1?["16:00　阵雨停 19°","18:30　能见度复核 18°","20:10　末班船待定 17°"]:chapter===2?["09:00　低云 20°","12:00　短时见光 22°","17:00　海雾回流 19°"]:["02:00　浓雾 16°","03:17　低潮 15°","04:00　能见度不足百米 15°"]).map(x=><li key={x}>{x}</li>)}</ul>:<ul>{["今天　雨 / 雾","明天　阴","周五　阵雨","周六　多云"].map(x=><li key={x}>{x}</li>)}</ul>}</div></div>}
     {app === "cracker" && <div className="phone-page recovery-app"><PhoneHead title="数据复原" back={back}/><header><i>解</i><div><b>本地取证模式</b><span>只分析这台设备上的残留数据</span></div></header><article className={found.includes(recoveryTarget.id)?"done":""}><small>检测到可恢复项目</small><h3>{recoveryTarget.name}</h3><p>{recoveryTarget.method}</p><div className="recovery-track"><span style={{width:`${found.includes(recoveryTarget.id)?100:recoveryProgress}%`}}/></div><em>{found.includes(recoveryTarget.id)?"校验完成 · 已收录到调查手记":recovering?`正在重建 ${recoveryProgress}%`:"等待开始"}</em><button disabled={recovering||found.includes(recoveryTarget.id)} onClick={()=>{setRecoveryProgress(0);setRecovering(true)}}>{found.includes(recoveryTarget.id)?"已完成":"开始复原"}</button></article><p className="recovery-rule">它只能恢复设备中真实存在的残留字节，不能猜密码，也不能还原已经被正确打码的姓名。</p></div>}
     {app === "camera" && <div className="phone-page camera-app"><PhoneHead title="相机" back={back}/><div className={`camera-preview ${cameraGlitch?"glitch":""}`}>{cameraStream?<video ref={videoRef} autoPlay playsInline muted/>:<div className="camera-permission"><i>相</i><p>启用后会调用你的摄像头<br/>画面只在当前页面处理</p><button onClick={()=>startCamera("user")}>启用前置摄像头</button>{cameraError&&<small>{cameraError}</small>}</div>}{cameraGlitch&&<div className="focus-anomaly"><i/><span>正在重新对焦</span></div>}</div>{cameraStream&&<div className="camera-controls"><button onClick={()=>startCamera(cameraFacing==="user"?"environment":"user")}>切换</button><button className="shutter" aria-label="拍照" onClick={captureCamera}/><button onClick={()=>{stopCamera();setCameraShot("")}}>关闭</button></div>}{cameraShot&&<div className="camera-shot" role="dialog"><img src={cameraShot} alt="刚拍摄的照片"/><button onClick={()=>setCameraShot("")}>继续拍摄</button></div>}</div>}
+    {app === "amap" && <div className="phone-page amap-app"><PhoneHead title="高德地图" back={back}/><div className="amap-search"><input value={amapQuery} onChange={e=>setAmapQuery(e.target.value)} placeholder="搜索地点"/><button onClick={()=>window.open(`https://uri.amap.com/search?keyword=${encodeURIComponent(amapQuery)}`,"_blank","noopener,noreferrer")}>搜索</button></div><section><div className="amap-pin">⌖</div><small>搜索建议</small><h3>雾港</h3><p>未找到可验证的公开地点</p><article><b>设备离线记录</b><span>雾港岛 · 最近访问</span><em>{chapter===3?"定位曾短暂下沉至白塔下方12米":"离线地图由设备持有人保存"}</em></article><button onClick={()=>window.open(`https://uri.amap.com/search?keyword=${encodeURIComponent(amapQuery)}`,"_blank","noopener,noreferrer")}>在高德地图中继续搜索</button></section></div>}
+    {app === "calculator" && <div className="phone-page calculator-app"><PhoneHead title="计算器" back={back}/><output>{calcInput}</output>{calcSecret&&<aside><small>设备管理诊断</small><b>监督配置：CS-C17</b><p>远程策略上次同步：03:17<br/>定位镜像：启用<br/>相机权限：由用户控制</p><button onClick={()=>setCalcSecret(false)}>关闭</button></aside>}<div>{["C","÷","×","-","7","8","9","+","4","5","6","=","1","2","3","0","."] .map(key=><button key={key} className={"÷×-+=".includes(key)?"operator":""} onClick={()=>pressCalc(key)}>{key}</button>)}</div></div>}
+    {screenLight&&<div className="screen-light" role="dialog"><p>设备不支持网页控制补光灯<br/>已改用屏幕照明</p><button onClick={toggleTorch}>关闭照明</button></div>}
   </div><aside className="phone-caption"><b>{CHAPTERS[chapter-1].device}</b><p>{chapter === 1 ? "使用习惯：摄影、出行、给母亲买东西。" : chapter === 2 ? "无SIM卡。资料被刻意拆散，但没有谜语密码。" : "家族管理渗进健康、学校和日常聊天。"}</p></aside></div>;
 }
 
@@ -617,11 +637,13 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
     "旧港冷链":{sub:"西侧工作码头",desc:"夜间仍有一条电缆和一辆无牌冷藏车在运行。",image:"/photos/venue-cold-chain.webp",actions:[["核对三份单据","运输单、康养院耗材单和境外付款回执日期相同。","payments"],["拍下无牌冷藏车","车厢没有货物，地板固定着四组医疗设备卡槽。"]]},
     "郭家旧宅":{sub:"归潮广场东巷",desc:"郭家的健康群、奖学金和出岛申请都由这里统一处理。",image:"/photos/family-dinner.webp",actions:[["查看家庭群公告","群公告把体检、服药和出岛申请写在同一张表里。","family-group"],["翻药箱标签","四个药袋分别写着C17-01至C17-04。","codes"]]},
     "引水洞":{sub:"旧港北侧海蚀通道",desc:"普通地图没有标注，退潮后入口才露出半米。",image:"/photos/wugang-aerial.webp",actions:[["核对潮位","03:17前后有二十二分钟可通行窗口。","rescue"],["查看洞口拖痕","新鲜轮痕从冷链码头方向一直延伸到水线。"]]},
-    "客运码头":{sub:"北岸渡口",desc:"救援位置和证据可在这里接入岛外网络发送。",image:"/photos/venue-terminal.webp",actions:[["测试岛外上传","固定网络可用，三个加密备份目标均已连通。"],["查询凌晨船班","04:20有一艘海事巡逻艇靠岸，可作为撤离接应。"]]}
+    "客运码头":{sub:"北岸渡口",desc:"救援位置和证据可在这里接入岛外网络发送。",image:"/photos/venue-terminal.webp",actions:[["测试岛外上传","固定网络可用，三个加密备份目标均已连通。"],["查询凌晨船班","04:20有一艘海事巡逻艇靠岸，可作为撤离接应。"]]},
+    "旧港监控室":{sub:"冷链地下一层 · 镜像节点",desc:"五套本应彼此独立的监控，在这里被接进同一面屏幕墙。中心画面正停在你经过冷链东门的那一帧。",image:"/photos/surveillance-room.png",actions:[["查看中心屏幕","画面里是你的背影。左侧小屏按时间倒序保存着你进入宾馆、客运站和旧港的路线；陌生号码不是在猜。"],["核对线路标签","客运、宾馆、便利店、冷链和白塔都通过一条名为‘设备维护’的专线镜像到这里。"],["拔下外网镜像线","本地录像仍在，远端观看中断。你先复制索引，再拔掉上行线路，避免破坏原始证据。"]]}
   };
   const places=chapter===1?chapterOne:chapter===2?chapterTwo:chapterThree;
   const mapImage=chapter===1?"/photos/wugang-map-rain.webp":chapter===2?"/photos/wugang-map-archive.webp":"/photos/wugang-map-night.webp";
-  const visiblePlaces=Object.keys(places).filter(name=>name!=="306房间");
+  const monitorUnlocked=chapter===3&&found.includes("payments")&&found.includes("rescue");
+  const visiblePlaces=Object.keys(places).filter(name=>name!=="306房间"&&(name!=="旧港监控室"||monitorUnlocked));
   const imageFor=(action:MapAction,item:{image:string})=>action[2]==="hotel-log"?"/photos/hotel-306.webp":action[2]==="badge1704"?"/photos/clerk-badge.webp":action[2]==="ward"?"/photos/transfer-forms.webp":action[2]==="nurse"?"/photos/nurse-id-1992.webp":action[2]==="codes"?"/photos/health-records.webp":item.image;
   const visit=(name:string)=>{setPlace(name);setInside(name);setEvent(null);};
   const act=(action:MapAction,item:any)=>{setEvent({title:action[0],text:action[1],image:imageFor(action,item)});if(action[2]&&!found.includes(action[2]))collect(action[2]);if(action[3])acquireItem(action[3]);};
