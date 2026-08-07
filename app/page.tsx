@@ -2,11 +2,11 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
-type Area = "phone" | "browser" | "map" | "evidence" | "board";
+type Area = "phone" | "browser" | "map" | "evidence" | "board" | "side";
 type AppId = "home" | "messages" | "photos" | "notes" | "files" | "shopping" | "music" | "weather" | "cracker" | "appstore" | "camera" | "calculator" | "amap" | "phone";
 type SimCall = { name: string; number: string; status: "dialing" | "connected" | "ended"; elapsed: number; reply: string };
 type WechatCall = { name: string; mode: "voice" | "video"; status: "calling" | "unanswered" };
-type Article = { id: string; chapter: number; tag: string; date: string; title: string; excerpt: string; body: string[]; source?: string; author?: string; image?: string; caption?: string; deleted?: boolean; redacted?: boolean };
+type Article = { id: string; chapter: number; tag: string; date: string; title: string; excerpt: string; body: string[]; source?: string; author?: string; image?: string; caption?: string; deleted?: boolean; redacted?: boolean; related?: boolean };
 type Clue = { id: string; chapter: number; title: string; source: string; text: string };
 type Deduction = { id: string; chapter: number; title: string; requires: [string,string]; source: string; text: string; question: string };
 type Item = { id: string; title: string; text: string };
@@ -72,7 +72,42 @@ const ITEMS: Record<string,Item> = {
   "maintenance-tag": { id:"maintenance-tag", title:"冷链检修挂牌", text:"无牌冷藏车副驾遗落的检修挂牌，背面写着白塔低潮通行窗口。" },
   "mirror-index": { id:"mirror-index", title:"监控镜像索引", text:"从B1节点复制出的只读索引，保留五处镜头编号与时间戳，没有复制或破坏原始录像。" },
   "bed-location": { id:"bed-location", title:"LQ床位定位截图", text:"地下终端显示LQ仍有生命体征，位置在B-06。截图只保留床位、时间与状态，没有拍到病人。" },
+  "ward-record": { id:"ward-record", title:"乙区病床记录残页", text:"从康养院旧址废弃物中找到的半页纸，记录着C17-01至C17-04的‘转入时间’和‘备注’。备注栏只写了三个字：不醒。" },
+  "night-recording": { id:"night-recording", title:"旧港夜间录音片段", text:"手机在306房间自动录下的一段音频，时间戳显示03:17。录音里只有潮水声和一个模糊的、重复的女声——像在数数。" },
 };
+
+type SideMystery = {
+  id: string;
+  chapter: number;
+  title: string;
+  question: string;
+  answer: string;
+  requires: string[];
+};
+const SIDE_MYSTERIES: SideMystery[] = [
+  { id:"sm-1", chapter:1, title:"两个C17/04", question:"为什么便利店胸牌和早餐券上出现了同一组数字？", requires:["badge1704","voucher1704"],
+    answer:"便利店胸牌把17和04分栏书写，早餐券却写成C17/04——它们不是同一套编号系统。C17代表项目组，04代表入组顺序。这组数字跨越零售和住宿，指向一个更大的编号体系：潮生健康的C组随访表。陶小雨的C17-04和郭宁的C17-01，都在同一张表上。" },
+  { id:"sm-2", chapter:1, title:"工作船的燃料", question:"加油量0升的工作船，当晚真的离泊了吗？", requires:["workboat"],
+    answer:"船员表登记3人、加油单为0升、目的港回执空白——三项缺一，值班员不得补签放行。工作船22:20的离泊记录只是口头说明，没有实际航行证据。这条记录的目的是制造一个'林琴可能乘船离开'的假象。" },
+  { id:"sm-3", chapter:2, title:"沈砚的下落", question:"那个调查乙区的自由研究者，最终去了哪里？", requires:["a44","qin-note"],
+    answer:"沈砚，2008年至2009年在雾港查阅旧港、康养院和失踪人口剪报。他发现了乙区转院链与归潮号事故的关联，在准备交出材料前失踪。林琴的备忘录写'沈砚如果没回来，先别交原件'。他的登记卡背面被撕去、电话已停用、两盘访谈带缺失——他的名字可能也在某份死亡名单上。" },
+  { id:"sm-4", chapter:2, title:"归潮号的十七件救生衣", question:"核载6人的船，为什么领走17件救生衣？", requires:["ship","nurse"],
+    answer:"6月16日晚，乙区23:10后床位被手写改动，同时归潮号领走17件救生衣。船只核载6人——17件对应的是12名孩子加5名工作人员。这艘船当晚被用来转运儿童，随后被伪装成事故沉没。6月19日公开稿改称'无人维护船漂移'，月报只列设备损失。" },
+  { id:"sm-5", chapter:2, title:"2009年的大火", question:"钟表铺火灾真的只烧掉了账本吗？", requires:["a29"],
+    answer:"报警记录比报纸报道早八分钟。许伯回忆起火前有人来取一只寄存铁盒，身份未登记。沈砚的调查材料当时存放在钟表铺阁楼——火灾后部分账本被烧毁，残存账本由许伯家属捐给陈列馆，但其中几页与陈列馆扫描件对不上。被抽走的页面很可能包含了沈砚的原始记录和乙区名单。" },
+  { id:"sm-6", chapter:3, title:"同一个梦", question:"为什么陶小雨和郭宁会做同一个走廊梦？", requires:["fog-horn","codes"],
+    answer:"雾笛不仅是航标信号，也是乙区实验中的声音触发装置。陶小雨（C17-04）和郭宁（C17-01）都是C组入组者，童年时期在乙区接受过声音条件反射训练。雾笛播放时，被压抑的记忆以梦境形式浮现——没有窗的走廊、尽头的床、床上睁着眼睛的人，都是乙区病房的真实场景。雾笛日志记录的姓名缩写和生理数值，就是她们对声音的反应数据。" },
+  { id:"sm-7", chapter:3, title:"郭维的双面角色", question:"郭维在03:17的安排中到底扮演了什么角色？", requires:["family-group","rescue","a48"],
+    answer:"郭维以家族企业名义资助慢病学生交通和寄宿费用，同时担任潮生健康项目顾问。他的女儿郭宁是C17-01入组者。白塔的03:17'LQ转入'日程由他签署，群公告中'今晚03:17统一转入'的指令也来自他。他既是项目的推动者，也是项目的受害者——他清楚那晚会发生什么，但他的女儿也在其中。" },
+  { id:"sm-8", chapter:3, title:"TX-0817-12", question:"档案尾号TX-0817-12，究竟指向谁？", requires:["lan-transplant","a38","codes"],
+    answer:"TX-0817-12同时出现在林岚的移植随访表和一条正文缺页的民政死亡登记索引中。0817代表8月17日，12是当年档案编号。随访表显示供体年龄十二岁、姓名被遮盖；死亡登记记录一名十二岁未成年人于2008年8月17日死亡——同一天，九岁的林岚接受急诊肝移植。岛外警方调取纸本原卷后，最后一个名字才出现：叶知潮，十二岁。" },
+];
+
+const MYSTERY_MILESTONES = [
+  { count:2, title:"编号互证", text:"你已经能把跨场景出现的编号放回同一套档案体系。新的支线会优先提示缺失材料。" },
+  { count:5, title:"旧港拼图", text:"火灾、转院与归潮号不再是孤立事件。未解之谜现在会显示线索来源。" },
+  { count:8, title:"全貌归档", text:"八条旁证全部闭合。真结局会追加完整的支线归档记录。" },
+] as const;
 
 const ordinaryTitles = [
   ["民生", "雾港夏季客轮加开两班"], ["生活", "望潮饭店六月海鲜价目公示"], ["旅游", "白塔步道东段暂停开放"],
@@ -148,25 +183,26 @@ const ARTICLES: Article[] = ordinaryTitles.map(([tag, title], i) => ({
   body: articleDetails[i].split("|").slice(1), source: articleSourceFor(tag), author: tag==="论坛"?"岛民投稿":i%5===0?"记者 许蔚":"编辑部整理",
   image: [0,1,2,3,5,10,15,17,22,26,30,35].includes(i) ? ["/photos/venue-terminal.webp","/photos/venue-restaurant.webp","/photos/lighthouse-door.webp","/photos/venue-plaza.webp","/photos/wugang-aerial.webp","/photos/venue-cold-chain.webp","/photos/wugang-aerial.webp","/photos/venue-hotel.webp","/photos/venue-terminal.webp","/photos/venue-hotel.webp","/photos/venue-cold-chain.webp","/photos/wugang-aerial.webp"][[0,1,2,3,5,10,15,17,22,26,30,35].indexOf(i)] : undefined,
   deleted: i === 25 || i === 31, redacted: i === 27 || i === 32,
+  related: [22,24,27,30,31].includes(i) ? true : undefined,
 }));
 
-ARTICLES.push({ id: "a37", chapter: 3, tag: "医疗", date: "2008.08.17", title: "跨区儿童器官移植术后随访登记", excerpt: "患者林岚，9岁；供体身份在公开副本中隐去。", redacted: true, body: ["登记显示患者因急性肝衰竭接受急诊移植，术后转入长期随访。供体年龄十二岁，供体姓名栏在数字化副本中被整段遮盖。", "附件目录原有死亡证明、转运交接和监护人同意书三项，当前扫描包只剩随访首页。档案尾号为TX-0817-12。"] });
-ARTICLES.push({ id: "a38", chapter: 3, tag: "民政", date: "2008.08.18", title: "TX-0817-12死亡登记索引（正文缺页）", excerpt: "索引可以检索，登记正文与更正页均不在公开扫描包内。", deleted: true, redacted: true, body: ["目录记录一名十二岁未成年人于2008年8月17日死亡，姓名、户籍地与监护人字段未公开。", "纸本卷宗第12页与第13页之间留有撕裂装订孔。移交备注只剩半枚印章，无法确认经办机构。"] });
+ARTICLES.push({ id: "a37", chapter: 3, tag: "医疗", date: "2008.08.17", title: "跨区儿童器官移植术后随访登记", excerpt: "患者林岚，9岁；供体身份在公开副本中隐去。", redacted: true, related: true, body: ["登记显示患者因急性肝衰竭接受急诊移植，术后转入长期随访。供体年龄十二岁，供体姓名栏在数字化副本中被整段遮盖。", "附件目录原有死亡证明、转运交接和监护人同意书三项，当前扫描包只剩随访首页。档案尾号为TX-0817-12。"] });
+ARTICLES.push({ id: "a38", chapter: 3, tag: "民政", date: "2008.08.18", title: "TX-0817-12死亡登记索引（正文缺页）", excerpt: "索引可以检索，登记正文与更正页均不在公开扫描包内。", deleted: true, redacted: true, related: true, body: ["目录记录一名十二岁未成年人于2008年8月17日死亡，姓名、户籍地与监护人字段未公开。", "纸本卷宗第12页与第13页之间留有撕裂装订孔。移交备注只剩半枚印章，无法确认经办机构。"] });
 
 ARTICLES.push(
-  {id:"a39",chapter:1,tag:"即时",date:"2026.06.16",title:"今日雾港：晚班船18:30复核，岛内公交正常",excerpt:"截至16:20，阵雨减弱，客运站尚未决定是否取消20:10班次。",source:"今日雾港",author:"值班编辑 周俐",image:"/photos/wugang-map-rain.webp",body:["气象站称内湾能见度仍在下降，是否停航以客运站现场广播为准。岛内环线、商店和旅馆正常营业。","通信运营商未报告基站故障。客运站提醒旅客不要前往工作码头等待替代船只。"]},
-  {id:"a40",chapter:1,tag:"人物",date:"2024.11.03",title:"望潮饭店经营者陈放：休渔期也得把来源写清楚",excerpt:"一篇普通的本地商户访谈，记录陈放从修相机到经营饭店的经历。",source:"雾港商户通讯",author:"记者 许蔚",image:"/photos/venue-restaurant.webp",body:["陈放，1988年生，早年在大陆影像器材店工作，2021年回岛接手亲属饭店。工商登记、食品许可与采访信息一致。","采访附件中的个人履历止于2021年，未涉及港务、医疗或康养院。"]},
-  {id:"a41",chapter:1,tag:"旅业",date:"2025.12.19",title:"潮生宾馆年度消防检查记录",excerpt:"检查记录列出经营者与当班员工，住客信息依法不公开。",source:"雾港政务公开",author:"消防联络点",image:"/photos/venue-hotel.webp",redacted:true,body:["宾馆1998年登记营业，现有客房二十八间。前台员工蒋小蕊于2024年完成消防培训。","附件三‘万能卡领用人员’在网页扫描中缺失，目录显示原件共两页，当前只能打开第一页。"]},
-  {id:"a42",chapter:1,tag:"巡检",date:"2026.06.15",title:"白塔东侧夜间异响完成设备排查",excerpt:"港务站称异响来自检修门受风振动，暂未发现线路故障。",source:"今日雾港",author:"港务站值班室",image:"/photos/lighthouse-door.webp",body:["巡检时间为22:40至23:15，东侧道路因边坡维护未向公众开放。","巡检单的第二名签字被水浸开，只能辨认姓氏左半部分。港务站称纸本会在月底统一扫描。"]},
-  {id:"a43",chapter:2,tag:"今日雾港",date:"2026.06.16",title:"陈列馆夜间更新一批旧港医疗史目录",excerpt:"新增目录包括转院单、值班表和器材领用簿，正文仍按隐私等级开放。",source:"今日雾港",author:"文化版编辑",image:"/photos/nurse-id-1992.webp",body:["这批目录于22:00完成上传，只开放题名、年代、页数和来源，不公开未成年人姓名及医疗正文。","工作人员发现1992年六月卷有四页缺口，装订线显示纸张曾被人为拆走，缺页去向没有移交记录。"]},
-  {id:"a44",chapter:2,tag:"人物残档",date:"2010.02.08",title:"沈砚旧港口述史项目登记卡",excerpt:"项目登记人存在，但联系方式、结项页和两盘访谈带均已缺失。",source:"雾港地方档案",author:"目录自动生成",image:"/photos/wugang-map-archive.webp",body:["沈砚，男，项目登记时34岁，身份栏填写‘自由研究者’。2008年至2009年申请查阅旧港、康养院和失踪人口剪报。","登记卡背面被整页撕去，只剩订书钉孔。联系电话已停用，档案馆没有保存身份证复印件。"]},
-  {id:"a45",chapter:2,tag:"执业索引",date:"1993.01.12",title:"周岚护理执业登记变更索引",excerpt:"公开索引显示执业地点曾为潮生康养院乙区，变更附件无法查看。",source:"卫生档案目录",author:"系统迁移",redacted:true,body:["周岚的登记状态于1993年1月变更，原因字段被遮盖。公开页没有照片、住址和后续执业地点。","目录显示附件应有三页，目前扫描包只有封面；纸本借阅卡最后一次签出时间为2009年。"]},
-  {id:"a46",chapter:2,tag:"事故旧闻",date:"1992.06.20",title:"归潮号搜索第四日：仅发现空油桶与缆绳",excerpt:"当年短讯没有提到人员，只称工作船可能在大雾中漂移。",source:"《临海晚报》剪报",author:"记者署名缺失",deleted:true,body:["剪报下半段被撕掉，现存文字无法确认船上是否有人。照片背面却写有‘家属在客运站等候’。","同日港务月报将事故归为设备损失，两份材料的叙述对象并不一致。"]},
-  {id:"a47",chapter:3,tag:"今日雾港",date:"2026.06.17",title:"白塔检修门将于凌晨低潮窗口短时开启",excerpt:"港务站提示03:10至03:35有设备运输，公众不要进入东侧封闭路段。",source:"今日雾港",author:"港务通知",image:"/photos/wugang-map-night.webp",body:["通知称运输内容为备用电池和除湿设备，车辆从旧港冷链方向进入。","附件中的车辆号牌、承运单位和现场负责人均以个人信息为由遮盖。"]},
-  {id:"a48",chapter:3,tag:"人物",date:"2023.09.22",title:"郭维向雾港中学捐赠慢病学生交通基金",excerpt:"公开报道只记录其公益身份，没有披露资金管理细节。",source:"今日雾港",author:"教育记者 何岑",image:"/photos/family-dinner.webp",body:["郭维长期以家族企业名义资助复诊交通和寄宿费用，同时担任潮生健康项目顾问。","基金年度报告的受助者名单依法隐去，但附件中的审批人页在2025年后停止公开。"]},
-  {id:"a49",chapter:3,tag:"医师公示",date:"2026.03.04",title:"吴启明医师多点执业备案",excerpt:"备案包含卫生站与潮生健康门诊两个地点，执业范围为内科。",source:"卫生监督公示",author:"政务数据同步",redacted:true,body:["吴启明的学历、资格证号与常规执业信息完整。2008年至2010年的工作经历一栏显示‘材料核验中’。","附件目录曾包含一份儿童随访项目任职表，当前链接返回文件不存在。"]},
-  {id:"a50",chapter:3,tag:"校园",date:"2025.12.28",title:"郭宁获海岛学生生物观察竞赛二等奖",excerpt:"学校报道中的郭宁只是普通学生，文章没有健康项目相关内容。",source:"雾港中学",author:"校团委",body:["郭宁的作品记录潮间带生物，没有使用人体或医疗数据。指导教师评价她观察细、记录完整。","获奖名单页的监护人签字栏被后期遮盖，学校称未成年人信息不对外公开。"]},
-  {id:"a51",chapter:3,tag:"社区",date:"2026.06.17",title:"多名居民反映凌晨听到旧雾笛，港务站称未安排试鸣",excerpt:"声音出现时间不一，没有一段录音能完整记录三次鸣响。",source:"岛民论坛存档",author:"社区版主",image:"/photos/lighthouse-door.webp",body:["发帖者分布在南坡巷、旧港和学校宿舍，部分人称声音里像夹着名字，其他人只听见机械低频。","港务站回复公开系统没有试鸣任务，可能是海风与金属共振。帖子仍保留，但评论中的人名已全部删除。"]}
+  {id:"a39",chapter:1,tag:"即时",date:"2026.06.16",title:"今日雾港：晚班船18:30复核，岛内公交正常",excerpt:"截至16:20，阵雨减弱，客运站尚未决定是否取消20:10班次。",source:"今日雾港",author:"值班编辑 周俐",image:"/photos/wugang-map-rain.webp",related:true,body:["气象站称内湾能见度仍在下降，是否停航以客运站现场广播为准。岛内环线、商店和旅馆正常营业。","通信运营商未报告基站故障。客运站提醒旅客不要前往工作码头等待替代船只。"]},
+  {id:"a40",chapter:1,tag:"人物",date:"2024.11.03",title:"望潮饭店经营者陈放：休渔期也得把来源写清楚",excerpt:"一篇普通的本地商户访谈，记录陈放从修相机到经营饭店的经历。",source:"雾港商户通讯",author:"记者 许蔚",image:"/photos/venue-restaurant.webp",related:true,body:["陈放，1988年生，早年在大陆影像器材店工作，2021年回岛接手亲属饭店。工商登记、食品许可与采访信息一致。","采访附件中的个人履历止于2021年，未涉及港务、医疗或康养院。"]},
+  {id:"a41",chapter:1,tag:"旅业",date:"2025.12.19",title:"潮生宾馆年度消防检查记录",excerpt:"检查记录列出经营者与当班员工，住客信息依法不公开。",source:"雾港政务公开",author:"消防联络点",image:"/photos/venue-hotel.webp",redacted:true,related:true,body:["宾馆1998年登记营业，现有客房二十八间。前台员工蒋小蕊于2024年完成消防培训。","附件三‘万能卡领用人员’在网页扫描中缺失，目录显示原件共两页，当前只能打开第一页。"]},
+  {id:"a42",chapter:1,tag:"巡检",date:"2026.06.15",title:"白塔东侧夜间异响完成设备排查",excerpt:"港务站称异响来自检修门受风振动，暂未发现线路故障。",source:"今日雾港",author:"港务站值班室",image:"/photos/lighthouse-door.webp",related:true,body:["巡检时间为22:40至23:15，东侧道路因边坡维护未向公众开放。","巡检单的第二名签字被水浸开，只能辨认姓氏左半部分。港务站称纸本会在月底统一扫描。"]},
+  {id:"a43",chapter:2,tag:"今日雾港",date:"2026.06.16",title:"陈列馆夜间更新一批旧港医疗史目录",excerpt:"新增目录包括转院单、值班表和器材领用簿，正文仍按隐私等级开放。",source:"今日雾港",author:"文化版编辑",image:"/photos/nurse-id-1992.webp",related:true,body:["这批目录于22:00完成上传，只开放题名、年代、页数和来源，不公开未成年人姓名及医疗正文。","工作人员发现1992年六月卷有四页缺口，装订线显示纸张曾被人为拆走，缺页去向没有移交记录。"]},
+  {id:"a44",chapter:2,tag:"人物残档",date:"2010.02.08",title:"沈砚旧港口述史项目登记卡",excerpt:"项目登记人存在，但联系方式、结项页和两盘访谈带均已缺失。",source:"雾港地方档案",author:"目录自动生成",image:"/photos/wugang-map-archive.webp",related:true,body:["沈砚，男，项目登记时34岁，身份栏填写‘自由研究者’。2008年至2009年申请查阅旧港、康养院和失踪人口剪报。","登记卡背面被整页撕去，只剩订书钉孔。联系电话已停用，档案馆没有保存身份证复印件。"]},
+  {id:"a45",chapter:2,tag:"执业索引",date:"1993.01.12",title:"周岚护理执业登记变更索引",excerpt:"公开索引显示执业地点曾为潮生康养院乙区，变更附件无法查看。",source:"卫生档案目录",author:"系统迁移",redacted:true,related:true,body:["周岚的登记状态于1993年1月变更，原因字段被遮盖。公开页没有照片、住址和后续执业地点。","目录显示附件应有三页，目前扫描包只有封面；纸本借阅卡最后一次签出时间为2009年。"]},
+  {id:"a46",chapter:2,tag:"事故旧闻",date:"1992.06.20",title:"归潮号搜索第四日：仅发现空油桶与缆绳",excerpt:"当年短讯没有提到人员，只称工作船可能在大雾中漂移。",source:"《临海晚报》剪报",author:"记者署名缺失",deleted:true,related:true,body:["剪报下半段被撕掉，现存文字无法确认船上是否有人。照片背面却写有‘家属在客运站等候’。","同日港务月报将事故归为设备损失，两份材料的叙述对象并不一致。"]},
+  {id:"a47",chapter:3,tag:"今日雾港",date:"2026.06.17",title:"白塔检修门将于凌晨低潮窗口短时开启",excerpt:"港务站提示03:10至03:35有设备运输，公众不要进入东侧封闭路段。",source:"今日雾港",author:"港务通知",image:"/photos/wugang-map-night.webp",related:true,body:["通知称运输内容为备用电池和除湿设备，车辆从旧港冷链方向进入。","附件中的车辆号牌、承运单位和现场负责人均以个人信息为由遮盖。"]},
+  {id:"a48",chapter:3,tag:"人物",date:"2023.09.22",title:"郭维向雾港中学捐赠慢病学生交通基金",excerpt:"公开报道只记录其公益身份，没有披露资金管理细节。",source:"今日雾港",author:"教育记者 何岑",image:"/photos/family-dinner.webp",related:true,body:["郭维长期以家族企业名义资助复诊交通和寄宿费用，同时担任潮生健康项目顾问。","基金年度报告的受助者名单依法隐去，但附件中的审批人页在2025年后停止公开。"]},
+  {id:"a49",chapter:3,tag:"医师公示",date:"2026.03.04",title:"吴启明医师多点执业备案",excerpt:"备案包含卫生站与潮生健康门诊两个地点，执业范围为内科。",source:"卫生监督公示",author:"政务数据同步",redacted:true,related:true,body:["吴启明的学历、资格证号与常规执业信息完整。2008年至2010年的工作经历一栏显示‘材料核验中’。","附件目录曾包含一份儿童随访项目任职表，当前链接返回文件不存在。"]},
+  {id:"a50",chapter:3,tag:"校园",date:"2025.12.28",title:"郭宁获海岛学生生物观察竞赛二等奖",excerpt:"学校报道中的郭宁只是普通学生，文章没有健康项目相关内容。",source:"雾港中学",author:"校团委",related:true,body:["郭宁的作品记录潮间带生物，没有使用人体或医疗数据。指导教师评价她观察细、记录完整。","获奖名单页的监护人签字栏被后期遮盖，学校称未成年人信息不对外公开。"]},
+  {id:"a51",chapter:3,tag:"社区",date:"2026.06.17",title:"多名居民反映凌晨听到旧雾笛，港务站称未安排试鸣",excerpt:"声音出现时间不一，没有一段录音能完整记录三次鸣响。",source:"岛民论坛存档",author:"社区版主",image:"/photos/lighthouse-door.webp",related:true,body:["发帖者分布在南坡巷、旧港和学校宿舍，部分人称声音里像夹着名字，其他人只听见机械低频。","港务站回复公开系统没有试鸣任务，可能是海风与金属共振。帖子仍保留，但评论中的人名已全部删除。"]}
 );
 
 const APPS: { id: AppId; icon: string; name: string }[] = [
@@ -197,87 +233,90 @@ const PHOTO_SETS = {
   ],
 } satisfies Record<number, { title: string; caption: string; clue: string; src: string; meta: string; transcript?: string }[]>;
 
-type ChatLine = { side: "them" | "me" | "system"; text: string };
+type ChatLine = { side: "them" | "me" | "system"; text: string; terror?: boolean; redText?: boolean };
 function conversationFor(chapter: number, thread: string): ChatLine[] {
   if(thread==="陌生号码") return chapter===1?[
-    {side:"them",text:"306的备用卡不是给你翻东西用的"},{side:"me",text:"你是谁"},{side:"them",text:"你刚从三楼下来 雨衣左肩破了"}
+    {side:"them",text:"306的备用卡不是给你翻东西用的"},{side:"me",text:"你是谁"},{side:"them",text:"你刚从三楼下来 雨衣左肩破了"},{side:"them",text:"快走 他们知道你来了"}
   ]:chapter===2?[
     {side:"them",text:"缺掉的页不是遗失"},{side:"me",text:"沈砚在哪"},{side:"them",text:"旧纸会烂 人也会 别再查乙区"}
   ]:[
-    {side:"them",text:"别去白塔"},{side:"them",text:"[监控照片] 旧港冷链东门 02:41"},{side:"me",text:"林琴在下面对不对"},{side:"them",text:"现在回头 你还能当没看见"},{side:"system",text:"对方撤回了一条消息"}
+    {side:"them",text:"别去白塔"},{side:"them",text:"[监控照片] 旧港冷链东门 02:41"},{side:"me",text:"林琴在下面对不对"},{side:"them",text:"现在回头 你还能当没看见"},{side:"system",text:"对方撤回了一条消息"},{side:"them",text:"扫码缴费，快速离开，快，快",redText:true},{side:"them",text:"你刚才是不是听见了 那个声音",terror:true},{side:"me",text:"什么声音"},{side:"them",text:"算了 你继续查吧 别查乙区"},{side:"system",text:"6月17日 03:17"},{side:"them",text:"她醒了",terror:true},{side:"me",text:"谁醒了"},{side:"them",text:"她在问你的名字",terror:true},{side:"them",text:"快走。别回头。",redText:true}
   ];
   if (thread === "潮") {
     const first:ChatLine[] = [
-    { side: "them", text: "到了" }, { side: "me", text: "刚到 雨停了" },
+    { side: "them", text: "到了？" }, { side: "me", text: "嗯 雨刚停" },
     { side: "them", text: "你妈住哪间" }, { side: "me", text: "306 人不在 行李还在" },
-    { side: "them", text: "先看门卡 再看船票" }, { side: "me", text: "你觉得她没走" },
-    { side: "them", text: "我没这么说 先看记录" },
+    { side: "them", text: "先查门卡记录 别急着翻行李" }, { side: "me", text: "你觉得她没走？" },
+    { side: "them", text: "……我说不好。你先看记录。" },
     ];
     const second:ChatLine[] = [
     {side:"system",text:"6月16日 22:04"},
-    { side: "me", text: "十二张 看得我眼睛疼" }, { side: "them", text: "名字先放一边" },
-    { side: "me", text: "那看什么" }, { side: "them", text: "年龄 衣服 章 哪个重复就圈哪个" },
-    { side: "me", text: "你以前干过这个" }, { side: "them", text: "没有 就是不喜欢别人把人写成编号" },
+    { side: "me", text: "十二张 看得我眼睛快瞎了" }, { side: "them", text: "别盯名字 没用" },
+    { side: "me", text: "那盯什么" }, { side: "them", text: "年龄 衣服 转院章 哪个重复就是哪个" },
+    { side: "me", text: "你以前干过这个啊" }, { side: "them", text: "没有。就是看不得人把人写成编号。" },
     ];
     const third:ChatLine[] = [
     {side:"system",text:"6月17日 02:46"},
-    { side: "them", text: "找到人了" }, { side: "me", text: "知道在哪 还没进去" },
-    { side: "them", text: "位置先发出去" }, { side: "me", text: "名单呢 一起发" },
-    { side: "them", text: "别 里面有病人 先备份" }, { side: "me", text: "你到底站哪边" },
-    { side: "them", text: "你这边 快点" },
+    { side: "them", text: "找到人了？" }, { side: "me", text: "知道在哪 但还没进去" },
+    { side: "them", text: "位置先发出去 别等" }, { side: "me", text: "名单呢 一起发？" },
+    { side: "them", text: "别 里面有病人 先备份" }, { side: "me", text: "你到底是哪边的" },
+    { side: "them", text: "你这边。快。", redText: true },
     ];
-    return chapter===1?first:chapter===2?[...first,...second]:[...first,...second,...third];
+    return chapter===1?first:chapter===2?second:third;
   }
   const chats: Record<string, ChatLine[]> = {
     "1:妈妈": [
-      { side: "them", text: "护膝到了 颜色比照片深点" }, { side: "me", text: "能戴就行 你别又舍不得拆" },
-      { side: "them", text: "到雾港了 住潮生宾馆306 房间有点潮" }, { side: "me", text: "后天几点的船 我去接你" },
-      { side: "them", text: "事情办完再买 冰箱第二层有汤 别点外卖😅" },
+      { side: "them", text: "护膝到了 颜色比照片深一点 不过还行" }, { side: "me", text: "能戴就行 你别又舍不得拆啊" },
+      { side: "them", text: "到雾港了 住潮生宾馆306 房间有点潮" }, { side: "me", text: "后天几点的船 我去码头接你" },
+      { side: "them", text: "办完事再说 冰箱第二层有汤 别老点外卖😅" },
     ],
     "1:潮生宾馆": [
-      { side: "them", text: "您好 这里是潮生宾馆前台 您问306房林琴女士吗" }, { side: "me", text: "对 她两天没回消息 麻烦敲一下门" },
+      { side: "them", text: "您好 潮生宾馆前台 您问306的林女士是吧" }, { side: "me", text: "对 她两天没回消息了 能帮我敲下门吗" },
       { side: "them", text: "行李还在 人昨晚没回来 我们已经报过警了" },
-      { side: "me", text: "房里的东西先别动 我马上到" }, { side: "them", text: "好 到前台找我就行" },
+      { side: "me", text: "房间的东西先别动 我马上到" }, { side: "them", text: "好 到了找我前台就行 我姓蒋" },
     ],
     "1:陈放": [
-      { side: "them", text: "你那只35还在我这 遮光罩磕了点" }, { side: "me", text: "先放着 电池帮我充上" },
-      { side: "them", text: "又临时出差啊" }, { side: "me", text: "找我妈 她在雾港失联了" },
-      { side: "them", text: "定位发我 有事喊我 别一个人往废码头钻" },
+      { side: "them", text: "喂 你那台35还在我这儿 遮光罩磕了个角" }, { side: "me", text: "先放着 电池帮我充上" },
+      { side: "them", text: "又出差？你不是说最近不跑了吗" }, { side: "me", text: "不是出差 我妈在雾港失联了 我得过去" },
+      { side: "them", text: "……雾港？定位发我一个 有事喊一声 别一个人往废码头跑" },
     ],
     "1:蒋小蕊": [
-      { side: "them", text: "林姐 我是前台小蒋 警察看过房间了 旧手机和帆布包先登记封存" },
-      { side: "me", text: "昨晚有人进去过吗" }, { side: "them", text: "保洁没有 老板有总卡 但系统没显示开门 你到了我把记录给你" },
-      { side: "me", text: "好 你先别跟老板争" }, { side: "them", text: "嗯 路上慢点 码头地砖很滑🌧️" },
+      { side: "them", text: "林姐 我是前台小蒋 警察刚走 看了房间 说旧手机和帆布包先封存登记" },
+      { side: "me", text: "昨晚有人进去过吗" }, { side: "them", text: "保洁没进 老板有总卡 但系统没显示开门记录 你到了我给你看" },
+      { side: "me", text: "好 你先别跟老板提这事" }, { side: "them", text: "嗯 路上慢点 码头地砖滑得很🌧️" },
     ],
     "2:沈砚（旧号码）": [
-      { side: "them", text: "别查名字 名单后补过" }, { side: "them", text: "[文件] 十二张启事_扫描件.pdf" }, { side: "me", text: "你谁 为什么用沈砚的号" },
-      { side: "them", text: "先看年龄 衣服 转院章" }, { side: "me", text: "你认识我妈" },
-      { side: "them", text: "认识 她不一定记得" }, { side: "system", text: "该账号已停止接收消息" },
+      { side: "them", text: "别查名字 那份名单是后来补的" }, { side: "them", text: "[文件] 十二张启事_扫描件.pdf" }, { side: "me", text: "你谁啊 为什么用沈砚的号" },
+      { side: "them", text: "先看年龄 衣服 还有转院章 名字没用" }, { side: "me", text: "你认识我妈？" },
+      { side: "them", text: "认识。她不一定记得我。" }, { side: "system", text: "该账号已停止接收消息" },
     ],
     "2:许医生": [
-      { side: "them", text: "这次量表比三月稳定 药先不加" },
-      { side: "me", text: "她总梦到潮水和小孩唱歌 这算旧事吗" }, { side: "them", text: "梦不能直接当记忆 先记频率 睡眠和当天接触的信息" },
-      { side: "me", text: "好 我把三周记录发您" },
+      { side: "them", text: "这次量表比三月好一点 药暂时不加" },
+      { side: "me", text: "她老梦见潮水和小孩唱歌 这算以前的事吗" }, { side: "them", text: "梦不能直接当记忆用 你先记频率 记她睡得好不好 白天接触了什么" },
+      { side: "me", text: "好 我把这三周记录发您" },
     ],
     "3:郭家健康群": [
-      { side: "them", text: "本月C组复查改周五 早餐后别自己加药" }, { side: "me", text: "我周五模拟考 能不能下周去" },
+      { side: "them", text: "C组复查改周五 早餐后别自己加药" }, { side: "me", text: "我周五模拟考 能不能下周去" },
       { side: "them", text: "不能 今晚03:17统一转入 C组家属不要靠近白塔" }, { side: "me", text: "为什么每次都不给我们看报告" },
-      { side: "them", text: "按群通知来" },
+      { side: "them", text: "C17-01 复查异常 心率夜间骤降 请确认是否停药" }, { side: "me", text: "没停过啊 一直都按时吃的" },
+      { side: "them", text: "收到。明早抽血复核。白塔夜间有设备检修，家属不要靠近北坡。", terror: true },
     ],
     "3:爸爸": [
-      { side: "them", text: "晚上回来吃饭 你姑带了黄鱼" }, { side: "me", text: "我在小雨店里写卷子 晚点" },
-      { side: "them", text: "十点前回来 明早抽血" }, { side: "me", text: "又抽 上个月才抽过" },
-      { side: "them", text: "别闹 你的药 学校名额 以后出岛 哪样不是家里安排的" },
+      { side: "them", text: "晚上回来吃饭 你姑带了黄鱼" }, { side: "me", text: "在小雨店里写卷子 晚点回" },
+      { side: "them", text: "十点前回来 明早抽血" }, { side: "me", text: "又抽？上个月不是才抽过" },
+      { side: "them", text: "别跟我犟 你的药 学校名额 以后出岛 哪样不是家里在安排" },
     ],
     "3:吴医生": [
-      { side: "them", text: "药袋还是17·01就拍给我 别跟小雨的混" }, { side: "me", text: "我们吃的不是同一种吗" },
-      { side: "them", text: "剂量不同 最近还听见那首歌吗" }, { side: "me", text: "她也听见了 可我们小时候不认识" },
-      { side: "them", text: "别在群里说 先记时间" },
+      { side: "them", text: "药袋拍17·01那个 别跟小雨的混一块儿" }, { side: "me", text: "我们吃的不是一样的吗" },
+      { side: "them", text: "剂量不一样 不能混。最近还听见那首歌吗" }, { side: "me", text: "她也听见了 可我们小时候不认识啊" },
+      { side: "them", text: "别在群里说这个 先记时间 回头告诉我" },
     ],
     "3:陶小雨": [
-      { side: "them", text: "你那把蓝伞还在店里" }, { side: "me", text: "帮我塞收银台下面 明天拿" },
-      { side: "them", text: "你爸刚来问你了 脸好臭" }, { side: "me", text: "他一说体检就这样 你药袋拍了吗" },
-      { side: "them", text: "拍了 还是C17/04😓 昨晚又梦到那个没窗的走廊" },
+      { side: "them", text: "你那把蓝伞还在店里 啥时候来拿" }, { side: "me", text: "帮我塞收银台下面 明天拿" },
+      { side: "them", text: "你爸刚来过了 脸臭得要死" }, { side: "me", text: "他一提体检就这样 药袋拍了吗" },
+      { side: "them", text: "拍了 还是C17/04😓 昨晚又梦到那个走廊了 没窗那个" }, { side: "me", text: "又梦到了？" },
+      { side: "them", text: "这次不一样 走廊尽头有张床 床上的人睁着眼睛看我", terror: true }, { side: "me", text: "……别说了 我害怕" },
+      { side: "them", text: "她好像在叫我 但声音不对 像从水底下传上来的", terror: true },
     ],
   };
   if(thread==="妈妈") return chats["1:妈妈"];
@@ -289,7 +328,7 @@ function conversationFor(chapter: number, thread: string): ChatLine[] {
 
 const avatarFor = (name: string) => name === "潮" || name === "陌生号码" ? "/avatars/tide.webp" : name.includes("郭家")
   ? "/photos/family-dinner.webp" : name.includes("妈妈") ? "/avatars/mom.webp" : name.includes("爸爸") ? "/avatars/chen.webp" : name.includes("宾馆") ? "/avatars/hotel-key.webp" : name.includes("沈砚")
-  ? "/avatars/shen-yan.webp" : name.includes("医生") ? "/avatars/doctor.webp" : name.includes("陶") || name.includes("蒋") ? "/avatars/clerk.webp" : "/avatars/chen.webp";
+  ? "/avatars/shen-yan.webp" : name.includes("吴医生") ? "/avatars/wu-doctor.webp" : name.includes("医生") ? "/avatars/doctor.webp" : name.includes("陶") ? "/avatars/clerk.webp" : name.includes("蒋") ? "/avatars/jiang.webp" : name.includes("陈放") ? "/avatars/chen.webp" : "/avatars/lin-lan.webp";
 
 const replyChoicesFor = (chapter:number, name:string) => {
   if(name === "潮") return chapter === 1 ? ["先查哪儿","你觉得她还在岛上","那个编号呢"] : chapter === 2 ? ["为什么不查名字","十二张怎么排","归潮号跟乙区有关吗"] : ["先救人还是先发名单","你到底谁啊","白塔下面有人吗"];
@@ -297,18 +336,84 @@ const replyChoicesFor = (chapter:number, name:string) => {
   if(name.includes("宾馆")) return ["306的东西先别动","能拍一下门卡记录吗","你们几点报的警"];
   if(name.includes("郭家")) return ["原始报告呢","今晚我不去白塔","编号谁定的"];
   if(name === "爸爸") return ["把报告发我","你们到底瞒了什么","今晚别等我"];
+  if(name.includes("许医生")) return ["她最近总说梦到走廊","量表能让我看下吗","她以前也这样过吗"];
+  if(name.includes("吴医生")) return ["药袋编号是什么意思","剂量哪里不一样","那首歌是什么"];
   if(name.includes("陶")||name.includes("蒋")) return ["原图留一下🙏","你还记得几点吗","先别跟别人说"];
   return ["最后一次见她是几点","原始记录能拍吗","你再想想还有没有别的"];
 };
 
-const autoReplyFor = (chapter:number, name:string, text:string) => {
-  if(name === "潮") return text.includes("谁") ? "现在说了你也不信 先找TX-0817-12" : text.includes("救人")||text.includes("名单") ? "先发位置 名单等等 里面不全是坏人" : text.includes("编号") ? "拍下来 先别问店员" : text.includes("哪儿") ? "宾馆 码头 先这两个" : "有可能 先别下结论";
-  if(name === "妈妈") return "";
-  if(name.includes("宾馆")) return text.includes("门卡") ? "行 打印机有点慢 我拍清楚发你" : "报过警了 306锁着 东西没动";
-  if(name.includes("郭家")) return "郭维：家里的事回家说 别在群里问编号";
-  if(name === "爸爸") return text.includes("报告") ? "原件不在我这 你先回来" : "别一个人去白塔 先回家";
-  if(name.includes("陶") || name.includes("蒋")) return "留着了 👍 原图我不删";
-  if(name.includes("医生")) return "只能先核对编号 身份信息要本人申请";
+const autoReplyFor = (chapter:number, name:string, text:string): string | null => {
+  const map: Record<string, Record<string, string>> = {
+    "潮": {
+      "先查哪儿":"门卡和船票。先把时间线理清楚，别急着翻行李。",
+      "你觉得她还在岛上":"船票没出岛记录，工作船也没目的港回执。你自己想。",
+      "那个编号呢":"C17/04在两个地方出现。先记着，后面会用到。",
+      "为什么不查名字":"名字是后来补的。先看年龄、衣服、转院章。",
+      "十二张怎么排":"先按医院分。转院单上的章是同一个，跑不了。",
+      "归潮号跟乙区有关吗":"同一天晚上。床位改了，救生衣也领了十七件。你说呢。",
+      "先救人还是先发名单":"先发位置。里面有病人，不能停设备。",
+      "你到底谁啊":"现在说了你也不信。先找TX-0817-12。",
+      "白塔下面有人吗":"有。你妈在下面。",
+    },
+    "潮生宾馆": {
+      "306的东西先别动":"没动 锁着呢 警察说了保持原样",
+      "能拍一下门卡记录吗":"行 打印机有点慢 我拍清楚发你",
+      "你们几点报的警":"昨晚十一点多 前台换班发现没人回来就报了",
+      "最后一次见她是几点":"昨天下午她还下来拿过快递 之后就没人见了",
+      "原始记录能拍吗":"我试试 拍清楚发你",
+      "你再想想还有没有别的":"嗯……好像没了 想到再跟你说",
+    },
+    "陈放": {
+      "最后一次见她是几点":"前天傍晚吧 她来店里吃了碗面 一个人坐靠窗",
+      "原始记录能拍吗":"行 我找找相册 拍完发你",
+      "你再想想还有没有别的":"她那天好像拿着个牛皮纸信封 鼓鼓的",
+      "先查哪儿":"宾馆和码头 这两个地方先跑",
+      "你觉得她还在岛上":"说不好 但船没出去 人应该还在",
+    },
+    "蒋小蕊": {
+      "原图留一下🙏":"留着了 👍 原图我不删",
+      "你还记得几点吗":"大概十一点 具体没看时间 换班才发现的",
+      "先别跟别人说":"知道 嘴严得很😂",
+      "最后一次见她是几点":"昨天下午她还下来过 拿了个快递",
+      "你再想想还有没有别的":"她那天好像有点心不在焉 说话反应慢半拍",
+    },
+    "郭家健康群": {
+      "原始报告呢":"郭维：临时不在手边 回头拍给你",
+      "今晚我不去白塔":"郭维：不是让你去 是让你别靠近 今晚有设备检修",
+      "编号谁定的":"郭维：家里的事回家说 别在群里问",
+    },
+    "爸爸": {
+      "把报告发我":"原件不在我这 你先回来",
+      "你们到底瞒了什么":"没什么好瞒的 你回来再说",
+      "今晚别等我":"别一个人去白塔 先回家",
+    },
+    "陶小雨": {
+      "原图留一下🙏":"留着了 拍得清楚 👍",
+      "你还记得几点吗":"好像十一点多 具体记不清了",
+      "先别跟别人说":"放心 我不说😂",
+      "你再想想还有没有别的":"她最近老提起一个梦 说走廊没窗……",
+    },
+    "许医生": {
+      "她最近总说梦到走廊":"梦到走廊的人不止她一个。你先把频率记下来，别急着下结论。",
+      "量表能让我看下吗":"量表结果不能直接给你，但可以告诉你：三月比一月好，夜间指标还是偏低。",
+      "她以前也这样过吗":"她小时候的事不太愿意说。不过梦的内容……你最好问问她小时候认识的人。",
+    },
+    "吴医生": {
+      "药袋编号是什么意思":"C17是项目组，01到04是入组顺序。这个编号只在系统里用，跟药名没关系。",
+      "剂量哪里不一样":"C17-01和C17-04差一倍。混了会出问题，所以我让你分开放。",
+      "那首歌是什么":"不是什么歌。是旧雾笛的声音。她们都听过，但不一定在同一时间。",
+      "把报告发我":"只能先核对编号 身份信息要本人申请",
+      "你们到底瞒了什么":"医疗记录不能随便给 你得走流程",
+      "今晚别等我":"今晚我值班 你别乱跑",
+    },
+  };
+  const replies = map[name];
+  if (replies && replies[text]) return replies[text];
+  // fallback
+  if(name === "妈妈" || name.includes("沈砚")) return null;
+  if(name.includes("郭家")) return "郭维：家里的事回家说 别在群里问";
+  if(name.includes("医生")) return "先核对编号 身份信息要本人申请";
+  if(name.includes("陶") || name.includes("蒋")) return "留着了 👍";
   return "我找找 等会回你";
 };
 
@@ -335,9 +440,18 @@ export default function Home() {
   const [introSeen,setIntroSeen]=useState(false);
   const [lockTouch,setLockTouch]=useState<number|null>(null);
   const [unlocking,setUnlocking]=useState(false);
+  const [tutorialShown,setTutorialShown]=useState(false);
+  const [terrorActive,setTerrorActive]=useState(false);
+  const [terrorInfo,setTerrorInfo]=useState({text:"",reward:""});
+  const [terrorTime,setTerrorTime]=useState(0);
+  const [resolvedMysteries,setResolvedMysteries]=useState<string[]>([]);
+  const [acceptedFriends,setAcceptedFriends]=useState<string[]>([]);
+  const [hydrated,setHydrated]=useState(false);
 
-  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("wugang-v6") || "null"); if (v) { setStarted(v.started); setChapter(v.chapter); setUnlocked(v.unlocked); setFound(v.found || []); setInventory(v.inventory || []); setIntroSeen(Boolean(v.introSeen)); } } catch {} }, []);
-  useEffect(() => { localStorage.setItem("wugang-v6", JSON.stringify({ started, chapter, unlocked, found, inventory, introSeen })); }, [started, chapter, unlocked, found, inventory, introSeen]);
+  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("wugang-v6") || "null"); if (v) { setStarted(Boolean(v.started)); setChapter(v.chapter || 1); setUnlocked(v.unlocked || 1); setFound(v.found || []); setInventory(v.inventory || []); setIntroSeen(Boolean(v.introSeen)); setTutorialShown(Boolean(v.tutorialShown)); setResolvedMysteries(v.resolvedMysteries || []); setAcceptedFriends(v.acceptedFriends || []); } } catch {} finally { setHydrated(true); } }, []);
+  useEffect(() => { if(!hydrated)return;localStorage.setItem("wugang-v6", JSON.stringify({ started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends })); }, [hydrated, started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends]);
+
+  useEffect(()=>{if(!terrorActive)return;const t=window.setInterval(()=>{setTerrorTime(v=>{if(v<=1){clearInterval(t);setTerrorActive(false);setTerrorInfo({text:"",reward:""});return 0}return v-1})},1000);return()=>clearInterval(t)},[terrorActive]);
 
   const chapterClues = CLUES.filter(c => c.chapter === chapter);
   const collected = chapterClues.filter(c => found.includes(c.id));
@@ -372,7 +486,6 @@ export default function Home() {
     if (!answer) { notify("先写下你目前最倾向的解释。判断不是锁死的，之后还可以改。"); return; }
     if(chapter===3&&answer==="rescue-first"&&!inventory.includes("maintenance-tag")){notify("你知道时间，却还没有能进入地下设备层的凭据。先检查旧港冷链的无牌车辆。");return}
     if(chapter===3&&answer==="rescue-first"&&!inventory.includes("bed-location")){notify("先确认LQ的具体床位与生命状态。只有日程，没有救援位置还不能行动。");return}
-    if(chapter===3&&answer==="rescue-first"&&!inventory.includes("mirror-index")){notify("远端还在监看你。先到B1镜像节点复制只读索引，再考虑断开线路。");return}
     const deduction = DEDUCTIONS.find(d=>d.chapter===chapter&&selected.includes(d.id)&&d.requires.every(id=>found.includes(id)));
     const correct = answer === (chapter === 1 ? "island" : chapter === 2 ? "transfer" : "rescue-first");
     const acceptedArguments:Record<number,string[]>={1:["room-timeline","departure-gap","weather-alibi"],2:["ward-chain","seventeen-children"],3:["transfer-chain"]};
@@ -394,7 +507,7 @@ export default function Home() {
     }
     else setEnding("truth");
   };
-  const reset = () => { localStorage.removeItem("wugang-v6");localStorage.removeItem("wugang-tool-installed");localStorage.removeItem("wugang-wechat-log");[1,2,3].forEach(n=>localStorage.removeItem(`wugang-recovered-${n}`)); setStarted(false); setIntroSeen(false); setChapter(1); setUnlocked(1); setFound([]); setInventory([]); setEnding(null); setArea("phone"); setApp("home"); };
+  const reset = () => { localStorage.removeItem("wugang-v6");localStorage.removeItem("wugang-tool-installed");localStorage.removeItem("wugang-wechat-log");[1,2,3].forEach(n=>localStorage.removeItem(`wugang-recovered-${n}`)); setStarted(false); setIntroSeen(false); setTutorialShown(false); setChapter(1); setUnlocked(1); setFound([]); setInventory([]); setResolvedMysteries([]); setAcceptedFriends([]); setEnding(null); setArea("phone"); setApp("home"); };
   const unlockPhone=()=>{if(unlocking)return;setUnlocking(true);window.setTimeout(()=>setIntroSeen(true),520)};
 
   if (!started) return <main className="cover">
@@ -413,12 +526,14 @@ export default function Home() {
 
   if (ending) return <main className="ending">
     <p>TRUE ENDING · 名字归岸</p><h1>先救人，再让证据说话。</h1>
-    <div className="ending-text"><p>郭宁关闭雾笛，吴启明交出第三代观察记录。你沿白塔检修道找到林琴，把救援位置、低潮时间和三套证据分别发给岛外警方、律师与媒体。</p><p>引水洞里的归潮号终于被找到。受害者姓名由家属确认，无辜受体的医疗隐私没有成为猎奇标题。</p><p>恢复工具只找回手术日期、供体年龄和档案尾号。TX-0817-12同时出现在一条正文缺页的民政死亡登记索引里。岛外警方调取纸本原卷后，最后一个名字才出现：<b>叶知潮，十二岁，死亡于2008年8月17日。</b>同一天，九岁的林岚接受急诊肝移植。你再打开微信，“潮”的会话不存在；系统从未记录过这个联系人。</p><p>他没有替你找到任何线索。他只是把你已经看见的东西，换个顺序放回去。</p><div className="post-record"><span>档案反查 / TX-0817-12</span><strong>叶知潮死亡登记　↔　林岚移植随访证明</strong><small>签发机构相距342公里，经办人却属于同一间潮生康养院。</small></div><p>监护设备停下后，空病房录到一句孩子的声音：“这次有人记得我们了。”房里没有音频设备。</p></div>
+    <div className="ending-text"><p>郭宁关闭雾笛，吴启明交出第三代观察记录。你沿白塔检修道找到林琴，把救援位置、低潮时间和三套证据分别发给岛外警方、律师与媒体。</p><p>引水洞里的归潮号终于被找到。受害者姓名由家属确认，无辜受体的医疗隐私没有成为猎奇标题。</p><p>恢复工具只找回手术日期、供体年龄和档案尾号。TX-0817-12同时出现在一条正文缺页的民政死亡登记索引里。岛外警方调取纸本原卷后，最后一个名字才出现：<b>叶知潮，十二岁，死亡于2008年8月17日。</b>同一天，九岁的林岚接受急诊肝移植。你再打开微信，“潮”的会话不存在；系统从未记录过这个联系人。</p><p>他没有替你找到任何线索。他只是把你已经看见的东西，换个顺序放回去。</p><div className="post-record"><span>档案反查 / TX-0817-12</span><strong>叶知潮死亡登记　↔　林岚移植随访证明</strong><small>签发机构相距342公里，经办人却属于同一间潮生康养院。</small></div>{resolvedMysteries.length===SIDE_MYSTERIES.length?<div className="ending-archive"><span>SIDE ARCHIVE · 8/8</span><strong>所有旁证已经归档</strong><p>两个C17/04、十七件救生衣、沈砚失踪与2009年的火灾终于落在同一条时间线上。雾港留下的不再只是一个结论，而是一套可以被复核的完整记录。</p></div>:<div className="ending-archive incomplete"><span>SIDE ARCHIVE · {resolvedMysteries.length}/8</span><strong>仍有旁证没有闭合</strong><p>主线已经结束，但雾港的旧记录还没有全部归岸。你可以返回未解之谜，补完支线归档。</p><button onClick={()=>{setEnding(null);setArea("side")}}>返回补完未解之谜</button></div>}<p>监护设备停下后，空病房录到一句孩子的声音：“这次有人记得我们了。”房里没有音频设备。</p></div>
     <button className="primary" onClick={reset}>重新调查</button>
   </main>;
 
   return <main className="game-shell">
     {toast && <div className="toast">{toast}</div>}
+    {!tutorialShown && introSeen && <TutorialOverlay dismiss={() => setTutorialShown(true)} />}
+    {terrorActive && <div className="terror-prompt" role="dialog" aria-modal="true"><div className="terror-prompt-bg"/><div className="terror-prompt-card"><div className="terror-prompt-icon">!</div><p>{terrorInfo.text}</p><div className="terror-prompt-bar"><span style={{width:`${(terrorTime/5)*100}%`}}/></div><button className="terror-prompt-btn" onClick={()=>{if(terrorInfo.reward)acquireItem(terrorInfo.reward);setTerrorActive(false);setTerrorInfo({text:"",reward:""});setTerrorTime(0);}}>赶快逃！{terrorTime}s</button></div></div>}
     {collectionNotice && <div className={`collection-modal ${collectionNotice.source.includes("组合推演")?"deduction-achievement":""}`} role="dialog" aria-modal="true"><article>{collectionNotice.source.includes("组合推演")?<div className="achievement-mark"><i/><span>推演成立</span></div>:<div className="clue-mark">＋</div>}<small>{collectionNotice.source.includes("组合推演")?"新的材料关系已写入调查手记":`线索已收录 · ${CHAPTERS[collectionNotice.chapter-1].title}`}</small><h2>{collectionNotice.title}</h2><b>{collectionNotice.source}</b><p>{collectionNotice.text}</p><button onClick={()=>setCollectionNotice(null)}>{collectionNotice.source.includes("组合推演")?"查看新的推演":"我已查看"}</button></article></div>}
     {itemNotice && <div className="item-modal item-achievement" role="dialog" aria-modal="true"><article><div className="achievement-rays"/><small>道具获得 · 已加入调查清单</small><div className="item-icon">{itemNotice.title.slice(0,1)}</div><h2>{itemNotice.title}</h2><p>{itemNotice.text}</p><button onClick={()=>setItemNotice(null)}>记下并继续调查</button></article></div>}
     <header className="topbar">
@@ -429,19 +544,20 @@ export default function Home() {
     <section className="mission">
       <div><span>当前设备</span><b>{CHAPTERS[chapter - 1].device}</b></div>
       <div className="question"><span>本章调查问题</span><strong>{CHAPTERS[chapter - 1].question}</strong></div>
-      <div className="chapter-progress"><b>{collected.length}</b><span>本章手记</span></div>
+      <div className="chapter-progress"><b>{collected.length}</b><span>本章手记 · 谜 {resolvedMysteries.length}/{SIDE_MYSTERIES.filter(m=>m.chapter<=chapter).length}</span></div>
     </section>
     <div className="workspace">
       <nav className="rail">
-        {([ ["phone","手机","机"], ["browser","档案搜索","搜"], ["map","岛内地图","图"], ["evidence","调查手记","证"], ["board","阶段结论","结"] ] as [Area,string,string][]).map(([id,label,icon]) => <button key={id} className={area === id ? "active" : ""} onClick={() => openArea(id)}><i>{icon}</i><span>{label}</span>{id === "evidence" && collected.length > 0 && <em>{collected.length}</em>}</button>)}
+        {([ ["phone","手机","机"], ["browser","档案搜索","搜"], ["map","岛内地图","图"], ["evidence","调查手记","证"], ["board","阶段结论","结"], ["side","未解之谜","谜"] ] as [Area,string,string][]).map(([id,label,icon]) => <button key={id} className={area === id ? "active" : ""} onClick={() => openArea(id)}><i>{icon}</i><span>{label}</span>{id === "evidence" && collected.length > 0 && <em>{collected.length}</em>}{id === "side" && SIDE_MYSTERIES.filter(m=>m.chapter<=chapter&&m.requires.every(r=>found.includes(r))).length>resolvedMysteries.length && <em className="rail-dot" />}</button>)}
       </nav>
 
       <section className="content" key={`${area}-${chapter}`}>
-        {area === "phone" && (!introSeen?<PhoneLock unlocking={unlocking} lockTouch={lockTouch} setLockTouch={setLockTouch} unlockPhone={unlockPhone}/>:<Phone chapter={chapter} app={app} setApp={setApp} thread={thread} setThread={setThread} collect={collect} found={found} inventory={inventory} playing={playing} setPlaying={setPlaying} track={track} setTrack={setTrack} notify={notify} />)}
+        {area === "phone" && (!introSeen?<PhoneLock unlocking={unlocking} lockTouch={lockTouch} setLockTouch={setLockTouch} unlockPhone={unlockPhone}/>:<Phone chapter={chapter} app={app} setApp={setApp} thread={thread} setThread={setThread} collect={collect} found={found} inventory={inventory} playing={playing} setPlaying={setPlaying} track={track} setTrack={setTrack} notify={notify} acquireItem={acquireItem} acceptedFriends={acceptedFriends} setAcceptedFriends={setAcceptedFriends} setTerrorActive={setTerrorActive} setTerrorInfo={setTerrorInfo} setTerrorTime={setTerrorTime} />)}
         {area === "browser" && <Browser query={query} setQuery={setQuery} results={results} article={article} setArticle={setArticle} collect={collect} found={found} chapter={chapter} />}
         {area === "map" && <MapPanel chapter={chapter} collect={collect} found={found} notify={notify} inventory={inventory} acquireItem={acquireItem} />}
         {area === "evidence" && <Evidence found={found} chapter={chapter} collect={collect} />}
         {area === "board" && <Board chapter={chapter} collected={collected} selected={selected} toggle={toggleEvidence} answer={answer} setAnswer={setAnswer} submit={submit} investigate={() => openArea("phone")} />}
+        {area === "side" && <SideMysteries chapter={chapter} found={found} resolvedMysteries={resolvedMysteries} setResolvedMysteries={setResolvedMysteries} notify={notify} />}
       </section>
     </div>
   </main>;
@@ -454,14 +570,19 @@ function PhoneLock({unlocking,lockTouch,setLockTouch,unlockPhone}:{unlocking:boo
   return <div className="phone-stage lock-stage"><div className={`phone lock-device ${unlocking?"unlocking":""}`}><div className="lock-wallpaper"><div className="lock-status"><span>{lockTime}</span><b>雾港 5G　▰</b></div><div className="lock-clock"><small>6月16日　星期二</small><strong>{lockTime}</strong><i>⌁</i></div><section className="lock-notice"><img src="/avatars/mom.webp" alt="妈妈"/><div><header><b>微信</b><time>6月14日</time></header><strong>妈妈</strong><p>到了 住潮生宾馆306 房间有点潮</p></div></section><section className="device-restored"><span>未接来电 · 潮生宾馆</span><p>林小姐，看到后请尽快回电话。</p></section><button className="unlock-handle" onClick={unlockPhone} onTouchStart={e=>{e.stopPropagation();setLockTouch(e.touches[0].clientY)}} onTouchEnd={e=>{e.stopPropagation();if(lockTouch!==null&&lockTouch-e.changedTouches[0].clientY>55)unlockPhone();setLockTouch(null)}} onTouchCancel={()=>setLockTouch(null)}><i>⌃</i><span>从这里向上滑动解锁</span></button></div></div><aside className="phone-caption"><b>林岚的手机</b><p>屏幕上停着一条两天前的微信，和一通刚刚打来的电话。</p></aside></div>
 }
 
-function Phone({ chapter, app, setApp, thread, setThread, collect, found, inventory, playing, setPlaying, track, setTrack, notify }: any) {
+function Phone({ chapter, app, setApp, thread, setThread, collect, found, inventory, playing, setPlaying, track, setTrack, notify, acquireItem, acceptedFriends, setAcceptedFriends, setTerrorActive, setTerrorInfo, setTerrorTime }: any) {
   const chapterFound=CLUES.filter(c=>c.chapter===chapter&&found.includes(c.id)&&!c.source.includes("组合推演")).length;
   const threatUnlocked=chapterFound>=(chapter===1?3:chapter===2?3:2);
   const baseContacts=["潮","妈妈","潮生宾馆","陈放","蒋小蕊"];
   const chapterTwoContacts=["沈砚（旧号码）","许医生"];
   const chapterThreeContacts=["郭家健康群（导入备份）","爸爸（导入备份）","吴医生（导入备份）","陶小雨（导入备份）"];
-  const messages:Record<number,string[]>={1:[...baseContacts],2:[...baseContacts,...chapterTwoContacts],3:[...baseContacts,...chapterTwoContacts,...chapterThreeContacts]};
+  const chapterNewContacts=chapter===1?[]:chapter===2?chapterTwoContacts:[...chapterTwoContacts,...chapterThreeContacts];
+  const pendingFriends=chapterNewContacts.filter((c:string)=>!acceptedFriends.includes(c)&&!c.includes("导入备份"));
+  const acceptedThisChapter=acceptedFriends.filter((c:string)=>chapterNewContacts.includes(c));
+  const autoImported=chapter>=3?chapterThreeContacts:[] as string[];
+  const messages:Record<number,string[]>={1:[...baseContacts],2:[...baseContacts,...acceptedThisChapter,...autoImported],3:[...baseContacts,...acceptedThisChapter,...autoImported]};
   if(threatUnlocked)messages[chapter].unshift("陌生号码");
+  const acceptFriend=(name:string)=>{setAcceptedFriends((value:string[])=>value.includes(name)?value:[...value,name]);notify(`你已添加了${name}，现在可以开始聊天了`);};
   const photos = ([1,2,3] as const).filter(no=>no<=chapter).flatMap(no=>PHOTO_SETS[no]) as Array<{title:string;caption:string;clue:string;src:string;meta:string;transcript?:string}>;
   const tracks = ["内湾晴天", "返程票", "二楼走廊", "夜船不开", "未命名录音"];
   const orders = [{name:"防潮相机袋",icon:"袋",status:"交易成功",detail:"深灰色 · 单肩防水款",price:"¥79.00",logistics:["6月9日 14:12 已签收","6月9日 09:30 到达雾港客运站","6月8日 18:05 临海转运中心发出"]},{name:"速溶咖啡 20条",icon:"咖",status:"交易成功",detail:"无糖黑咖啡 · 20条",price:"¥32.80",logistics:["6月11日 16:40 前台代收","6月11日 11:20 随客轮进岛"]},{name:"白色运动鞋",icon:"鞋",status:"交易成功",detail:"37码 · 米白色",price:"¥159.00",logistics:["5月28日 19:08 本人签收","5月28日 13:10 派送中"]},{name:"给妈妈的护膝",icon:"礼",status:"已签收",detail:"保暖护膝 · 深灰 · M码",price:"¥68.00",logistics:["6月13日 17:46 潮生宾馆前台代收","6月13日 16:55 到达老街配送点","6月12日 20:20 临海转运中心发出"]}];
@@ -499,6 +620,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
   const [composer, setComposer] = useState<"replies"|"emoji"|"more"|null>(null);
   const [voiceMode, setVoiceMode] = useState(false);
   const [sentMessages, setSentMessages] = useState<Record<string,ChatLine[]>>({});
+  const [typing, setTyping] = useState(false);
   const [wechatTab,setWechatTab]=useState<"chats"|"contacts"|"discover"|"me">("chats");
   const [wechatSub,setWechatSub]=useState("");
   const [wechatCall,setWechatCall]=useState<WechatCall|null>(null);
@@ -507,6 +629,8 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
   const [activeCall,setActiveCall]=useState<SimCall|null>(null);
   const [selectedOrder,setSelectedOrder]=useState<(typeof orders)[number]|null>(null);
   const [selectedFile,setSelectedFile]=useState<PhoneFile|null>(null);
+  const [selectedFolder,setSelectedFolder]=useState<string|null>(null);
+  const fileFolders = [{name:"下载",icon:"↓",files:fileSets[0]},...(chapter>=2?[{name:"旧机备份",icon:"↩",files:fileSets[1]}]:[]),...(chapter>=3?[{name:"郭宁备份",icon:"📦",files:fileSets[2].slice(0,1).concat(fileSets[2].slice(2,3))},{name:"本机缓存",icon:"💾",files:[fileSets[2][2]].concat(fileSets[2].slice(4))},{name:"现场设备",icon:"🎤",files:[fileSets[2][3]]}]:[])];
   const [noteOpen,setNoteOpen]=useState<number|null>(null);
   const [weatherMode,setWeatherMode]=useState<"hourly"|"daily">("hourly");
   const [musicProgress,setMusicProgress]=useState(0);
@@ -572,7 +696,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
   const phoneContacts = chapter===1 ? [
     {name:"妈妈",number:"138 0616 2041"},{name:"潮生宾馆",number:"0580 761 0306"},{name:"陈放",number:"137 8804 1127"},{name:"雾港客运站",number:"0580 761 0120"}
   ] : chapter===2 ? [
-    {name:"妈妈",number:"138 0616 2041"},{name:"许医生",number:"139 7730 0912"},{name:"沈砚（旧号码）",number:"136 5521 1992"},{name:"潮生宾馆",number:"0580 761 0306"}
+    {name:"妈妈",number:"138 0616 2041"},{name:"陈放",number:"137 8804 1127"},{name:"许医生",number:"139 7730 0912"},{name:"沈砚（旧号码）",number:"136 5521 1992"},{name:"潮生宾馆",number:"0580 761 0306"}
   ] : [
     {name:"爸爸",number:"139 0616 1701"},{name:"吴医生",number:"138 3170 1702"},{name:"陶小雨",number:"137 3170 1704"},{name:"雾港客运站",number:"0580 761 0120"}
   ];
@@ -613,6 +737,20 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     const clue = chapter === 1 && name === "妈妈" ? "last-chat" : chapter === 2 && name === "沈砚（旧号码）" ? "twelve" : chapter === 3 && name.includes("郭家健康群") ? "family-group" : "";
     if (clue && !found.includes(clue)) collect(clue);
     transition(() => { setThread(name); setComposer(null); setVoiceMode(false); });
+    if(chapter===3&&name==="陌生号码"&&!found.includes("ward-record")){
+      window.setTimeout(()=>{
+        setTerrorActive(true);
+        setTerrorInfo({text:"手机屏幕突然闪烁了一下……\n好像有什么东西在窗外看着你。",reward:"ward-record"});
+        setTerrorTime(5);
+      },1800);
+    }
+    if(chapter===3&&name==="陶小雨"&&!found.includes("night-recording")){
+      window.setTimeout(()=>{
+        setTerrorActive(true);
+        setTerrorInfo({text:"手机麦克风突然自动开启了。\n录音界面显示一段未保存的音频文件。\n时间戳：03:17",reward:"night-recording"});
+        setTerrorTime(5);
+      },2500);
+    }
   };
   const chatKey=(name:string)=>["潮","妈妈","潮生宾馆","陈放","蒋小蕊"].includes(name)?`live:${name}`:`${chapter}:${name}`;
   const chatDayFor=(name:string)=>name.includes("导入备份")?"原设备记录":name==="妈妈"?"6月14日 周日":name==="潮"?phoneDay:"6月16日 周二";
@@ -631,7 +769,7 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
       if(chapter===3&&!found.includes("rescue"))return "去文件看今晚处置日程 或者直接去白塔查检修门";
       if(chapter===3&&!inventory.includes("maintenance-tag"))return "证据之外还得把路走通 去旧港冷链检查那辆无牌冷藏车";
       if(chapter===3&&!inventory.includes("bed-location"))return "检修挂牌能打开地下设备层 先确认LQ的床位和生命状态";
-      if(chapter===3&&!inventory.includes("mirror-index"))return "旧港监控室已经露出来了 先复制只读索引 再断开远端观看";
+      if(chapter===3&&!inventory.includes("mirror-index"))return "去旧港监控室！先复制只读索引再拔线 远端能看到你 快";
       return nearest?`离“${nearest.title}”最近 还差：${nearest.requires.filter(id=>!found.includes(id)).map(id=>CLUES.find(c=>c.id===id)?.title).join("、")}`:"去调查手记看看已经完成的推演";
     }
     if(question==="哪些材料能放一起"){
@@ -646,7 +784,14 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     }
     return chapter===1?"第一章先证明她没有可靠离岛记录 编号的含义可以晚一点再追":"编号先当索引用 别把编号相同直接当成同一个人";
   };
-  const askTide=(question:string)=>{appendMessage("潮",{side:"me",text:question});window.setTimeout(()=>appendMessage("潮",{side:"them",text:tideAnswer(question)}),360)};
+  const askTide=(question:string)=>{
+    appendMessage("潮",{side:"me",text:question});
+    setTyping(true);
+    window.setTimeout(()=>{
+      setTyping(false);
+      appendMessage("潮",{side:"them",text:tideAnswer(question)});
+    },800+Math.random()*600);
+  };
   const sendPreset = (text:string) => {
     appendMessage(thread,{side:"me",text}); setComposer(null);
     if(thread==="妈妈"){
@@ -658,12 +803,38 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
       return;
     }
     const reply=autoReplyFor(chapter,thread,text);
-    if(reply)window.setTimeout(() => appendMessage(thread,{side:"them",text:reply}), 850);
+    if(reply){
+      const delay=800+Math.random()*800;
+      setTyping(true);
+      window.setTimeout(()=>{
+        setTyping(false);
+        appendMessage(thread,{side:"them",text:reply});
+      },delay);
+    }
   };
   const sendAttachment = (kind:string) => {
     const content = kind === "位置" ? "[位置] 雾港岛 · 归潮广场" : kind === "照片" ? "[照片] 白塔东侧检修门" : "[文件] 港务记录摘录.pdf";
     appendMessage(thread,{side:"me",text:content}); setComposer(null);
-    window.setTimeout(() => appendMessage(thread,{side:"them",text:kind === "位置" ? "收到了 别走东段 那边围栏刚换" : "收到了 我留原图"}), 650);
+    const delay=600+Math.random()*600;
+    setTyping(true);
+    window.setTimeout(() => {
+      setTyping(false);
+      appendMessage(thread,{side:"them",text:kind === "位置" ? "收到了 别走东段 那边围栏刚换" : "收到了 我留原图"});
+    }, delay);
+  };
+  const renderWechatSubpage=()=>{
+    switch(wechatSub){
+      case "朋友圈": return <><article><img src="/photos/venue-plaza.webp" alt="归潮广场" loading="lazy" decoding="async"/><b>蒋小蕊</b><p>广场电影又取消了 椅子全搬回仓库</p><small>陈放：这雨看着还得下</small></article><article><img src="/photos/venue-restaurant.webp" alt="望潮饭店" loading="lazy" decoding="async"/><b>陈放</b><p>休渔期菜单 别再问有没有刚上岸的😂</p></article></>;
+      case "新的朋友": return <div className="new-friends-page">{pendingFriends.length?pendingFriends.map((name:string)=><div key={name} className="friend-request"><img src={avatarFor(name)} alt="" loading="lazy" decoding="async"/><div><b>{name}</b><small>请求添加你为朋友</small></div><button className="friend-accept" onClick={()=>acceptFriend(name)}>接受</button></div>):<div className="wechat-empty"><b>新的朋友</b><p>暂无新的朋友请求</p></div>}</div>;
+      case "扫一扫": return <div className="scan-page"><i>⌗</i><p>将二维码放入框内自动扫描</p><button onClick={()=>setWechatSub("扫描结果")}>从相册选择门卡背面</button></div>;
+      case "扫描结果": return <div className="wechat-article"><small>扫描结果</small><h3>潮生宾馆住客无线网</h3><p>网络：CHAOSHENG_GUEST</p><p>有效期：退房当日12:00</p><p>二维码下方印着前台电话和消防疏散图编号，并没有调查提示。</p></div>;
+      case "看一看": return <div className="look-page"><button onClick={()=>setWechatSub("末班船复核")}><b>雾港今晚末班船待复核</b><span>港务站 · 18分钟前</span></button><button onClick={()=>setWechatSub("白塔封闭")}><b>白塔东段继续封闭</b><span>市政提醒 · 昨天</span></button></div>;
+      case "末班船复核": return <div className="wechat-article"><img src="/photos/wugang-map-rain.webp" alt="雨后雾港客运码头" loading="lazy" decoding="async"/><small>今日雾港</small><h3>20:10末班船仍待能见度复核</h3><p>港务站将在18:30再次测量航道能见度。此前售出的船票可以改签，但系统不会自动生成返程订单。</p><p>工作船不使用客运闸机，船员和临时乘员另记纸质名册。</p></div>;
+      case "白塔封闭": return <div className="wechat-article"><img src="/photos/lighthouse-door.webp" alt="白塔检修门" loading="lazy" decoding="async"/><small>雾港市政</small><h3>白塔东段检修步道继续封闭</h3><p>封闭范围只到地面步道。夜间设备运输由旧港冷链入口进出，不经过游客入口。</p></div>;
+      case "设置": return <div className="setting-page"><label>消息通知<input type="checkbox" defaultChecked/></label><label>听筒模式<input type="checkbox"/></label><button onClick={()=>setWechatSub("聊天记录")}>聊天记录</button></div>;
+      case "聊天记录": return <div className="wechat-article"><h3>聊天记录</h3><p>本机记录已恢复至6月16日12:46</p><p>语音与图片原件保存在设备内，不会自动上传。</p><button onClick={()=>setWechatSub("设置")}>返回设置</button></div>;
+      default: return <div className="wechat-empty"><b>{wechatSub}</b><p>{wechatSub==="文件"?"最近文件会按会话来源保存在这里。":wechatSub==="群聊"?"当前设备里没有置顶群聊。":"没有新的内容"}</p></div>;
+    }
   };
   const back = () => transition(() => { stopCamera();setThread(""); setComposer(null); setWechatSub(""); setWechatCall(null); setActiveCall(null); setSelectedOrder(null); setSelectedFile(null); setNoteOpen(null); setApp("home"); });
   return <div className="phone-stage"><div className={`phone phone-${chapter}`} onTouchStart={event => {
@@ -698,14 +869,14 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
     </div>}
     {app === "messages" && <div className="phone-page message-page">
       {!thread ? <><PhoneHead title={wechatSub||({chats:"微信",contacts:"通讯录",discover:"发现",me:"我"} as any)[wechatTab]} back={wechatSub?()=>setWechatSub(""):back} backLabel={wechatSub?"发现":"桌面"} /><div className="wechat-section">
-        {!wechatSub&&wechatTab==="chats"&&<div className="thread-list">{messages[chapter].map((m:string) => <button key={m} onClick={() => openThread(m)}><img className="thread-avatar" src={avatarFor(m)} alt=""/><span><strong>{m}</strong><small>{m.includes("妈妈") ? "到了，住潮生宾馆306……" : m === "潮" ? "我把你说的重新排了下。" : conversationFor(chapter,m).at(-1)?.text}</small></span><time>{m === "潮" ? phoneTime : "昨天"}</time></button>)}</div>}
+        {!wechatSub&&wechatTab==="chats"&&<div className="thread-list">{[...messages[chapter]].sort((a,b)=>a==="潮"?-1:b==="潮"?1:0).map((m:string) => <button key={m} className={m==="潮"?"tide-pinned":""} onClick={() => openThread(m)}><img className="thread-avatar" src={avatarFor(m)} alt=""/><span><strong>{m}{m==="潮"&&<i className="tide-badge">顾问</i>}</strong><small>{m.includes("妈妈") ? "到了，住潮生宾馆306……" : m === "潮" ? "我把你说的重新排了下。调查中卡住了可以随时问我。" : conversationFor(chapter,m).at(-1)?.text}</small></span><time>{m === "潮" ? phoneTime : "昨天"}</time></button>)}</div>}
         {!wechatSub&&wechatTab==="contacts"&&<div className="contact-list"><div className="contact-tools"><button onClick={()=>setWechatSub("新的朋友")}>＋<span>新的朋友</span></button><button onClick={()=>setWechatSub("群聊")}>群<span>群聊</span></button></div><p>联系人</p>{messages[chapter].map((m:string)=><button key={m} onClick={()=>openThread(m)}><img src={avatarFor(m)} alt=""/><span>{m}</span></button>)}</div>}
         {!wechatSub&&wechatTab==="discover"&&<div className="wechat-menu"><button onClick={()=>setWechatSub("朋友圈")}><i>◎</i><span>朋友圈</span><b>›</b></button><button onClick={()=>setWechatSub("扫一扫")}><i>⌗</i><span>扫一扫</span><b>›</b></button><button onClick={()=>setWechatSub("看一看")}><i>看</i><span>看一看</span><b>›</b></button></div>}
         {!wechatSub&&wechatTab==="me"&&<div className="wechat-me"><header><img src="/avatars/lin-lan.webp" alt="林岚"/><div><b>林岚</b><span>微信号：lan_0616</span></div></header><div className="wechat-menu"><button onClick={()=>setWechatSub("收藏")}><i>☆</i><span>收藏</span><b>›</b></button><button onClick={()=>setWechatSub("文件")}><i>文</i><span>文件</span><b>›</b></button><button onClick={()=>setWechatSub("设置")}><i>⚙</i><span>设置</span><b>›</b></button></div></div>}
-        {wechatSub&&<div className="wechat-subpage">{wechatSub==="朋友圈"?<><article><img src="/photos/venue-plaza.webp" alt=""/><b>蒋小蕊</b><p>广场电影又取消了 椅子全搬回仓库</p><small>陈放：这雨看着还得下</small></article><article><img src="/photos/venue-restaurant.webp" alt=""/><b>陈放</b><p>休渔期菜单 别再问有没有刚上岸的😂</p></article></>:wechatSub==="扫一扫"?<div className="scan-page"><i>⌗</i><p>将二维码放入框内自动扫描</p><button onClick={()=>setWechatSub("扫描结果")}>从相册选择门卡背面</button></div>:wechatSub==="扫描结果"?<div className="wechat-article"><small>扫描结果</small><h3>潮生宾馆住客无线网</h3><p>网络：CHAOSHENG_GUEST</p><p>有效期：退房当日12:00</p><p>二维码下方印着前台电话和消防疏散图编号，并没有调查提示。</p></div>:wechatSub==="看一看"?<div className="look-page"><button onClick={()=>setWechatSub("末班船复核")}><b>雾港今晚末班船待复核</b><span>港务站 · 18分钟前</span></button><button onClick={()=>setWechatSub("白塔封闭")}><b>白塔东段继续封闭</b><span>市政提醒 · 昨天</span></button></div>:wechatSub==="末班船复核"?<div className="wechat-article"><img src="/photos/wugang-map-rain.webp" alt="雨后雾港客运码头"/><small>今日雾港</small><h3>20:10末班船仍待能见度复核</h3><p>港务站将在18:30再次测量航道能见度。此前售出的船票可以改签，但系统不会自动生成返程订单。</p><p>工作船不使用客运闸机，船员和临时乘员另记纸质名册。</p></div>:wechatSub==="白塔封闭"?<div className="wechat-article"><img src="/photos/lighthouse-door.webp" alt="白塔检修门"/><small>雾港市政</small><h3>白塔东段检修步道继续封闭</h3><p>封闭范围只到地面步道。夜间设备运输由旧港冷链入口进出，不经过游客入口。</p></div>:wechatSub==="设置"?<div className="setting-page"><label>消息通知<input type="checkbox" defaultChecked/></label><label>听筒模式<input type="checkbox"/></label><button onClick={()=>setWechatSub("聊天记录")}>聊天记录</button></div>:wechatSub==="聊天记录"?<div className="wechat-article"><h3>聊天记录</h3><p>本机记录已恢复至6月16日12:46</p><p>语音与图片原件保存在设备内，不会自动上传。</p><button onClick={()=>setWechatSub("设置")}>返回设置</button></div>:<div className="wechat-empty"><b>{wechatSub}</b><p>{wechatSub==="文件"?"最近文件会按会话来源保存在这里。":wechatSub==="群聊"?"当前设备里没有置顶群聊。":"没有新的内容"}</p></div>}</div>}
-      </div><nav className="wechat-tabs">{([['chats','微信','◉'],['contacts','通讯录','♟'],['discover','发现','◎'],['me','我','●']] as const).map(([id,label,icon])=><button key={id} className={wechatTab===id?"active":""} onClick={()=>{setWechatTab(id);setWechatSub("");}}><i>{icon}</i><span>{label}</span></button>)}</nav></> : <><PhoneHead title={thread} back={() => transition(() => setThread(""))} backLabel="微信" actions={!thread.includes("导入备份")&&<div className="wechat-call-actions"><button onClick={()=>startWechatCall("voice")} aria-label="发起语音通话">☎</button><button onClick={()=>startWechatCall("video")} aria-label="发起视频通话">🎥</button></div>} />
+        {wechatSub&&<div className="wechat-subpage">{renderWechatSubpage()}</div>}
+      </div><nav className="wechat-tabs">{([['chats','微信','◉'],['contacts','通讯录','♟'],['discover','发现','◎'],['me','我','●']] as const).map(([id,label,icon])=><button key={id} className={wechatTab===id?"active":""} onClick={()=>{setWechatTab(id);setWechatSub("");}}><i>{icon}</i><span>{label}</span>{id==="contacts"&&pendingFriends.length>0&&<em className="contact-badge">{pendingFriends.length}</em>}</button>)}</nav></> : <><PhoneHead title={thread} back={() => transition(() => setThread(""))} backLabel="微信" actions={!thread.includes("导入备份")&&<div className="wechat-call-actions"><button onClick={()=>startWechatCall("voice")} aria-label="发起语音通话">☎</button><button onClick={()=>startWechatCall("video")} aria-label="发起视频通话">🎥</button></div>} />
       {thread.includes("导入备份")&&<div className="imported-chat-label">从郭宁设备备份导入 · 只读记录</div>}
-      <div className="conversation" ref={conversationRef}><div className="chat-day">{chatDayFor(thread)}</div>{[...conversationFor(chapter, thread),...(sentMessages[chatKey(thread)]||[])].map((line, index) => line.side === "system" ? <time className="system-note" key={index}>{line.text}</time> : <div className={`chat-row ${line.side}`} key={index}>{line.side === "them" && <img src={avatarFor(thread)} alt=""/>}{line.text.startsWith("[监控照片]")?<figure className="chat-surveillance"><img src="/photos/surveillance-room.png" alt="旧港监控截图中林岚的背影"/><figcaption>{line.text.replace("[监控照片]","")}</figcaption></figure>:<p className={`bubble ${line.side}`}>{line.text}</p>}{line.side === "me" && <img src={thread.includes("导入备份")?"/photos/family-dinner.webp":"/avatars/lin-lan.webp"} alt=""/>}</div>)}</div>
+      <div className="conversation" ref={conversationRef}><div className="chat-day">{chatDayFor(thread)}</div>{[...conversationFor(chapter, thread),...(sentMessages[chatKey(thread)]||[])].map((line, index) => {const bubbleClass=`bubble ${line.side}${line.terror?" chat-terror":""}${line.redText?" chat-red-text":""}`;return line.side === "system" ? <time className="system-note" key={index}>{line.text}</time> : <div className={`chat-row ${line.side}`} key={index}>{line.side === "them" && <img src={avatarFor(thread)} alt="" loading="lazy" decoding="async"/>}{line.text.startsWith("[监控照片]")?<figure className="chat-surveillance"><img src="/photos/surveillance-room.webp" alt="旧港监控截图中林岚的背影" loading="lazy" decoding="async"/><figcaption>{line.text.replace("[监控照片]","")}</figcaption></figure>:<p className={bubbleClass}>{line.text}</p>}{line.side === "me" && <img src={thread.includes("导入备份")?"/photos/family-dinner.webp":"/avatars/lin-lan.webp"} alt="" loading="lazy" decoding="async"/>}</div>})}{typing&&<div className="chat-row them typing-row"><img src={avatarFor(thread)} alt="" loading="lazy" decoding="async"/><p className="bubble typing-bubble"><span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/></p></div>}</div>
       {thread==="潮"&&!composer&&<section className="tide-qa"><header><img src="/avatars/tide.webp" alt=""/><div><b>问潮</b><span>卡住了就直接问 不影响结局</span></div></header><div>{["我下一步查什么","哪些材料能放一起","为什么结论过不了","编号该怎么理解"].map(question=><button key={question} onClick={()=>askTide(question)}>{question}</button>)}</div></section>}
       {composer === "replies" && <div className="composer-sheet reply-sheet"><header><b>选择一句回复</b><button onClick={()=>setComposer(null)}>关闭</button></header>{replyChoicesFor(chapter,thread).map(text=><button key={text} onClick={()=>sendPreset(text)}>{text}<span>发送</span></button>)}</div>}
       {composer === "emoji" && <div className="composer-sheet emoji-sheet"><header><b>表情</b><button onClick={()=>setComposer(null)}>关闭</button></header><div>{["🙂","😟","👌","🙏","❓","🌫️","📍","⚠️"].map(icon=><button key={icon} onClick={()=>sendPreset(icon)}>{icon}</button>)}</div></div>}
@@ -714,14 +885,14 @@ function Phone({ chapter, app, setApp, thread, setThread, collect, found, invent
       {wechatCall&&<div className={`wechat-call-screen ${wechatCall.mode}`} role="dialog" aria-modal="true"><div className="wechat-call-bg" style={{backgroundImage:`url(${avatarFor(wechatCall.name)})`}}/><header><img src={avatarFor(wechatCall.name)} alt=""/><h3>{wechatCall.name}</h3><p>{wechatCall.status==="calling"?(wechatCall.mode==="video"?"正在等待对方接受邀请…":"正在呼叫…"):"对方无应答"}</p></header>{wechatCall.mode==="video"&&<div className="video-self-preview"><span>你的画面</span></div>}<footer><button><i>麦</i><span>静音</span></button><button className="hangup" onClick={()=>setWechatCall(null)}><i>☎</i><span>{wechatCall.status==="unanswered"?"关闭":"挂断"}</span></button><button><i>扬</i><span>免提</span></button></footer></div>}
     </div>}
     {app === "phone" && <div className="phone-page system-phone-page"><PhoneHead title="电话" back={back}/>{activeCall?<div className={`system-call-screen ${activeCall.status}`}><small>{activeCall.status==="dialing"?"正在呼叫…":activeCall.status==="connected"?callDuration(activeCall.elapsed):"无法接通"}</small><h2>{activeCall.name}</h2><p>{activeCall.number}</p>{activeCall.status!=="dialing"&&<blockquote>{activeCall.reply}</blockquote>}<div className="call-controls"><button><i>静</i><span>静音</span></button><button><i>键</i><span>键盘</span></button><button><i>扬</i><span>免提</span></button></div><button className="system-hangup" onClick={()=>setActiveCall(null)} aria-label="挂断电话">☎</button></div>:<><div className="phone-tab-content">{phoneTab==="recents"&&<div className="call-list"><h3>最近通话</h3>{phoneContacts.slice(0,3).map((item,index)=><button key={item.number} onClick={()=>startPhoneCall(item.number,item.name)}><i className={index===0?"missed":""}>↗</i><span><b>{item.name}</b><small>{index===0?"未接来电":"呼出电话"} · {index===0?"今天":"昨天"}</small></span><em>ⓘ</em></button>)}</div>}{phoneTab==="contacts"&&<div className="call-list contacts"><h3>通讯录</h3>{phoneContacts.map(item=><button key={item.number} onClick={()=>startPhoneCall(item.number,item.name)}><span><b>{item.name}</b><small>{item.number}</small></span><em>☎</em></button>)}</div>}{phoneTab==="keypad"&&<div className="dialer"><output>{dialNumber||"输入号码"}</output><div>{["1","2","3","4","5","6","7","8","9","*","0","#"].map(key=><button key={key} onClick={()=>setDialNumber(value=>(value+key).slice(0,14))}>{key}</button>)}</div><footer><button className="dial-call" disabled={!dialNumber} onClick={()=>startPhoneCall(dialNumber)}>☎</button><button className="dial-delete" onClick={()=>setDialNumber(value=>value.slice(0,-1))}>⌫</button></footer></div>}</div><nav className="phone-tabs">{([['recents','最近通话','时'],['contacts','通讯录','人'],['keypad','拨号键盘','键']] as const).map(([id,label,icon])=><button key={id} className={phoneTab===id?"active":""} onClick={()=>setPhoneTab(id)}><i>{icon}</i><span>{label}</span></button>)}</nav></>}</div>}
-    {app === "photos" && <div className="phone-page"><PhoneHead title="照片" back={back}/><div className="photo-grid">{photos.map(photo => <button key={photo.title} onClick={() => { setPhotoOpen(photo as any); setTranscriptOpen(false); if (photo.clue && !found.includes(photo.clue)) collect(photo.clue); }}><img src={photo.src} alt={photo.title}/><b>{photo.title}</b><span>{photo.caption}</span>{photo.clue && found.includes(photo.clue) && <em>已收录</em>}</button>)}</div>{photoOpen && <div className="photo-viewer"><button className="photo-close" onClick={() => { setPhotoOpen(null); setTranscriptOpen(false); }}>关闭</button><button className="photo-image-button" onClick={() => setTranscriptOpen(true)}><img src={photoOpen.src} alt={photoOpen.title}/><span>点击查看文字内容</span></button><div><b>{photoOpen.title}</b><p>{photoOpen.caption}</p><small>{photoOpen.meta}</small></div>{transcriptOpen && <div className="transcript-modal" role="dialog" aria-modal="true"><article><small>照片文字抄录</small><h3>{photoOpen.title}</h3><p>{photoOpen.transcript || `${photoOpen.caption}\n${photoOpen.meta}`}</p><button onClick={() => setTranscriptOpen(false)}>关闭文字内容</button></article></div>}</div>}</div>}
-    {app === "files" && <div className="phone-page"><PhoneHead title={selectedFile?String(selectedFile[0]):"文件"} back={selectedFile?()=>setSelectedFile(null):back} backLabel={selectedFile?"文件":"桌面"}/>{selectedFile?<article className="file-detail"><i>文</i><h3>{selectedFile[0]}</h3><small>{selectedFile[1]}</small>{selectedRecovery&&!found.includes(selectedRecovery.id)?<div className="corrupt-file"><b>无法完整读取</b><p>文件正文出现连续空白块，修改时间与缓存索引不一致。</p><small>{recoveryInstalled?"已安装的数据复原可以检查这份文件。":"本机没有能处理残留分片的工具，可去 App Store 搜索‘数据恢复’。"}</small><button onClick={()=>{setSelectedFile(null);setApp(recoveryInstalled?"cracker":"appstore")}}>{recoveryInstalled?"用数据复原打开":"去 App Store 搜索"}</button></div>:<><p>{CLUES.find(c=>c.id===selectedFile[2])?.text}</p><div><span>来源</span><b>{CLUES.find(c=>c.id===selectedFile[2])?.source}</b></div></>}<button onClick={()=>setSelectedFile(null)}>返回文件列表</button></article>:<div className="file-list">{phoneFiles.map(f => {const damaged=recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]);return <button key={f[0]} onClick={() => {setSelectedFile(f);if(!recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]))collect(f[2]);}}><i>文</i><span><b>{f[0]}</b><small>{damaged?"读取异常 · 文件可能损坏":f[1]}</small></span><em>{found.includes(f[2]) ? "✓" : "打开"}</em></button>})}</div>}</div>}
+    {app === "photos" && <div className="phone-page"><PhoneHead title="照片" back={back}/><div className="photo-grid">{photos.map(photo => <button key={photo.title} onClick={() => { setPhotoOpen(photo as any); setTranscriptOpen(false); if (photo.clue && !found.includes(photo.clue)) collect(photo.clue); }}><img src={photo.src} alt={photo.title} loading="lazy" decoding="async"/><b>{photo.title}</b><span>{photo.caption}</span>{photo.clue && found.includes(photo.clue) && <em>已收录</em>}</button>)}</div>{photoOpen && <div className="photo-viewer"><button className="photo-close" onClick={() => { setPhotoOpen(null); setTranscriptOpen(false); }}>关闭</button><button className="photo-image-button" onClick={() => setTranscriptOpen(true)}><img src={photoOpen.src} alt={photoOpen.title} decoding="async"/><span>点击查看文字内容</span></button><div><b>{photoOpen.title}</b><p>{photoOpen.caption}</p><small>{photoOpen.meta}</small></div>{transcriptOpen && <div className="transcript-modal" role="dialog" aria-modal="true"><article><small>照片文字抄录</small><h3>{photoOpen.title}</h3><p>{photoOpen.transcript || `${photoOpen.caption}\n${photoOpen.meta}`}</p><button onClick={() => setTranscriptOpen(false)}>关闭文字内容</button></article></div>}</div>}</div>}
+    {app === "files" && <div className="phone-page"><PhoneHead title={selectedFile?String(selectedFile[0]):selectedFolder?selectedFolder:"文件"} back={selectedFile?()=>setSelectedFile(null):selectedFolder?()=>setSelectedFolder(null):back} backLabel={selectedFile?"文件":selectedFolder?"文件":"桌面"}/>{selectedFile?<article className="file-detail"><i>文</i><h3>{selectedFile[0]}</h3><small>{selectedFile[1]}</small>{selectedRecovery&&!found.includes(selectedRecovery.id)?<div className="corrupt-file"><b>无法完整读取</b><p>文件正文出现连续空白块，修改时间与缓存索引不一致。</p><small>{recoveryInstalled?"已安装的数据复原可以检查这份文件。":"本机没有能处理残留分片的工具，可去 App Store 搜索‘数据恢复’。"}</small><button onClick={()=>{setSelectedFile(null);setApp(recoveryInstalled?"cracker":"appstore")}}>{recoveryInstalled?"用数据复原打开":"去 App Store 搜索"}</button></div>:<><p>{CLUES.find(c=>c.id===selectedFile[2])?.text}</p><div><span>来源</span><b>{CLUES.find(c=>c.id===selectedFile[2])?.source}</b></div></>}<button onClick={()=>setSelectedFile(null)}>返回</button></article>:selectedFolder?<div className="file-list">{phoneFiles.filter(f=>fileFolders.find(fo=>fo.name===selectedFolder)?.files.includes(f)).map(f => {const damaged=recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]);return <button key={f[0]} onClick={() => {setSelectedFile(f);if(!recoveryItems.some(item=>item.id===f[2])&&!found.includes(f[2]))collect(f[2]);}}><i>文</i><span><b>{f[0]}</b><small>{damaged?"读取异常 · 文件可能损坏":f[1]}</small></span><em>{found.includes(f[2]) ? "✓" : "打开"}</em></button>})}</div>:<div className="file-folder-list">{fileFolders.map(fo=><button key={fo.name} onClick={()=>setSelectedFolder(fo.name)}><i>{fo.icon}</i><span><b>{fo.name}</b><small>{fo.files.length} 个文件</small></span><em>›</em></button>)}</div>}</div>}
     {app === "notes" && <div className="phone-page"><PhoneHead title={noteOpen!==null?notes[noteOpen].title:"备忘录"} back={noteOpen!==null?()=>setNoteOpen(null):back} backLabel={noteOpen!==null?"备忘录":"桌面"}/>{noteOpen!==null?<article className="note-paper note-detail"><small>{notes[noteOpen].date}</small><h3>{notes[noteOpen].title}</h3><p>{notes[noteOpen].text}</p></article>:<div className="note-list">{notes.map((note,i)=><button key={note.title} onClick={()=>{setNoteOpen(i);if(note.title.includes("如果又忘了")&&!found.includes("qin-note"))collect("qin-note");}}><b>{note.title}</b><p>{note.text.split("\n")[0]}</p><time>{note.date}</time></button>)}</div>}</div>}
     {app === "shopping" && <div className="phone-page lifestyle taobao-page"><PhoneHead title={selectedOrder?"订单详情":"手机淘宝"} back={selectedOrder?()=>setSelectedOrder(null):back} backLabel={selectedOrder?"我的订单":"桌面"}/>{selectedOrder?<article className="order-detail"><header><i>{selectedOrder.icon}</i><div><h3>{selectedOrder.name}</h3><p>{selectedOrder.detail}</p></div></header><strong>{selectedOrder.price}</strong><section><b>物流信息</b>{selectedOrder.logistics.map((line,i)=><p key={line} className={i===0?"current":""}>{line}</p>)}</section><footer>收货人：林岚　尾号0616</footer></article>:<><input placeholder="搜索淘宝商品"/><h3>我的订单</h3>{orders.map(order=><button key={order.name} onClick={()=>setSelectedOrder(order)}><i>{order.icon}</i><span><b>{order.name}</b><small>{order.status} · 查看物流</small></span></button>)}</>}</div>}
     {app === "music" && <div className="phone-page lifestyle"><PhoneHead title="泊声音乐" back={back}/><div className="album"><i>泊</i><div><b>{tracks[track]}</b><span>林岚的通勤收藏</span><input aria-label="播放进度" type="range" min="0" max="100" value={musicProgress} onChange={e=>setMusicProgress(Number(e.target.value))}/></div><button onClick={()=>setPlaying(!playing)}>{playing?"暂停":"播放"}</button></div>{tracks.map((t,i)=><button className={track===i?"playing":""} key={t} onClick={()=>{setTrack(i);setMusicProgress(0);setPlaying(true)}}><span>{String(i+1).padStart(2,"0")}</span><b>{t}</b><small>{2+i}:1{i}</small></button>)}</div>}
     {app === "weather" && <div className="phone-page"><PhoneHead title="天气" back={back}/><div className={`weather-card weather-${chapter}`}><b>雾港岛</b><strong>{chapter===1?"19°":chapter===2?"17°":"16°"}</strong><p>{chapter===1?"阵雨转平流雾":chapter===2?"海雾回流 风弱":"浓雾 低潮"}</p><nav><button className={weatherMode==="hourly"?"active":""} onClick={()=>setWeatherMode("hourly")}>逐小时</button><button className={weatherMode==="daily"?"active":""} onClick={()=>setWeatherMode("daily")}>十日天气</button></nav>{weatherMode==="hourly"?<ul>{(chapter===1?["16:00　阵雨停 19°","18:30　能见度复核 18°","20:10　末班船待定 17°"]:chapter===2?["21:00　低云 18°","23:00　海雾回流 17°","02:00　能见度下降 16°"]:["02:00　浓雾 16°","03:17　低潮 15°","04:00　能见度不足百米 15°"]).map(x=><li key={x}>{x}</li>)}</ul>:<ul>{["今天　雨 / 雾","明天　阴","周五　阵雨","周六　多云"].map(x=><li key={x}>{x}</li>)}</ul>}</div></div>}
     {app === "appstore" && <div className="phone-page app-store-page"><PhoneHead title="App Store" back={back}/><header><small>App 与游戏</small><h2>实用工具</h2></header><div className="store-search">⌕　搜索 App</div><article><i className="store-weather">云</i><div><b>岛屿天气</b><span>天气 · 本地预警</span><small>逐小时降雨、海雾与客轮天气提醒。</small></div><button onClick={()=>setApp("weather")}>打开</button></article><article><i className="store-scan">扫</i><div><b>简扫</b><span>效率 · 文档扫描</span><small>调用相机拍摄纸张，支持离线文字查看。</small></div><button onClick={()=>setApp("camera")}>打开</button></article><article className={installingRecovery?"installing":recoveryInstalled?"installed":""}><i>拾</i><div><b>拾遗 · 本地数据复原</b><span>工具 · 仅扫描本机文件</span><small>重建仍留在设备上的缓存与索引，不恢复正确遮盖的内容。</small></div><button className="store-install" disabled={installingRecovery} onClick={()=>recoveryInstalled?setApp("cracker"):(setInstallProgress(0),setInstallingRecovery(true))}>{installingRecovery?<i className="install-ring" style={{background:`conic-gradient(#1875d1 ${installProgress*3.6}deg,#d8d9dc 0)`}}><span/></i>:recoveryInstalled?"打开":"获取"}</button></article><article><i className="store-tide">汐</i><div><b>潮汐表</b><span>天气 · 海事数据</span><small>近岸潮位预报与日出日落时间。</small></div><button onClick={()=>setApp("weather")}>打开</button></article>{installingRecovery&&<div className="install-status"><span style={{width:`${installProgress}%`}}/><b>正在下载并验证… {installProgress}%</b></div>}{recoveryInstalled&&<div className="install-complete"><i>✓</i><span>安装完成，应用已经出现在桌面</span></div>}<section><h3>隐私说明</h3><p>安装前请核对工具申请的权限。本地处理不等于能够恢复彻底删除或依法遮盖的信息。</p></section></div>}
-    {app === "cracker" && <div className="phone-page recovery-app"><PhoneHead title="数据复原" back={back}/><header><i>拾</i><div><b>本机扫描完成</b><span>按文件逐项检查可恢复内容</span></div></header><div className="recovery-list">{recoveryItems.map(item=>{const done=found.includes(item.id)||recoveredItems.includes(item.id);const active=recovering===item.id;return <article key={item.id} className={done?"done":""}><small>{item.clue?"文件残片":"缓存残片"}</small><h3>{item.name}</h3><p>{done?item.result:item.method}</p><div className="recovery-track"><span style={{width:`${done?100:active?recoveryProgress:0}%`}}/></div><em>{done?(item.clue?"恢复完成 · 已收录到调查手记":"恢复完成 · 仅保存在工具内"):active?`正在重建 ${recoveryProgress}%`:"可尝试恢复"}</em><button disabled={Boolean(recovering)} onClick={()=>done?setRecoveryOpen(item.id):(setRecoveryProgress(0),setRecovering(item.id))}>{done?"查看恢复内容":"开始复原"}</button></article>})}</div><p className="recovery-rule">恢复结果只是原始材料。工具保留原文件名、来源路径与缺损位置，不替你作判断。</p>{recoveryOpen&&(()=>{const item=recoveryItems.find(entry=>entry.id===recoveryOpen);return item?<div className="recovery-view" role="dialog" aria-modal="true"><article><small>只读恢复副本</small><h3>{item.name}</h3><p>{item.result}</p><dl><dt>复原方法</dt><dd>{item.method}</dd><dt>完整性</dt><dd>{item.clue?"可读字段已写入调查手记；缺损字段保持空白。":"仅恢复缓存信息，不作为独立结论材料。"}</dd></dl><button onClick={()=>setRecoveryOpen(null)}>关闭</button></article></div>:null})()}</div>}
+    {app === "cracker" && <div className="phone-page recovery-app"><PhoneHead title="数据复原" back={back}/><header><i>拾</i><div><b>本机扫描完成</b><span>按文件逐项检查可恢复内容</span></div></header><div className="recovery-list">{recoveryItems.filter(item=>found.includes(item.id)||recoveredItems.includes(item.id)).length>0?recoveryItems.filter(item=>found.includes(item.id)||recoveredItems.includes(item.id)).map(item=>{const done=found.includes(item.id)||recoveredItems.includes(item.id);const active=recovering===item.id;return <article key={item.id} className={done?"done":""}><small>{item.clue?"文件残片":"缓存残片"}</small><h3>{item.name}</h3><p>{done?item.result:item.method}</p><div className="recovery-track"><span style={{width:`${done?100:active?recoveryProgress:0}%`}}/></div><em>{done?(item.clue?"恢复完成 · 已收录到调查手记":"恢复完成 · 仅保存在工具内"):active?`正在重建 ${recoveryProgress}%`:"可尝试恢复"}</em><button disabled={Boolean(recovering)} onClick={()=>done?setRecoveryOpen(item.id):(setRecoveryProgress(0),setRecovering(item.id))}>{done?"查看恢复内容":"开始复原"}</button></article>}):<div className="recovery-empty"><b>没有可恢复的文件</b><p>先在本机文件系统中找到损坏或无法读取的文件，再回到这里尝试恢复。</p></div>}</div><p className="recovery-rule">恢复结果只是原始材料。工具保留原文件名、来源路径与缺损位置，不替你作判断。</p>{recoveryOpen&&(()=>{const item=recoveryItems.find(entry=>entry.id===recoveryOpen);return item?<div className="recovery-view" role="dialog" aria-modal="true"><article><small>只读恢复副本</small><h3>{item.name}</h3><p>{item.result}</p><dl><dt>复原方法</dt><dd>{item.method}</dd><dt>完整性</dt><dd>{item.clue?"可读字段已写入调查手记；缺损字段保持空白。":"仅恢复缓存信息，不作为独立结论材料。"}</dd></dl><button onClick={()=>setRecoveryOpen(null)}>关闭</button></article></div>:null})()}</div>}
     {app === "camera" && <div className="phone-page camera-app"><PhoneHead title="相机" back={back}/><div className={`camera-preview ${cameraGlitch?"glitch":""}`}>{cameraStream?<video ref={videoRef} autoPlay playsInline muted/>:<div className="camera-permission"><i>相</i><p>启用后会调用你的摄像头<br/>画面只在当前页面处理</p><button onClick={()=>startCamera("user")}>启用前置摄像头</button>{cameraError&&<small>{cameraError}</small>}</div>}{cameraGlitch&&<div className="focus-anomaly"><i/><span>正在重新对焦</span></div>}</div>{cameraStream&&<div className="camera-controls"><button onClick={()=>startCamera(cameraFacing==="user"?"environment":"user")}>切换</button><button className="shutter" aria-label="拍照" onClick={captureCamera}/><button onClick={()=>{stopCamera();setCameraShot("")}}>关闭</button></div>}{cameraShot&&<div className="camera-shot" role="dialog"><img src={cameraShot} alt="刚拍摄的照片"/><button onClick={()=>setCameraShot("")}>继续拍摄</button></div>}</div>}
     {app === "amap" && <div className="phone-page amap-app"><PhoneHead title="高德地图" back={back}/><div className="amap-search"><input value={amapQuery} onChange={e=>setAmapQuery(e.target.value)} placeholder="搜索地点"/><button onClick={()=>window.open(`https://uri.amap.com/search?keyword=${encodeURIComponent(amapQuery)}`,"_blank","noopener,noreferrer")}>搜索</button></div><section><div className="amap-pin">⌖</div><small>搜索建议</small><h3>雾港</h3><p>未找到可验证的公开地点</p><article><b>设备离线记录</b><span>雾港岛 · 最近访问</span><em>{chapter===3?"定位曾短暂下沉至白塔下方12米":"离线地图由设备持有人保存"}</em></article><button onClick={()=>window.open(`https://uri.amap.com/search?keyword=${encodeURIComponent(amapQuery)}`,"_blank","noopener,noreferrer")}>在高德地图中继续搜索</button></section></div>}
     {app === "calculator" && <div className="phone-page calculator-app"><PhoneHead title="计算器" back={back}/><output>{calcInput}</output>{calcSecret&&<aside><small>设备管理诊断</small><b>监督配置：CS-C17</b><p>远程策略上次同步：03:17<br/>定位镜像：启用<br/>相机权限：由用户控制</p><button onClick={()=>setCalcSecret(false)}>关闭</button></aside>}<div>{["C","÷","×","-","7","8","9","+","4","5","6","=","1","2","3","0","."] .map(key=><button key={key} className={"÷×-+=".includes(key)?"operator":""} onClick={()=>pressCalc(key)}>{key}</button>)}</div></div>}
@@ -735,10 +906,10 @@ function Browser({ query, setQuery, results, article, setArticle, collect, found
   const openArticle = (next: Article) => { const clue = next.id === "a23" ? "weather" : next.id === "a28" && chapter >= 2 ? "ship" : ""; if (clue && !found.includes(clue)) collect(clue); setArticle(next); };
   const updateIds=chapter===1?["a39","a42"]:chapter===2?["a43","a44","a46"]:["a47","a48","a51"];
   const updates=updateIds.map(id=>ARTICLES.find(a=>a.id===id)).filter(Boolean) as Article[];
-  if (article) return <div className="browser-page article-page"><header className="browser-bar"><button onClick={()=>setArticle(null)}>← 返回结果</button><span>archive.wugang.local / {article.id}</span></header><article><div className="article-meta"><span>{article.tag}</span><time>{article.date}</time></div><h1>{article.title}</h1><div className="article-byline"><b>{article.source || "雾港地方资料库"}</b><span>{article.author || "资料整理员"}</span><time>发布于 {article.date}</time></div><p className="lead">{article.excerpt}</p>{article.image&&<figure><img src={article.image} alt=""/><figcaption>{article.caption||`${article.title}相关现场资料图，图片时间以正文记录为准。`}</figcaption></figure>}{article.deleted && <div className="deleted">原页面已删除。当前内容来自搜索摘要、RSS与纸质剪报交叉恢复。</div>}{article.redacted && <p>公开档案中的经办人：<mark>　　　　　　</mark>。遮盖由2026年数字化整理时添加，理由为“个人信息”。</p>}{article.body.map((p:string,i:number)=><p key={i}>{p}</p>)}<footer className="article-footer">资料编号 {article.id.toUpperCase()} · 页面按原发布来源整理；修订与删除状态单独保留。</footer></article></div>;
+  if (article) return <div className="browser-page article-page"><header className="browser-bar"><button onClick={()=>setArticle(null)}>← 返回结果</button><span>archive.wugang.local / {article.id}</span></header><article><div className="article-meta"><span>{article.tag}</span><time>{article.date}</time></div><h1>{article.title}</h1><div className="article-byline"><b>{article.source || "雾港地方资料库"}</b><span>{article.author || "资料整理员"}</span><time>发布于 {article.date}</time></div><p className="lead">{article.excerpt}</p>{article.image&&<figure><img src={article.image} alt="" loading="lazy" decoding="async"/><figcaption>{article.caption||`${article.title}相关现场资料图，图片时间以正文记录为准。`}</figcaption></figure>}{article.deleted && <div className="deleted">原页面已删除。当前内容来自搜索摘要、RSS与纸质剪报交叉恢复。</div>}{article.redacted && <p>公开档案中的经办人：<mark>　　　　　　</mark>。遮盖由2026年数字化整理时添加，理由为“个人信息”。</p>}{article.body.map((p:string,i:number)=><p key={i}>{p}</p>)}<footer className="article-footer">资料编号 {article.id.toUpperCase()} · 页面按原发布来源整理；修订与删除状态单独保留。</footer></article></div>;
   return <div className="browser-page"><header className="browser-bar"><span>今日雾港</span><form onSubmit={(e)=>e.preventDefault()}><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜索地点、机构、年份或事件"/><button>搜索</button></form></header>
     {!query && <><section className={`portal-hero portal-chapter-${chapter}`}><div><p>{chapter===1?"2026年6月16日　星期二":chapter===2?"2026年6月16日　夜间版":"2026年6月17日　凌晨版"}</p><h1>今日雾港</h1><span>{chapter===1?"19°C　阵雨刚停　末班船待复核":chapter===2?"17°C　海雾回流　档案目录更新":"16°C　浓雾　03:17低潮窗口"}</span></div><aside><b>{chapter===1?"航班提醒":chapter===2?"档案更新":"夜间提醒"}</b><p>{chapter===1?"20:10客轮是否开航，将于18:30根据能见度决定。":chapter===2?"一批旧港医疗史目录已于22:00更新，正文仍按隐私等级查阅。":"白塔东段正在设备运输，公众不要进入封闭路段。"}</p></aside></section><section className="portal-updates"><header><b>本章新增</b><span>调查推进后，首页会保留当时可见的更新</span></header>{updates.map(a=><button key={a.id} onClick={()=>openArticle(a)}><time>{a.date}</time><b>{a.title}</b><p>{a.excerpt}</p></button>)}</section></>}
-    <div className="browser-layout"><div><div className="result-head"><b>{query ? `“${query}”的结果` : "本地资讯与档案"}</b></div>{results.length ? <div className="article-list">{results.map((a:Article)=><button key={a.id} onClick={()=>openArticle(a)}><div><span>{a.tag}</span><time>{a.date}</time>{a.deleted&&<em>原页删除</em>}</div><h3>{a.title}</h3><p>{a.excerpt}</p></button>)}</div> : <div className="no-result"><b>没有找到完全匹配的页面</b><p>可以更换地点、机构或年份重新搜索。</p></div>}</div>
+    <div className="browser-layout"><div><div className="result-head"><b>{query ? `“${query}”的结果` : "本地资讯与档案"}</b></div>{results.length ? <div className="article-list">{results.map((a:Article)=><button key={a.id} className={a.related?"related":""} onClick={()=>openArticle(a)}><div><span>{a.tag}</span><time>{a.date}</time>{a.deleted&&<em>原页删除</em>}{a.related&&<em className="article-related">🔍 与调查相关</em>}</div><h3>{a.title}</h3><p>{a.excerpt}</p></button>)}</div> : <div className="no-result"><b>没有找到完全匹配的页面</b><p>可以更换地点、机构或年份重新搜索。</p></div>}</div>
     <aside className="browser-side"><h3>资料分类</h3>{[{label:"岛内新闻",q:"雾港"},{label:"生活商业",q:"生活"},{label:"历史民俗",q:"民俗"},{label:"1992事故",q:"1992"},{label:"健康教育",q:"健康"}].map(item=><button key={item.label} onClick={()=>setQuery(item.q)}>{item.label}</button>)}</aside></div>
   </div>;
 }
@@ -750,7 +921,8 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
   const [inside,setInside]=useState<string | null>(null);
   const [event,setEvent]=useState<{title:string;text:string;image:string}|null>(null);
   const [mapGlitch,setMapGlitch]=useState(false);
-  useEffect(()=>{if(chapter!==3||sessionStorage.getItem("wugang-map-glitch"))return;sessionStorage.setItem("wugang-map-glitch","1");const start=window.setTimeout(()=>setMapGlitch(true),650);const end=window.setTimeout(()=>setMapGlitch(false),2700);return()=>{window.clearTimeout(start);window.clearTimeout(end)}},[chapter]);
+  const [mapHorror,setMapHorror]=useState<{text:string;visible:boolean}>({text:"",visible:false});
+  const triggerPlace=(name:string)=>{if(chapter===3&&name==="白塔"){setMapHorror({text:"小心身后",visible:true});setMapGlitch(true);window.setTimeout(()=>{setMapHorror({text:"快跑",visible:true});window.setTimeout(()=>{setMapHorror({text:"",visible:false});setMapGlitch(false)},1200)},1800);}setPlace(name);};
   const chapterOne:Record<string,{sub:string;desc:string;image:string;actions:MapAction[]}>={
     "客运码头":{sub:"北岸渡口",desc:"实名客轮每日四班，候船厅与售票窗口仍在营业。",image:"/photos/venue-terminal.webp",actions:[["查询实名航班","自助终端显示：林琴6月14日16:30登岛，之后没有离岛核验。","ferry-list"],["询问售票员","售票员翻了纸质补票册：这两天没有林琴，也没有使用她证件的旅客。"]]},
     "潮生宾馆":{sub:"老街东口",desc:"一间经营二十余年的家庭宾馆。警方登记过306，但房内物品尚未移交家属。",image:"/photos/venue-hotel.webp",actions:[["向前台说明身份","蒋小蕊核对你的身份证、林琴登记的紧急联系人信息，又向接警民警确认后，交给你一张只能开启306的备用房卡。",undefined,"room-card"],["询问昨晚值班情况","前台只确认林琴整夜未归。完整门卡记录不能口头提供，她建议你先核对房内物品是否有缺失。"]]},
@@ -776,7 +948,7 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
     "郭家旧宅":{sub:"归潮广场东巷",desc:"郭宁带你从后门进入自己的房间。她不肯交出家人的隐私，只同意核对与自己有关的记录。",image:"/photos/family-dinner.webp",actions:[["查看郭宁导出的群公告","群公告把体检、服药和出岛申请写在同一张表里。","family-group"],["核对郭宁保存的药袋照片","四个药袋分别写着C17-01至C17-04；她只让你拍编号，没有拍姓名。","codes"]]},
     "引水洞":{sub:"旧港北侧海蚀通道",desc:"普通地图没有标注，退潮后入口才露出半米。",image:"/photos/wugang-aerial.webp",actions:[["核对潮位","03:17前后有二十二分钟可通行窗口。","rescue"],["查看洞口拖痕","新鲜轮痕从冷链码头方向一直延伸到水线。"]]},
     "客运码头":{sub:"北岸渡口",desc:"救援位置和证据可在这里接入岛外网络发送。",image:"/photos/venue-terminal.webp",actions:[["测试岛外上传","固定网络可用，三个加密备份目标均已连通。"],["查询凌晨船班","04:20有一艘海事巡逻艇靠岸，可作为撤离接应。"]]},
-    "旧港监控室":{sub:"冷链地下一层 · 镜像节点",desc:"五套本应彼此独立的监控，在这里被接进同一面屏幕墙。中心画面正停在你经过冷链东门的那一帧。",image:"/photos/surveillance-room.png",actions:[["查看中心屏幕","画面里是你的背影。左侧小屏按时间倒序保存着你进入宾馆、客运站和旧港的路线；陌生号码不是在猜。"],["复制只读镜像索引","你用手机扫描节点二维码，只复制镜头编号与时间戳，原始录像仍留在设备中。",undefined,"mirror-index"],["断开远端观看","确认只读索引已经保存后，你拔掉标为WAN的上行线。本地录像继续运行，远端画面中断。",undefined,undefined,"mirror-index"]]}
+    "旧港监控室":{sub:"冷链地下一层 · 镜像节点",desc:"五套本应彼此独立的监控，在这里被接进同一面屏幕墙。中心画面正停在你经过冷链东门的那一帧。",image:"/photos/surveillance-room.webp",actions:[["查看中心屏幕","画面里是你的背影。左侧小屏按时间倒序保存着你进入宾馆、客运站和旧港的路线；陌生号码不是在猜。"],["复制只读镜像索引","你用手机扫描节点二维码，只复制镜头编号与时间戳，原始录像仍留在设备中。",undefined,"mirror-index"],["断开远端观看","确认只读索引已经保存后，你拔掉标为WAN的上行线。本地录像继续运行，远端画面中断。",undefined,undefined,"mirror-index"]]}
   };
   const places=chapter===1?chapterOne:chapter===2?chapterTwo:chapterThree;
   const mapImage=chapter===1?"/photos/wugang-map-rain.webp":chapter===2?"/photos/wugang-map-archive.webp":"/photos/wugang-map-night.webp";
@@ -786,7 +958,7 @@ function MapPanel({chapter,collect,found,notify,inventory,acquireItem}:any) {
   const visit=(name:string)=>{setPlace(name);setInside(name);setEvent(null);};
   const act=(action:MapAction,item:any)=>{if(action[4]&&!inventory.includes(action[4])){const needed=ITEMS[action[4]];setEvent({title:"现在还缺一个由头",text:`对方没有理由配合。先找到“${needed?.title||"必要物品"}”，也许能让这次交涉有个自然的开场。`,image:item.image});return}setEvent({title:action[0],text:action[1],image:imageFor(action,item)});if(action[2]&&!found.includes(action[2]))collect(action[2]);if(action[3])acquireItem(action[3]);};
   if(inside){const item=places[inside];const hasRoomCard=inventory.includes("room-card");return <div className={`venue-page venue-chapter-${chapter}`} style={{backgroundImage:`linear-gradient(180deg,rgba(10,18,16,.12),rgba(10,18,16,.82)),url(${item.image})`}}><header><button onClick={()=>{inside==="306房间"?setInside("潮生宾馆"):setInside(null);setEvent(null);}}>← {inside==="306房间"?"返回前台":"离开，返回地图"}</button><span>{CHAPTERS[chapter-1].title} · {item.sub}</span></header><section><p>当前地点</p><h1>{inside}</h1><strong>{item.desc}</strong>{inside==="潮生宾馆"&&<button className={`room-entry ${hasRoomCard?"unlocked":"locked"}`} onClick={()=>hasRoomCard?setInside("306房间"):notify("前台不会让你直接上楼。先说明身份并完成登记。")}>{hasRoomCard?"刷卡进入306房间 →":"306房间 · 需要房卡"}</button>}<div className="venue-actions">{item.actions.map((action,i)=><button key={i} onClick={()=>act(action,item)}><span>{String(i+1).padStart(2,"0")}</span>{action[0]}</button>)}</div></section>{event&&<div className="venue-modal" role="dialog" aria-modal="true"><article><figure><img src={event.image} alt=""/></figure><small>{event.title.includes("房卡")||event.title.includes("身份")?"交互结果":"现场查看"}</small><h2>{event.title}</h2><p>{event.text}</p><button onClick={()=>setEvent(null)}>关闭</button></article></div>}</div>}
-  return <div className={`map-page map-chapter-${chapter}`}><div className="map-canvas real-map" style={{backgroundImage:`linear-gradient(rgba(15,28,25,.16),rgba(15,28,25,.22)),url(${mapImage})`}}>{visiblePlaces.map((p,i)=><button key={p} style={{left:`${12+(i*15)%70}%`,top:`${14+(i*21)%64}%`}} className={place===p?"active":""} onClick={()=>setPlace(p)}><i>{i+1}</i>{p}</button>)}<div className="map-time"><b>{chapter===1?"20:26":chapter===2?"22:36":"03:17"}</b><span>{chapter===1?"海雾渐浓":chapter===2?"海雾回流":"低潮 · 浓雾"}</span></div>{mapGlitch&&<div className="map-glitch"><i/><b>当前位置</b><span>白塔下方 · -12m</span><em>定位信号异常</em></div>}</div><aside><p>{CHAPTERS[chapter-1].title} · 岛内地图</p><h2>{place}</h2><b>{places[place].sub}</b><p>{places[place].desc}</p>{inventory.length>0&&<div className="map-items"><span>调查道具</span>{inventory.map((id:string)=><b key={id}>{ITEMS[id]?.title}</b>)}</div>}<button className="route" onClick={()=>visit(place)}>进入地点</button></aside></div>
+  return <div className={`map-page map-chapter-${chapter}`}><div className="map-canvas real-map" style={{backgroundImage:`linear-gradient(rgba(15,28,25,.16),rgba(15,28,25,.22)),url(${mapImage})`}}>{visiblePlaces.map((p,i)=><button key={p} style={{left:`${12+(i*15)%70}%`,top:`${14+(i*21)%64}%`}} className={place===p?"active":""} onClick={()=>triggerPlace(p)}><i>{i+1}</i>{p}</button>)}<div className="map-time"><b>{chapter===1?"20:26":chapter===2?"22:36":"03:17"}</b><span>{chapter===1?"海雾渐浓":chapter===2?"海雾回流":"低潮 · 浓雾"}</span></div>{mapGlitch&&<div className="map-glitch"><i/><b>当前位置</b><span>白塔下方 · -12m</span><em>定位信号异常</em></div>}{mapHorror.visible&&<div className="map-horror"><span>{mapHorror.text}</span></div>}</div><aside><p>{CHAPTERS[chapter-1].title} · 岛内地图</p><h2>{place}</h2><b>{places[place].sub}</b><p>{places[place].desc}</p>{inventory.length>0&&<div className="map-items"><span>调查道具</span>{inventory.map((id:string)=><b key={id}>{ITEMS[id]?.title}</b>)}</div>}<button className="route" onClick={()=>visit(place)}>进入地点</button></aside></div>
 }
 
 const clueQuestion=(id:string)=>({
@@ -801,6 +973,29 @@ function Evidence({found,chapter,collect}:{found:string[];chapter:number;collect
   return <div className="evidence-page"><header><p>INVESTIGATION NOTES</p><h1>调查手记</h1><span>原始材料不会自动替你得出结论。把能对上时间、人物或编号的记录放在一起。</span></header>
     {(ready.length>0||completed.length>0)&&<section className="deduction-desk"><div><small>材料关系</small><h2>组合推演</h2><p>每份收录材料至少参与一条推演；不同组合会形成不同的论证路径。</p></div>{ready.map(d=><button key={d.id} onClick={()=>collect(d.id)}><span>{d.source}</span><b>{d.title}</b><em>开始推演 →</em></button>)}{completed.map(d=><button className="done" key={d.id} onClick={()=>setOpen(CLUES.find(c=>c.id===d.id)||null)}><span>已完成推演</span><b>{d.title}</b><em>查看关系 →</em></button>)}</section>}
     {items.length?<div className="evidence-grid">{items.map((c,i)=><button className={`evidence-card ${c.source.includes("组合推演")?"deduced":""}`} key={c.id} onClick={()=>setOpen(c)}><span>{String(i+1).padStart(2,"0")} · {CHAPTERS[c.chapter-1].title}</span><h3>{c.title}</h3><p>{c.text}</p><small>来源：{c.source}</small><em>查看详情 →</em></button>)}</div>:<div className="empty-evidence">本章手记内尚无材料。</div>}<footer>当前章节：{CHAPTERS[chapter-1].title}</footer>{open&&<div className="evidence-modal" role="dialog" aria-modal="true"><article><small>{CHAPTERS[open.chapter-1].title} · {open.source.includes("组合推演")?"材料关系":"原始材料"}</small><h2>{open.title}</h2><b>{open.source}</b><p>{open.text}</p>{(clueQuestion(open.id)||DEDUCTIONS.find(d=>d.id===open.id)?.question)&&<aside><span>尚未解决</span><p>{clueQuestion(open.id)||DEDUCTIONS.find(d=>d.id===open.id)?.question}</p></aside>}<button onClick={()=>setOpen(null)}>关闭</button></article></div>}</div>
+}
+
+function TutorialOverlay({dismiss}:{dismiss:()=>void}) {
+  const [step,setStep]=useState(0);
+  const tips=[
+    {title:"欢迎来到雾港",text:"你叫林岚，母亲林琴在雾港岛失联。她的手机现在在你手里——从这里开始调查。"},
+    {title:"① 先看微信",text:"打开微信，查看妈妈最后发来的消息。这是调查的起点。"},
+    {title:"② 找人帮忙",text:"微信里有一位叫「潮」的联系人——调查中卡住了随时可以问他，不影响结局。"},
+    {title:"③ 五个工具",text:"左侧工具栏切换：手机、档案搜索、岛内地图、调查手记、阶段结论。先熟悉手机里的内容。"},
+    {title:"④ 支线回收",text:"调查中会陆续解锁「未解之谜」——收集足够线索后，可以查看每条支线的真相。"},
+    {title:"⑤ 核心玩法",text:"找到线索 → 调查手记做组合推演 → 阶段结论提交判断。每个章节完成一次即可推进。"},
+  ];
+  const t=tips[step];
+  return <div className="tutorial-overlay" onClick={()=>{if(step<tips.length-1)setStep(s=>s+1);else dismiss()}}>
+    <div className="tutorial-card" onClick={e=>e.stopPropagation()}>
+      <div className="tutorial-dots">{tips.map((_,i)=><i key={i} className={i===step?"active":""}/>)}</div>
+      <h3>{t.title}</h3><p>{t.text}</p>
+      <div className="tutorial-actions">
+        <button onClick={dismiss}>跳过教程</button>
+        <button className="tutorial-next" onClick={()=>{if(step<tips.length-1)setStep(s=>s+1);else dismiss()}}>{step<tips.length-1?"下一步 →":"开始调查"}</button>
+      </div>
+    </div>
+  </div>;
 }
 
 function Board({chapter,collected,selected,toggle,answer,setAnswer,submit,investigate}:any) {
@@ -820,4 +1015,56 @@ function Board({chapter,collected,selected,toggle,answer,setAnswer,submit,invest
     ["rescue-first","先按检修道救人并异地备份，再分层公开犯罪证据"],
   ];
   return <div className="board-page"><header><p>阶段结论随时开放</p><h1>{CHAPTERS[chapter-1].question}</h1><span>选择一条已经成立的组合推演，再写下阶段判断。原始材料已记录在推演内部，不需要重复提交。</span></header>{!hasDeduction&&<div className="investigate-callout"><div><b>先把材料之间的关系理出来</b><p>回到调查手记。能在时间、人物或编号上互相印证的记录，会出现“组合推演”。</p></div><button onClick={investigate}>继续调查 →</button></div>}<form onSubmit={submit}><div className="board-columns"><section><h3>一、选择论证 <small>{selected.length}/1</small></h3>{hasDeduction?deductions.map((c:Clue)=><button type="button" key={c.id} className={`${selected.includes(c.id)?"selected":""} deduced`} onClick={()=>toggle(c.id)}><i>{selected.includes(c.id)?"✓":"+"}</i><span><b>{c.title}</b><small>{c.source}</small></span></button>):<div className="board-empty"><p>还没有完成组合推演。</p><button type="button" onClick={investigate}>先从手机里的日常记录查起</button></div>}</section><section><h3>二、写下阶段判断</h3><div className="answers">{choices.map(([value,label])=><label key={value}><input type="radio" name="a" value={value} checked={answer===value} onChange={e=>setAnswer(e.target.value)}/>{label}</label>)}</div><button className="submit-conclusion">{chapter===3?"执行最终行动":"提交阶段结论"}</button><small className="submit-note">推演已经保存了引用来源。这里仅判断哪条推演最能支撑你的结论。</small></section></div></form></div>
+}
+
+function SideMysteries({chapter,found,resolvedMysteries,setResolvedMysteries,notify}:{chapter:number;found:string[];resolvedMysteries:string[];setResolvedMysteries:(v:string[])=>void;notify:(text:string)=>void}){
+  const [open,setOpen]=useState<SideMystery|null>(null);
+  const [rewardNotice,setRewardNotice]=useState<(typeof MYSTERY_MILESTONES)[number]|null>(null);
+  const available=SIDE_MYSTERIES.filter(m=>m.chapter<=chapter);
+  const total=available.length;
+  const resolved=available.filter(m=>resolvedMysteries.includes(m.id)).length;
+  const percent=total>0?Math.round(resolved/total*100):0;
+  const resolveMystery=(mystery:SideMystery)=>{
+    if(resolvedMysteries.includes(mystery.id)){setOpen(null);return}
+    const next=[...resolvedMysteries,mystery.id];
+    setResolvedMysteries(next);
+    setOpen(null);
+    const milestone=MYSTERY_MILESTONES.find(item=>item.count===next.length);
+    if(milestone)setRewardNotice(milestone);
+    else notify(`支线已归档 · ${next.length}/8`);
+  };
+  return <div className="side-page">
+    <header><p>SIDE MYSTERIES</p><h1>未解之谜</h1><span>调查中收集到的线索会逐步解锁支线谜题。查看每条谜底的完整叙述，才算真正拼出雾港的全貌。</span></header>
+    <div className="side-progress">
+      <div className="side-progress-bar"><span style={{width:`${percent}%`}}/></div>
+      <b>{resolved}/{total}</b><span>条已解答</span>
+    </div>
+    <div className="side-milestones" aria-label="支线归档里程碑">{MYSTERY_MILESTONES.map(item=><div key={item.count} className={resolvedMysteries.length>=item.count?"reached":""}><i>{resolvedMysteries.length>=item.count?"✓":item.count}</i><span><b>{item.title}</b><small>{item.count} 条归档</small></span></div>)}</div>
+    <div className="side-grid">{available.map(m=>{
+      const unlocked=m.requires.every(r=>found.includes(r));
+      const done=resolvedMysteries.includes(m.id);
+      return <button key={m.id} className={`side-card${done?" done":""}${unlocked&&!done?" unlocked":""}${!unlocked?" locked":""}`} onClick={()=>unlocked&&setOpen(m)}>
+        <div className="side-card-head">
+          <span className="side-chapter">0{m.chapter}</span>
+          {done?<i className="side-check">✓</i>:unlocked?<i className="side-unlock">?</i>:<i className="side-lock">🔒</i>}
+        </div>
+        <h3>{m.title}</h3>
+        <p>{done?"已解答":unlocked?m.question:"需要更多线索"}</p>
+        {!unlocked&&<small className="side-hint">缺失：{m.requires.filter(r=>!found.includes(r)).map(r=>CLUES.find(c=>c.id===r)?.title||r).join("、")}</small>}
+      </button>;
+    })}</div>
+    {open&&<div className="side-modal" role="dialog" aria-modal="true">
+      <article>
+        <small>0{open.chapter} · {CHAPTERS[open.chapter-1].title}</small>
+        <h2>{open.title}</h2>
+        <p className="side-question">{open.question}</p>
+        <div className="side-sources"><span>互证材料</span>{open.requires.map(id=><b key={id}>{CLUES.find(c=>c.id===id)?.title||id}</b>)}</div>
+        <hr/>
+        <div className="side-answer"><p>{open.answer}</p></div>
+        {!resolvedMysteries.includes(open.id)&&<button className="side-resolve" onClick={()=>resolveMystery(open)}>确认互证并归档</button>}
+        <button className="side-close" onClick={()=>setOpen(null)}>关闭</button>
+      </article>
+    </div>}
+    {rewardNotice&&<div className="side-modal side-reward" role="dialog" aria-modal="true"><article><small>支线里程碑 · {rewardNotice.count}/8</small><div className="side-reward-mark">✓</div><h2>{rewardNotice.title}</h2><p>{rewardNotice.text}</p><button className="side-resolve" onClick={()=>setRewardNotice(null)}>收下归档反馈</button></article></div>}
+  </div>;
 }
