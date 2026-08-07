@@ -19,7 +19,7 @@
     justify-content: center;
     gap: 70px;
     padding: 7vh 5vw;
-    background-image: linear-gradient(110deg,rgba(17,34,29,.86),rgba(70,101,91,.66)),url("/og.png");
+    background-image: linear-gradient(110deg,rgba(17,34,29,.86),rgba(70,101,91,.66)),url("/og.webp");
     background-size: cover;
     background-position: center;
   }
@@ -84,7 +84,7 @@
 .phone-head button:active { opacity: .45; }
 
 .phone-home { position:relative;overflow:hidden;padding-bottom:104px!important;background: linear-gradient(180deg,#118b95 0%,#3f9b9c 40%,#d7cdb2 100%) !important; }
-.app-icon { background-image: url("/phone-screen-reference.png") !important; background-size: 350px 623px !important; background-repeat: no-repeat !important; background-color: transparent !important; border-radius: 13px; font-size: 0 !important; }
+.app-icon { background-image: url("/phone-screen-reference.webp") !important; background-size: 350px 623px !important; background-repeat: no-repeat !important; background-color: transparent !important; border-radius: 13px; font-size: 0 !important; }
 .ai-0 { background-position: -283px -192px !important; }
 .ai-1 { background-position: -283px -102px !important; }
 .ai-2 { background-position: -199px -102px !important; }
@@ -128,7 +128,7 @@
 .message-page>.conversation { flex:1 1 auto;min-height:0;height:auto;overflow:auto; }
 .wechat-section { flex:1 1 auto;min-height:0;overflow:auto;background:#f5f4ef;overscroll-behavior:contain; }
 .wechat-tabs { flex:0 0 52px;height:52px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:relative;z-index:4;border-top:1px solid #d8d8d3;background:rgba(247,247,245,.98);box-shadow:0 -2px 8px #0000000a; }
-.wechat-tabs button { min-width:0;border:0;background:transparent;color:#777d79;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px 0;line-height:1; }
+.wechat-tabs button { min-width:0;border:0;background:transparent;color:#777d79;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px 0;line-height:1;position:relative; }
 .wechat-tabs button i { width:22px;height:20px;display:grid;place-items:center;font-style:normal;font-size:17px;line-height:20px; }
 .wechat-tabs button span { font-size:9px;line-height:1.15; }
 .wechat-tabs button.active { color:#24855d; }
@@ -356,3 +356,113 @@
 
 /* Terror prompt (quick escape gameplay) */
 .terror-prompt{position:fixed;inset:0;z-index:250;display:grid;place-items:center;padding:22px;animation:terror-in .15s ease}.terror-prompt-bg{position:absolute;inset:0;background:rgba(140,20,20,.55);backdrop-filter:blur(12px);animation:terror-bg-in .3s ease}.terror-prompt-card{position:relative;width:min(360px,100%);background:#1a0e0e;color:#f0dcdc;padding:32px 24px;border-radius:4px;border:1px solid #822;box-shadow:0 0 60px #c33,0 28px 70px #000;animation:terror-card-in .25s cubic-bezier(.2,1.4,.4,1)}.terror-prompt-icon{width:56px;height:56px;margin:0 auto 16px;border:2px solid #c33;border-radius:50%;display:grid;place-items:center;font-size:32px;color:#c33;animation:terror-icon-pulse .6s ease-in-out infinite alternate}.terror-prompt-card p{font:15px/1.8 var(--serif);text-align:center;white-space:pre-line;margin:0 0 20px}.terror-prompt-bar{height:4px;margin:0 0 16px;background:#2a1818;border-radius:2px;overflow:hidden}.terror-prompt-bar span{display:block;height:100%;background:#c33;transition:width .3s linear}.terror-prompt-btn{width:100%;border:2px solid #c33;background:transparent;color:#f55;padding:14px;font-size:15px;font-weight:700;letter-spacing:.12em;cursor:pointer;animation:terror-btn-pulse .8s ease-in-out infinite alternate}.terror-prompt-btn:hover{background:#c33;color:white}.terror-prompt-btn:active{transform:scale(.97)}@keyframes terror-in{from{opacity:0}}@keyframes terror-bg-in{from{opacity:0}}@keyframes terror-card-in{from{opacity:0;transform:scale(.85) rotate(-2deg)}}@keyframes terror-icon-pulse{to{transform:scale(1.12);box-shadow:0 0 30px #c33}}
+
+/* SideMysteries */
+.side-page { padding: 24px 32px; max-width: 800px; }
+.side-page header { margin-bottom: 24px; }
+.side-page header p { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #b77264; margin-bottom: 6px; }
+.side-page header h1 { font: 26px/1.1 var(--serif); margin-bottom: 8px; }
+.side-page header span { font-size: 13px; opacity: .7; }
+.side-progress { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; padding: 14px 18px; background: #ffffff0a; border-radius: 8px; }
+.side-progress-bar { flex: 1; height: 4px; background: #ffffff20; border-radius: 2px; overflow: hidden; }
+.side-progress-bar span { display: block; height: 100%; background: #b77264; border-radius: 2px; transition: width .5s ease; }
+.side-progress b { font-size: 15px; min-width: 28px; text-align: right; }
+.side-progress span { font-size: 12px; opacity: .6; }
+.side-grid { display: grid; gap: 12px; }
+.side-card { display: block; text-align: left; padding: 16px 18px; border-radius: 8px; background: #1e2b27; border: 1px solid #ffffff12; transition: background .2s, border-color .2s; width: 100%; }
+.side-card.unlocked { cursor: pointer; background: #1e2b27; }
+.side-card.unlocked:hover { background: #24332e; border-color: #b7726460; }
+.side-card.done { opacity: .7; border-color: #2b4636; }
+.side-card.locked { opacity: .45; }
+.side-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.side-chapter { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: #ffffff10; color: #b77264; }
+.side-check { color: #6abf69; font-style: normal; font-size: 14px; }
+.side-unlock { color: #b77264; font-style: normal; font-size: 14px; }
+.side-lock { font-size: 12px; opacity: .5; }
+.side-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.side-card p { font-size: 13px; opacity: .7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.side-hint { font-size: 11px; color: #b77264; display: block; margin-top: 6px; }
+.side-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.7); padding: 20px; }
+.side-modal article { background: #1a2824; border: 1px solid #ffffff18; border-radius: 12px; padding: 28px 32px; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.side-modal small { font-size: 10px; color: #b77264; letter-spacing: .1em; }
+.side-modal h2 { font: 20px/1.2 var(--serif); margin: 8px 0 14px; }
+.side-question { font-size: 14px; opacity: .8; margin-bottom: 16px; }
+.side-modal hr { border: 0; border-top: 1px solid #ffffff15; margin: 16px 0; }
+.side-answer { font-size: 14px; line-height: 1.7; }
+.side-answer p { margin-bottom: 10px; }
+.side-resolve, .side-close { display: inline-block; margin-top: 16px; padding: 10px 20px; border-radius: 6px; border: 0; font-size: 13px; cursor: pointer; }
+.side-resolve { background: #b77264; color: #0f1d19; font-weight: 600; margin-right: 10px; }
+.side-close { background: #ffffff12; color: inherit; }
+.rail-dot { width: 6px; height: 6px; border-radius: 50%; background: #b77264; position: absolute; top: 4px; right: 4px; }
+
+/* 文件文件夹列表 */
+.file-folder-list { padding: 12px 16px; }
+.file-folder-list button { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 14px; background: none; border: 0; border-bottom: 1px solid #ffffff0c; color: inherit; text-align: left; cursor: pointer; transition: background .15s; }
+.file-folder-list button:hover { background: #ffffff08; }
+.file-folder-list button i { font-size: 22px; font-style: normal; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: #1e2b27; border-radius: 6px; }
+.file-folder-list button span { flex: 1; }
+.file-folder-list button span b { display: block; font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+.file-folder-list button span small { font-size: 12px; opacity: .5; }
+.file-folder-list button em { font-size: 18px; opacity: .4; font-style: normal; }
+
+/* 解锁器空状态 */
+.recovery-empty { padding: 48px 24px; text-align: center; }
+.recovery-empty b { display: block; font-size: 16px; margin-bottom: 8px; opacity: .8; }
+.recovery-empty p { font-size: 13px; opacity: .5; line-height: 1.6; }
+
+/* 地图恐怖覆盖层 */
+.map-horror { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; pointer-events: none; animation: horror-fade .3s ease-out; }
+.map-horror span { font-size: clamp(48px,12vw,96px); font-weight: 900; color: #c0392b; text-shadow: 0 0 30px rgba(192,57,43,.6),0 0 60px rgba(192,57,43,.3); letter-spacing: .15em; animation: horror-pulse .6s ease-in-out infinite alternate; }
+@keyframes horror-fade { 0% { opacity: 0; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes horror-pulse { 0% { opacity: .7; text-shadow: 0 0 20px rgba(192,57,43,.4); } 100% { opacity: 1; text-shadow: 0 0 40px rgba(192,57,43,.8),0 0 80px rgba(192,57,43,.4); } }
+
+/* 地图glitch增强 */
+.map-glitch { animation: glitch-shake .15s infinite; }
+.map-glitch i { display: block; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle,#c0392b40,transparent); margin: 0 auto 8px; animation: glitch-ping 1s ease-in-out infinite; }
+@keyframes glitch-shake { 0%,100% { transform: translate(0) skew(0); } 25% { transform: translate(-2px,-1px) skew(1deg); } 50% { transform: translate(2px,1px) skew(-1deg); } 75% { transform: translate(-1px,2px) skew(0); } }
+@keyframes glitch-ping { 0%,100% { transform: scale(1); opacity: .6; } 50% { transform: scale(1.5); opacity: 1; } }
+
+/* 恐怖聊天增强 */
+.chat-terror { animation: terror-border .3s ease-in-out infinite alternate; }
+@keyframes terror-border { 0% { border-color: #c0392b; box-shadow: 0 0 8px rgba(192,57,43,.3); } 100% { border-color: #e74c3c; box-shadow: 0 0 16px rgba(192,57,43,.6); } }
+
+/* 好友请求 */
+.new-friends-page { padding: 12px 16px; }
+.friend-request { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid #ffffff0c; }
+.friend-request img { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; }
+.friend-request div { flex: 1; }
+.friend-request div b { display: block; font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+.friend-request div small { font-size: 12px; opacity: .5; }
+.friend-accept { padding: 6px 18px; border-radius: 4px; border: 0; background: #07c160; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s; }
+.friend-accept:hover { background: #06ad56; }
+.friend-accept:active { background: #059a4c; }
+
+/* 通讯录角标 */
+.contact-badge { position: absolute; top: -4px; right: -6px; min-width: 16px; height: 16px; border-radius: 8px; background: #c0392b; color: #fff; font-size: 10px; font-style: normal; display: flex; align-items: center; justify-content: center; padding: 0 4px; font-weight: 600; }
+
+/* 支线闭环与加载稳定性 */
+img { background:#d8d5cc; }
+.photo-grid img { display:block;width:100%;aspect-ratio:4/3;object-fit:cover; }
+.side-milestones { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-16px 0 22px; }
+.side-milestones>div { display:flex;align-items:center;gap:9px;padding:10px;border:1px solid #ffffff10;border-radius:7px;opacity:.42; }
+.side-milestones>div.reached { opacity:1;background:#284036;border-color:#6abf6940; }
+.side-milestones i { width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#ffffff12;font-style:normal;font-size:11px; }
+.side-milestones .reached i { background:#6abf69;color:#102019;font-weight:700; }
+.side-milestones b,.side-milestones small { display:block; }
+.side-milestones b { font-size:11px; }
+.side-milestones small { margin-top:2px;font-size:9px;opacity:.55; }
+.side-sources { display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:12px 0; }
+.side-sources span { width:100%;font-size:9px;letter-spacing:.12em;opacity:.5; }
+.side-sources b { padding:5px 8px;border-radius:4px;background:#ffffff0d;font-size:10px;font-weight:500; }
+.side-reward { z-index:1010; }
+.side-reward article { text-align:center; }
+.side-reward-mark { width:62px;height:62px;margin:18px auto 12px;border-radius:50%;display:grid;place-items:center;background:#6abf69;color:#11241d;font-size:28px;font-weight:800;box-shadow:0 0 35px #6abf6945; }
+.ending-archive { margin:24px 0;padding:20px;border:1px solid #6abf6960;background:#6abf690d; }
+.ending-archive.incomplete { border-color:#b7726460;background:#b772640d; }
+.ending-archive span,.ending-archive strong { display:block; }
+.ending-archive span { color:#b77264;font-size:10px;letter-spacing:.14em; }
+.ending-archive strong { margin:8px 0;font:20px var(--serif); }
+.ending-archive p { margin:0!important; }
+.ending-archive button { margin-top:14px;border:1px solid #ffffff55;background:transparent;color:white;padding:10px 14px; }
+
+@media(max-width:620px){.side-milestones{grid-template-columns:1fr}.side-page{padding:18px 14px 90px}.side-modal article{padding:22px 18px}}
