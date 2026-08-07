@@ -446,9 +446,10 @@ export default function Home() {
   const [terrorTime,setTerrorTime]=useState(0);
   const [resolvedMysteries,setResolvedMysteries]=useState<string[]>([]);
   const [acceptedFriends,setAcceptedFriends]=useState<string[]>([]);
+  const [hydrated,setHydrated]=useState(false);
 
-  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("wugang-v6") || "null"); if (v) { setStarted(Boolean(v.started)); setChapter(v.chapter || 1); setUnlocked(v.unlocked || 1); setFound(v.found || []); setInventory(v.inventory || []); setIntroSeen(Boolean(v.introSeen)); setTutorialShown(Boolean(v.tutorialShown)); setResolvedMysteries(v.resolvedMysteries || []); setAcceptedFriends(v.acceptedFriends || []); } } catch {} }, []);
-  useEffect(() => { localStorage.setItem("wugang-v6", JSON.stringify({ started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends })); }, [started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends]);
+  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("wugang-v6") || "null"); if (v) { setStarted(Boolean(v.started)); setChapter(v.chapter || 1); setUnlocked(v.unlocked || 1); setFound(v.found || []); setInventory(v.inventory || []); setIntroSeen(Boolean(v.introSeen)); setTutorialShown(Boolean(v.tutorialShown)); setResolvedMysteries(v.resolvedMysteries || []); setAcceptedFriends(v.acceptedFriends || []); } } catch {} finally { setHydrated(true); } }, []);
+  useEffect(() => { if(!hydrated)return;localStorage.setItem("wugang-v6", JSON.stringify({ started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends })); }, [hydrated, started, chapter, unlocked, found, inventory, introSeen, tutorialShown, resolvedMysteries, acceptedFriends]);
 
   useEffect(()=>{if(!terrorActive)return;const t=window.setInterval(()=>{setTerrorTime(v=>{if(v<=1){clearInterval(t);setTerrorActive(false);setTerrorInfo({text:"",reward:""});return 0}return v-1})},1000);return()=>clearInterval(t)},[terrorActive]);
 
